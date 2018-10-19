@@ -11,7 +11,10 @@ const connect = async () => {
     logger.info('will now try and connect to mongo', { connection })
 
     try {
-        client = await MongoClient.connect(connection)
+        client = await MongoClient.connect(
+            connection,
+            { useNewUrlParser: true }
+        )
 
         db = client.db('ctx')
 
