@@ -1,5 +1,23 @@
 const router = require('koa-better-router')().loadMethods()
 
 router.extend(require('./health'))
+router.extend(require('./staff'))
+
+router.get('/', async (ctx, next) => {
+    const res = router.routes.map(r => ({
+        route: r.path,
+        method: r.method
+    }))
+
+    res.unshift(`▀▀▀ ░░▀░░ ▀░▀`)
+
+    res.unshift(`█░░ ░░█░░ ▄▀▄`)
+
+    res.unshift(`█▀▀ ▀▀█▀▀ █░█`)
+
+    ctx.body = res
+
+    await next()
+})
 
 module.exports = router.middleware()

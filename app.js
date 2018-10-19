@@ -5,6 +5,7 @@ const routes = require('./routes')
 const bodyParser = require('koa-bodyparser')
 const requestId = require('koa-requestid')
 const mongo = require('./mongo')
+const cors = require('@koa/cors')
 require('dotenv').config()
 
 async function errorHandler(ctx, next) {
@@ -40,11 +41,12 @@ async function logIncomingRequest(ctx, next) {
 }
 
 async function main() {
-    await mongo.connect()
+    mongo.connect()
 
     const app = new Koa()
     app.use(bodyParser())
     app.use(requestId())
+    app.use(cors())
     app.use(errorHandler)
     app.use(logIncomingRequest)
     app.use(camelCase)
@@ -53,4 +55,4 @@ async function main() {
     module.exports = app
 }
 
-main().catch(err => console.log(err.stack))
+return main().catch(err => console.log(err.stack))
