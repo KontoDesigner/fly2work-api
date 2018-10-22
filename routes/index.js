@@ -2,6 +2,8 @@ const router = require('koa-better-router')().loadMethods()
 
 router.extend(require('./health'))
 router.extend(require('./staff'))
+router.extend(require('./gpx'))
+router.extend(require('./new'))
 
 router.get('/', async (ctx, next) => {
     const res = router.routes.map(r => ({
