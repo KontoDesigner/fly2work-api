@@ -46,24 +46,23 @@ router.post(BASE, async (ctx, next) => {
         return await next()
     }
 
-    const insertOne = await mongo.collection('staffs').insertOne(model)
+    const updateOne = (await mongo.collection('staffs').updateOne({ id: model.id }, { $set: { status: model.status } })).result
 
-    if (insertOne.result.ok) {
-        logger.info('New staff inserted', { model, insertOne })
+    if (updateOne.ok) {
+        logger.info('Updated staff', { model, updateOne })
 
         ctx.body = {
-            ok: true,
-            id: insertOne.insertedIds
+            ok: true
         }
 
         return await next()
     }
 
-    logger.warning('Mongo insert returned ok:false', { model, insertOne })
+    logger.warning('Update staff failed', { model, updateOne })
 
     ctx.body = {
         ok: false,
-        errors: ['Mongo insert returned ok:false']
+        errors: ['Update staff failed']
     }
 
     return await next()

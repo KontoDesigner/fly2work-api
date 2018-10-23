@@ -51,7 +51,9 @@ const staffValidation = Yup.object().shape({
     comment: Yup.string()
         .nullable(true)
         .max(200, 'Comment must contain a total 200 characters'),
-    status: Yup.string().required('Status is required')
+    status: Yup.string()
+        .nullable()
+        .required('Status is required')
 })
 
 module.exports = staffValidation

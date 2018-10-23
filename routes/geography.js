@@ -13,9 +13,7 @@ router.get(`${BASE}/flights`, async (ctx, next) => {
 
     logger.info(`Returning ${BASE}/flights [GET]`, { flights })
 
-    ctx.body = {
-        flights
-    }
+    ctx.body = flights
 
     await next()
 })
@@ -25,9 +23,7 @@ router.get(`${BASE}/sourceMarkets`, async (ctx, next) => {
 
     logger.info(`Returning ${BASE}/sourceMarkets [GET]`, { sourceMarkets })
 
-    ctx.body = {
-        sourceMarkets
-    }
+    ctx.body = sourceMarkets
 
     await next()
 })
@@ -37,9 +33,7 @@ router.get(`${BASE}/seasons`, async (ctx, next) => {
 
     logger.info(`Returning ${BASE}/seasons [GET]`, { seasons })
 
-    ctx.body = {
-        seasons
-    }
+    ctx.body = seasons
 
     await next()
 })
@@ -49,9 +43,7 @@ router.get(`${BASE}/flightStatuses`, async (ctx, next) => {
 
     logger.info(`Returning ${BASE}/flightStatuses [GET]`, { flightStatuses })
 
-    ctx.body = {
-        flightStatuses
-    }
+    ctx.body = flightStatuses
 
     await next()
 })
@@ -61,9 +53,7 @@ router.get(`${BASE}/roles`, async (ctx, next) => {
 
     logger.info(`Returning ${BASE}/roles [GET]`, { roles })
 
-    ctx.body = {
-        roles
-    }
+    ctx.body = roles
 
     await next()
 })
@@ -73,9 +63,7 @@ router.get(`${BASE}/destinations`, async (ctx, next) => {
 
     logger.info(`Returning ${BASE}/destinations [GET]`, { destinations })
 
-    ctx.body = {
-        destinations
-    }
+    ctx.body = destinations
 
     await next()
 })
