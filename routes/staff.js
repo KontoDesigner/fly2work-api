@@ -5,20 +5,40 @@ const logger = require('tuin-logging')
 const BASE = '/staff'
 
 router.get(BASE, async (ctx, next) => {
-    logger.info(`Returning ${BASE} [GET]`, { staffs: null })
+    const staffs = await mongo
+        .collection('staffs')
+        .find({ status: ctx.params.status })
+        .toArray()
+
+    logger.info(`Returning ${BASE} [GET]`, { staffs })
 
     ctx.body = {
-        ok: true
+        staffs: staffs
     }
 
     await next()
 })
 
+router.get(`${BASE}/count`, async (ctx, next) => {
+    const staffs = await mongo.collection('staffs').group({
+        key: { status: 1 }
+    })
+
+    logger.info(`Returning ${BASE}/:id [GET]`, { staffs })
+
+    await next()
+})
+
 router.get(`${BASE}/:id`, async (ctx, next) => {
-    logger.info(`Returning ${BASE}/:id [GET]`, { staff: null })
+    const staff = await mongo
+        .collection('staffs')
+        .findOnde({ id: ctx.params.id })
+        .toArray()
+
+    logger.info(`Returning ${BASE}/:id [GET]`, { staff })
 
     ctx.body = {
-        ok: true
+        staff: staff
     }
 
     await next()
