@@ -16,16 +16,22 @@ const staffValidation = Yup.object().shape({
     sourceMarket: Yup.string()
         .nullable(true)
         .required('Source market is required'),
-    season: Yup.string()
+    hotelStart: Yup.date()
+        .typeError('Hotel start must be a datetime')
         .nullable(true)
-        .required('Season is required'),
+        .required('Hotel start is required'),
+    hotelEnd: Yup.date()
+        .typeError('Hotel end must be a datetime')
+        .nullable(true)
+        .required('Hotel end is required'),
+    positionStart: Yup.date()
+        .typeError('Position start must be a datetime')
+        .nullable(true)
+        .required('Position start is required'),
     dateOfFlight: Yup.date()
         .typeError('Date of flight must be a datetime')
         .nullable(true)
         .required('Date of flight is required'),
-    statusOfFlight: Yup.string()
-        .nullable(true)
-        .required('Status of flight is required'),
     role: Yup.string()
         .nullable(true)
         .required('Role is required'),
