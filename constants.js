@@ -1,9 +1,13 @@
-import keyMirror from 'keymirror'
+const keyMirror = require('keymirror')
 
-export var Statuses = keyMirror({
+const Statuses = keyMirror({
     New: null,
     Submitted: null,
     Pending: null,
     Confirmed: null,
     Overview: null
 })
+
+module.exports = {
+    Statuses
+}
