@@ -2,6 +2,7 @@ const router = require('koa-better-router')().loadMethods()
 const mongo = require('../mongo')
 const gpxValidation = require('../validations/gpxValidation')
 const logger = require('tuin-logging')
+const constants = require('../constants')
 
 const BASE = '/gpx'
 
@@ -14,7 +15,7 @@ router.post(BASE, async (ctx, next) => {
         dateOfBirth: body.DateOfBirth,
         sourceMarket: body.SourceMarket,
         phone: body.Phone,
-        status: 'New',
+        status: constants.Statuses.New,
         gender: body.Gender,
         destination: body.Destination,
         positionStart: body.PositionStart

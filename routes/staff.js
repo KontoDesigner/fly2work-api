@@ -1,6 +1,7 @@
 const router = require('koa-better-router')().loadMethods()
 const mongo = require('../mongo')
 const logger = require('tuin-logging')
+const constants = require('../constants')
 
 const BASE = '/staff'
 
@@ -30,11 +31,11 @@ router.get(`${BASE}/count`, async (ctx, next) => {
     //     return total
     // }, {})
 
-    const _new = res.find(obj => obj._id === 'New')
-    const submitted = res.find(obj => obj._id === 'Submitted')
-    const pending = res.find(obj => obj._id === 'Pending')
-    const confirmed = res.find(obj => obj._id === 'Confirmed')
-    const overview = res.find(obj => obj._id === 'Overview')
+    const _new = res.find(obj => obj._id === constants.Statuses.New)
+    const submitted = res.find(obj => obj._id === constants.Statuses.Submitted)
+    const pending = res.find(obj => obj._id === constants.Statuses.Pending)
+    const confirmed = res.find(obj => obj._id === constants.Statuses.Confirmed)
+    const overview = res.find(obj => obj._id === constants.Statuses.Overview)
 
     const count = {
         new: _new ? _new.count : 0,
