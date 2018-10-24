@@ -8,8 +8,14 @@ const BASE = '/gpx'
 router.post(BASE, async (ctx, next) => {
     const body = ctx.request.body
 
+    console.log('asdf', body)
+
     const model = {
-        id: body.id,
+        id: body.Id,
+        name: body.Name,
+        dateOfBirth: body.DateOfBirth,
+        sourceMarket: body.SourceMarket,
+        phone: body.Phone,
         status: 'New'
     }
 
