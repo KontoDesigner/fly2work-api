@@ -21,7 +21,7 @@ router.get(`${BASE}/flights`, async (ctx, next) => {
 router.get(`${BASE}/sourceMarkets`, async (ctx, next) => {
     const sourceMarkets = [{ value: 'tuise', label: 'tuise' }, { value: 'tuifi', label: 'tuifi' }]
 
-    logger.info(`Returning ${BASE}/sourceMarkets [GET]`, { sourceMarkets })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, sourceMarkets })
 
     ctx.body = sourceMarkets
 
@@ -31,7 +31,7 @@ router.get(`${BASE}/sourceMarkets`, async (ctx, next) => {
 router.get(`${BASE}/seasons`, async (ctx, next) => {
     const seasons = [{ value: 'Current Season', label: 'Current Season' }, { value: 'Next Season', label: 'Next Season' }]
 
-    logger.info(`Returning ${BASE}/seasons [GET]`, { seasons })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, seasons })
 
     ctx.body = seasons
 
@@ -41,7 +41,7 @@ router.get(`${BASE}/seasons`, async (ctx, next) => {
 router.get(`${BASE}/flightStatuses`, async (ctx, next) => {
     const flightStatuses = [{ value: 'Current Season', label: 'Current Season' }, { value: 'Next Season', label: 'Next Season' }]
 
-    logger.info(`Returning ${BASE}/flightStatuses [GET]`, { flightStatuses })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, flightStatuses })
 
     ctx.body = flightStatuses
 
@@ -51,7 +51,7 @@ router.get(`${BASE}/flightStatuses`, async (ctx, next) => {
 router.get(`${BASE}/roles`, async (ctx, next) => {
     const roles = [{ value: 'Current Season', label: 'Current Season' }, { value: 'Next Season', label: 'Next Season' }]
 
-    logger.info(`Returning ${BASE}/roles [GET]`, { roles })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, roles })
 
     ctx.body = roles
 
@@ -61,7 +61,7 @@ router.get(`${BASE}/roles`, async (ctx, next) => {
 router.get(`${BASE}/destinations`, async (ctx, next) => {
     const destinations = [{ value: 'Current Season', label: 'Current Season' }, { value: 'Next Season', label: 'Next Season' }]
 
-    logger.info(`Returning ${BASE}/destinations [GET]`, { destinations })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, destinations })
 
     ctx.body = destinations
 

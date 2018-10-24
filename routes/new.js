@@ -36,7 +36,7 @@ router.post(BASE, async (ctx, next) => {
     })
 
     if (validation.errors && validation.errors.length > 0) {
-        logger.warning('Staff model validation failed, aborting', { model, validation })
+        logger.warning('Staff model validation failed, aborting', { url: ctx.url, model, validation })
 
         ctx.body = {
             ok: false,
@@ -49,7 +49,7 @@ router.post(BASE, async (ctx, next) => {
     const updateOne = (await mongo.collection('staffs').updateOne({ id: model.id }, { $set: { status: model.status } })).result
 
     if (updateOne.ok) {
-        logger.info('Updated staff', { model, updateOne })
+        logger.info('Updated staff', { url: ctx.url, model, updateOne })
 
         ctx.body = {
             ok: true
@@ -58,7 +58,7 @@ router.post(BASE, async (ctx, next) => {
         return await next()
     }
 
-    logger.warning('Update staff failed', { model, updateOne })
+    logger.warning('Update staff failed', { url: ctx.url, model, updateOne })
 
     ctx.body = {
         ok: false,

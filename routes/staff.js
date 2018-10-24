@@ -10,7 +10,7 @@ router.get(BASE, async (ctx, next) => {
         .find({ status: ctx.params.status })
         .toArray()
 
-    logger.info(`Returning ${BASE} [GET]`, { staffs })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, staffs })
 
     ctx.body = {
         staffs: staffs
@@ -44,18 +44,20 @@ router.get(`${BASE}/count`, async (ctx, next) => {
         overview: overview ? overview.count : 0
     }
 
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count })
+
     ctx.body = count
 
     await next()
 })
 
-router.get(`${BASE}/getbystatus/:status`, async (ctx, next) => {
+router.get(`${BASE}/:status`, async (ctx, next) => {
     const staffs = await mongo
         .collection('staffs')
         .find({ status: ctx.params.status })
         .toArray()
 
-    logger.info(`Returning ${BASE}/:status [GET]`, { staffs })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, staffs })
 
     ctx.body = staffs
 
@@ -63,9 +65,9 @@ router.get(`${BASE}/getbystatus/:status`, async (ctx, next) => {
 })
 
 router.get(`${BASE}/:status/:id`, async (ctx, next) => {
-    const staff = await mongo.collection('staffs').findOne({ id: parseInt(ctx.params.id), status: ctx.params.status })
+    const staff = await mongo.collection('staffs').findOne({ id: ctx.params.id, status: ctx.params.status })
 
-    logger.info(`Returning ${BASE}/getbyid/:id [GET]`, { staff })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, staff })
 
     ctx.body = staff
 

@@ -18,7 +18,17 @@ const staffValidation = Yup.object().shape({
         .required('Source market is required'),
     phone: Yup.string()
         .nullable(true)
-        .required('Phone is required')
+        .required('Phone is required'),
+    gender: Yup.string()
+        .nullable(true)
+        .required('Gender is required'),
+    destination: Yup.string()
+        .nullable(true)
+        .required('Destination is required'),
+    positionStart: Yup.date()
+        .typeError('Position start must be a datetime')
+        .nullable(true)
+        .required('Position start is required')
 })
 
 module.exports = staffValidation
