@@ -9,17 +9,17 @@ const BASE = '/gpx'
 router.post(BASE, async (ctx, next) => {
     const body = ctx.request.body
 
-    const model = {
-        id: body.Id,
-        name: body.Name,
-        dateOfBirth: body.DateOfBirth,
-        sourceMarket: body.SourceMarket,
-        phone: body.Phone,
-        status: constants.Statuses.New,
-        gender: body.Gender,
-        destination: body.Destination,
-        positionStart: body.PositionStart
-    }
+    const model = new constants.Staff()
+
+    model.id = body.Id
+    model.name = body.Name
+    model.dateOfBirth = body.DateOfBirth
+    model.sourceMarket = body.SourceMarket
+    model.phone = body.Phone
+    model.status = constants.Statuses.New
+    model.gender = body.Gender
+    model.destination = body.Destination
+    model.positionStart = body.PositionStart
 
     const validation = await gpxValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err

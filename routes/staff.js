@@ -2,8 +2,71 @@ const router = require('koa-better-router')().loadMethods()
 const mongo = require('../mongo')
 const logger = require('tuin-logging')
 const constants = require('../constants')
+const staffValidation = require('../validations/staffValidation')
 
 const BASE = '/staff'
+
+router.post(BASE, async (ctx, next) => {
+    const body = ctx.request.body
+
+    const model = new constants.Staff()
+
+    model.arrivalAirport = body.arrivalAirport
+    model.comment = body.comment
+    model.statusUpdated = new Date()
+    model.dateOfBirth = body.dateOfBirth
+    model.dateOfFlight = body.dateOfFlight
+    model.departureAirport = body.departureAirport
+    model.destination = body.destination
+    model.gender = body.gender
+    model.hotelNeeded = body.hotelNeeded
+    model.id = body.id
+    model.name = body.name
+    model.phone = body.phone
+    model.role = body.role
+    model.sourceMarket = body.sourceMarket
+    model.status = body.status
+    model.positionStart = body.positionStart
+    model.typeOfFlight = body.typeOfFlight
+    model.hotelStart = body.hotelStart
+    model.hotelEnd = body.hotelEnd
+
+    const validation = await staffValidation.validate(model, { abortEarly: false }).catch(function(err) {
+        return err
+    })
+
+    if (validation.errors && validation.errors.length > 0) {
+        logger.warning('Staff model validation failed, aborting', { url: ctx.url, model, validation })
+
+        ctx.body = {
+            ok: false,
+            errors: validation.errors
+        }
+
+        return await next()
+    }
+
+    const replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, model)).result
+
+    if (replaceOne.ok) {
+        logger.info('Updated staff', { url: ctx.url, model, replaceOne })
+
+        ctx.body = {
+            ok: true
+        }
+
+        return await next()
+    }
+
+    logger.warning('Update staff failed', { url: ctx.url, model, replaceOne })
+
+    ctx.body = {
+        ok: false,
+        errors: ['Update staff failed']
+    }
+
+    return await next()
+})
 
 router.get(BASE, async (ctx, next) => {
     const staffs = await mongo
