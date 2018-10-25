@@ -71,14 +71,12 @@ router.post(BASE, async (ctx, next) => {
 router.get(BASE, async (ctx, next) => {
     const staffs = await mongo
         .collection('staffs')
-        .find({ status: ctx.params.status })
+        .find()
         .toArray()
 
     logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, staffs })
 
-    ctx.body = {
-        staffs: staffs
-    }
+    ctx.body = staffs
 
     await next()
 })
@@ -98,15 +96,16 @@ router.get(`${BASE}/count`, async (ctx, next) => {
     const submitted = res.find(obj => obj._id === constants.Statuses.Submitted)
     const pending = res.find(obj => obj._id === constants.Statuses.Pending)
     const confirmed = res.find(obj => obj._id === constants.Statuses.Confirmed)
-    const overview = res.find(obj => obj._id === constants.Statuses.Overview)
 
     const count = {
         new: _new ? _new.count : 0,
         submitted: submitted ? submitted.count : 0,
         pending: pending ? pending.count : 0,
         confirmed: confirmed ? confirmed.count : 0,
-        overview: overview ? overview.count : 0
+        overview: null
     }
+
+    count.overview = count.new + count.submitted + count.pending + count.confirmed
 
     logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count })
 
@@ -115,11 +114,21 @@ router.get(`${BASE}/count`, async (ctx, next) => {
     await next()
 })
 
-router.get(`${BASE}/:status`, async (ctx, next) => {
+router.get(`${BASE}/getbystatus/:status`, async (ctx, next) => {
     const staffs = await mongo
         .collection('staffs')
         .find({ status: ctx.params.status })
         .toArray()
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, staffs })
+
+    ctx.body = staffs
+
+    await next()
+})
+
+router.get(`${BASE}/getbyid/:id`, async (ctx, next) => {
+    const staffs = await mongo.collection('staffs').findOne({ id: ctx.params.id })
 
     logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, staffs })
 
