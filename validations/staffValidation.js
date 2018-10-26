@@ -14,14 +14,6 @@ const staffValidation = Yup.object().shape({
     sourceMarket: Yup.string()
         .nullable(true)
         .required('Source market is required'),
-    hotelStart: Yup.date()
-        .typeError('Hotel start must be a datetime')
-        .nullable(true)
-        .required('Hotel start is required'),
-    hotelEnd: Yup.date()
-        .typeError('Hotel end must be a datetime')
-        .nullable(true)
-        .required('Hotel end is required'),
     positionStart: Yup.date()
         .typeError('Position start must be a datetime')
         .nullable(true)
@@ -58,12 +50,30 @@ const staffValidation = Yup.object().shape({
     status: Yup.string()
         .nullable()
         .required('Status is required'),
+    gender: Yup.string()
+        .nullable(true)
+        .required('Gender is required'),
     hotelNeeded: Yup.boolean()
         .nullable(true)
         .required('Hotel needed is required'),
-    gender: Yup.string()
+    hotelStart: Yup.date()
         .nullable(true)
-        .required('Gender is required')
+        .when('hotelNeeded', {
+            is: true,
+            then: Yup.date()
+                .typeError('Hotel start must be a datetime')
+                .nullable(true)
+                .required('Hotel start is required')
+        }),
+    hotelEnd: Yup.date()
+        .nullable(true)
+        .when('hotelNeeded', {
+            is: true,
+            then: Yup.date()
+                .typeError('Hotel start must be a datetime')
+                .nullable(true)
+                .required('Hotel end is required')
+        })
 })
 
 module.exports = staffValidation

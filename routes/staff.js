@@ -28,8 +28,10 @@ router.post(BASE, async (ctx, next) => {
     model.status = body.status
     model.positionStart = body.positionStart
     model.typeOfFlight = body.typeOfFlight
-    model.hotelStart = body.hotelStart
-    model.hotelEnd = body.hotelEnd
+    if (model.hotelNeeded === true) {
+        model.hotelStart = body.hotelStart
+        model.hotelEnd = body.hotelEnd
+    }
 
     const validation = await staffValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
