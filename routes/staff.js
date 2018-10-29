@@ -4,6 +4,7 @@ const logger = require('tuin-logging')
 const constants = require('../infrastructure/constants')
 const staffValidation = require('../validations/staffValidation')
 const newValidation = require('../validations/newValidation')
+const email = require('../infrastructure/email')
 
 const BASE = '/staff'
 
@@ -53,6 +54,10 @@ router.post(BASE, async (ctx, next) => {
 
     if (replaceOne.ok) {
         logger.info('Updated staff', { url: ctx.url, model, replaceOne })
+
+        if (model.status === constants.Statuses.Confirmed) {
+            await email.send(model)
+        }
 
         ctx.body = {
             ok: true
@@ -107,6 +112,8 @@ router.post(`${BASE}/new`, async (ctx, next) => {
         logger.info('Inserted staff', { url: ctx.url, model, replaceOne })
 
         const upserted = replaceOne.result.upserted ? true : false
+
+        await email.send(model)
 
         ctx.body = {
             ok: true,

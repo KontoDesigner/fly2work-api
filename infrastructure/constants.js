@@ -22,6 +22,17 @@ function Staff() {
     this.statusUpdated = null
 }
 
+function Email() {
+    this.userAddress = null
+    this.emailTo = null
+    this.ccTo = null
+    this.bccTo = null
+    this.subject = null
+    this.body = null
+    this.isBodyHtml = null
+    this.attachments = null
+}
+
 const Statuses = keyMirror({
     New: null,
     Submitted: null,
@@ -31,5 +42,6 @@ const Statuses = keyMirror({
 
 module.exports = {
     Statuses,
-    Staff
+    Staff,
+    Email
 }
