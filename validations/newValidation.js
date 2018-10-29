@@ -1,6 +1,6 @@
 const Yup = require('yup')
 
-const gpxValidation = Yup.object().shape({
+const newValidation = Yup.object().shape({
     // hotelNeeded,
     // gender,
     id: Yup.string()
@@ -31,4 +31,4 @@ const gpxValidation = Yup.object().shape({
         .required('Position start is required')
 })
 
-module.exports = gpxValidation
+module.exports = newValidation

@@ -3,7 +3,7 @@ const mongo = require('../infrastructure/mongo')
 const logger = require('tuin-logging')
 const constants = require('../infrastructure/constants')
 const staffValidation = require('../validations/staffValidation')
-const gpxValidation = require('../validations/gpxValidation')
+const newValidation = require('../validations/newValidation')
 
 const BASE = '/staff'
 
@@ -86,7 +86,7 @@ router.post(`${BASE}/new`, async (ctx, next) => {
     model.destination = body.Destination
     model.positionStart = body.PositionStart
 
-    const validation = await gpxValidation.validate(model, { abortEarly: false }).catch(function(err) {
+    const validation = await newValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
     })
 
