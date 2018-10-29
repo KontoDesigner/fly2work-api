@@ -101,20 +101,23 @@ router.post(`${BASE}/new`, async (ctx, next) => {
         return await next()
     }
 
-    const insertOne = await mongo.collection('staffs').insertOne(model)
+    const replaceOne = await mongo.collection('staffs').replaceOne({ id: model.id }, model, { upsert: true })
 
-    if (insertOne.result.ok) {
-        logger.info('Inserted staff', { url: ctx.url, model, insertOne })
+    if (replaceOne.result.ok) {
+        logger.info('Inserted staff', { url: ctx.url, model, replaceOne })
+
+        const upserted = replaceOne.result.upserted ? true : false
 
         ctx.body = {
             ok: true,
-            id: insertOne.insertedIds
+            upserted,
+            id: upserted ? replaceOne.result.upserted[0]._id : (await mongo.collection('staffs').findOne({ id: model.id }))._id
         }
 
         return await next()
     }
 
-    logger.warning('Insert staff failed', { url: ctx.url, model, insertOne })
+    logger.warning('Insert staff failed', { url: ctx.url, model, replaceOne })
 
     ctx.body = {
         ok: false,
