@@ -4,9 +4,8 @@ const camelcaseKeys = require('camelcase-keys')
 const routes = require('./routes')
 const bodyParser = require('koa-bodyparser')
 const requestId = require('koa-requestid')
-const mongo = require('./mongo')
+const mongo = require('./infrastructure/mongo')
 const cors = require('@koa/cors')
-require('dotenv').config()
 
 async function errorHandler(ctx, next) {
     try {

@@ -1,12 +1,13 @@
 const logger = require('tuin-logging')
 const mongo = require('mongodb')
+const config = require('./config')
 const MongoClient = mongo.MongoClient
 
 let client = null
 let db = null
 
 const connect = async () => {
-    const connection = process.env.MONGO_CONNECTION
+    const connection = config.mongo
 
     logger.info('will now try and connect to mongo', { connection })
 
