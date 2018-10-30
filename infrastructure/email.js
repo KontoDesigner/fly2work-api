@@ -3,6 +3,7 @@ const restClient = require('./restClient')
 const config = require('./config')
 const constants = require('./constants')
 const pdf = require('./pdf')
+const moment = require('moment')
 
 async function send(staff) {
     logger.info('Building email body..', { staff })
@@ -18,20 +19,16 @@ async function send(staff) {
 
     logger.info('Building email body successfull, generating pdf..', { staff, email })
 
-    pdf.generatePdf(staff, async response => {
-        email.attachments = [{ data: response, name: 'test.pdf' }]
+    pdf.generatePdfCallback(staff, async response => {
+        email.attachments = [{ data: response, name: `${config.name} - ${staff.id} - ${moment().format('YYYY/MM/DD HH:mm')}.pdf` }]
 
         const mailApi = `${config.mailApi}/${config.name}`
 
-        logger.info('PDF generation successfull, sending email..', { staff, email, mailApi })
+        logger.info('PDF generation successfull, sending email..', { staff, email, mailApi, pdfBytes: response.length })
 
         const res = await restClient.post(mailApi, email)
 
         logger.info('Received result from mail api', { res, staff, email, mailApi })
-
-        // res.send(response)
-
-        // return response
     })
 }
 
