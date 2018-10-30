@@ -15,6 +15,7 @@
     "koa-bodyparser": "^4.2.1",
     "koa-requestid": "^2.0.1",
     "mongodb": "^3.1.8",
+    "pdfmake": "^0.1.38",
     "tuin-logging": "^1.0.1",
     "yup": "^0.26.6"
   },
