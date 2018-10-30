@@ -1,14 +1,15 @@
 const axios = require('axios')
+const logger = require('tuin-logging')
 
 async function get(url) {
     try {
-        console.log(`[GET] ${url}`, 'RestClient')
+        logger.info('RestClient GET', { url })
 
         const response = await axios.get(url)
 
         return response.data
     } catch (err) {
-        console.log(err, 'RestClient')
+        logger.error('RestClient error GET', err, { url })
 
         throw new Error(err)
     }
@@ -16,13 +17,13 @@ async function get(url) {
 
 async function post(url, data) {
     try {
-        console.log(`[POST] ${url} ${JSON.stringify(data)}`, 'RestClient')
+        logger.info('RestClient POST', { url })
 
         const response = await axios.post(url, data)
 
         return response.data
     } catch (err) {
-        console.log(err, 'RestClient')
+        logger.error('RestClient error POST', err, { url, data })
 
         throw new Error(err)
     }

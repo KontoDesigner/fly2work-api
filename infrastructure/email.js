@@ -20,15 +20,18 @@ async function send(staff) {
     logger.info('Building email body successfull, generating pdf..', { staff, email })
 
     pdf.generatePdfCallback(staff, async response => {
-        email.attachments = [{ data: response, name: `${config.name} - ${staff.id} - ${moment().format('YYYY/MM/DD HH:mm')}.pdf` }]
-
         const mailApi = `${config.mailApi}/${config.name}`
 
         logger.info('PDF generation successfull, sending email..', { staff, email, mailApi, pdfBytes: response.length })
 
+        email.attachments = [{ data: response, name: `${config.name} - ${staff.id} - ${moment().format('YYYY/MM/DD HH:mm')}.pdf` }]
+
         const res = await restClient.post(mailApi, email)
 
-        logger.info('Received result from mail api', { res, staff, email, mailApi })
+        //Prevent large logs
+        email.attachments = null
+
+        logger.info('Received result from mail api', { res, staff, email, mailApi, pdfBytes: response.length })
     })
 }
 
