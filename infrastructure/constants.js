@@ -1,25 +1,25 @@
 const keyMirror = require('keymirror')
 
 function Staff() {
-    this.id = undefined
-    this.name = undefined
-    this.dateOfBirth = undefined
-    this.sourceMarket = undefined
-    this.hotelStart = undefined
-    this.hotelEnd = undefined
-    this.dateOfFlight = undefined
-    this.role = undefined
-    this.departureAirport = undefined
-    this.arrivalAirport = undefined
-    this.typeOfFlight = undefined
-    this.comment = undefined
-    this.hotelNeeded = undefined
-    this.phone = undefined
-    this.status = undefined
-    this.gender = undefined
-    this.destination = undefined
-    this.positionStart = undefined
-    this.statusUpdated = undefined
+    this.id = ''
+    this.name = ''
+    this.dateOfBirth = ''
+    this.sourceMarket = ''
+    this.hotelStart = ''
+    this.hotelEnd = ''
+    this.dateOfFlight = ''
+    this.role = ''
+    this.departureAirport = ''
+    this.arrivalAirport = ''
+    this.typeOfFlight = ''
+    this.comment = ''
+    this.hotelNeeded = ''
+    this.phone = ''
+    this.status = ''
+    this.gender = ''
+    this.destination = ''
+    this.positionStart = ''
+    this.statusUpdated = ''
 }
 
 function Email() {
