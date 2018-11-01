@@ -96,7 +96,7 @@ function getDocDefinition(staff) {
                             { text: staff.positionStart ? moment(staff.positionStart).format('YYYY/MM/DD HH:mm') : ' ' },
                             { text: staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY/MM/DD HH:mm') : ' ' },
                             {
-                                text: staff.hotelNeeded ? (staff.hotelNeeded === true ? 'YES' : 'NO') : false,
+                                text: staff.hotelNeeded ? (staff.hotelNeeded === true ? 'YES' : 'NO') : ' ',
                                 fillColor: staff.hotelNeeded === true ? '#eeffee' : '#f2cfcf'
                             }
                         ],
