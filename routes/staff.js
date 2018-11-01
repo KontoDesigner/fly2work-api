@@ -90,6 +90,7 @@ router.post(`${BASE}/new`, async (ctx, next) => {
     model.gender = body.Gender
     model.destination = body.Destination
     model.positionStart = body.PositionStart
+    model.hotelNeeded = false
 
     const validation = await newValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
