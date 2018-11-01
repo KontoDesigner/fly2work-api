@@ -1,0 +1,20 @@
+version: '1.0'
+
+steps:
+    BuildContainer:
+        type: build
+        image_name: ${{CF_REPO_NAME}}
+        dockerfile: Dockerfile
+        tag: latest
+
+    PushContainer:
+        type: push
+        candidate: ${{BuildContainer}}
+        tag: '${{CF_SHORT_REVISION}}'
+
+    EnsureServiceAndDeployContainer:
+        image: web-docker.tuinordic.com/horde-codefresh-deploy:latest
+        environment:
+            - TEAM=delivery
+            - CMD=node,index.js
+            - SCOPES=uat,prod
