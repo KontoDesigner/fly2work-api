@@ -2,7 +2,7 @@ const router = require('koa-better-router')().loadMethods()
 const mongo = require('../infrastructure/mongo')
 const logger = require('tuin-logging')
 const constants = require('../infrastructure/constants')
-const staffValidation = require('../validations/staffValidation')
+const bsValidation = require('../validations/bsValidation')
 const newValidation = require('../validations/newValidation')
 const email = require('../infrastructure/email')
 
@@ -35,7 +35,7 @@ router.post(BASE, async (ctx, next) => {
         model.hotelEnd = body.hotelEnd
     }
 
-    const validation = await staffValidation.validate(model, { abortEarly: false }).catch(function(err) {
+    const validation = await bsValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
     })
 

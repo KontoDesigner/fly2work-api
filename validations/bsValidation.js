@@ -1,6 +1,6 @@
 const Yup = require('yup')
 
-const staffValidation = Yup.object().shape({
+const bsValidation = Yup.object().shape({
     id: Yup.string()
         .nullable(true)
         .required('Id is required'),
@@ -76,4 +76,4 @@ const staffValidation = Yup.object().shape({
         })
 })
 
-module.exports = staffValidation
+module.exports = bsValidation
