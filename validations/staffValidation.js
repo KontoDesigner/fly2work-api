@@ -56,20 +56,20 @@ const staffValidation = Yup.object().shape({
     hotelNeeded: Yup.boolean()
         .nullable(true)
         .required('Hotel needed is required'),
-    hotelStart: Yup.string()
+    hotelStart: Yup.mixed()
         .nullable(true)
         .when('hotelNeeded', {
             is: true,
-            then: Yup.string()
+            then: Yup.date()
                 .typeError('Hotel start must be a datetime')
                 .nullable(true)
                 .required('Hotel start is required')
         }),
-    hotelEnd: Yup.string()
+    hotelEnd: Yup.mixed()
         .nullable(true)
         .when('hotelNeeded', {
             is: true,
-            then: Yup.string()
+            then: Yup.date()
                 .typeError('Hotel start must be a datetime')
                 .nullable(true)
                 .required('Hotel end is required')
