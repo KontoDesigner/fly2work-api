@@ -1,6 +1,7 @@
 const keyMirror = require('keymirror')
 
 function Staff() {
+    //BS
     this.id = ''
     this.name = ''
     this.dateOfBirth = ''
@@ -10,9 +11,8 @@ function Staff() {
     this.roleConcept = ''
     this.departureAirport = ''
     this.arrivalAirport = ''
-    this.typeOfFlight = ''
     this.comment = ''
-    this.hotelNeeded = ''
+    this.hotelNeeded = false
     this.hotelNeededHotelStart = ''
     this.hotelNeededHotelEnd = ''
     this.phone = ''
@@ -21,11 +21,28 @@ function Staff() {
     this.destination = ''
     this.positionStart = ''
     this.statusUpdated = ''
-    this.railFly = ''
-    this.bookReturnFlight = ''
+    this.railFly = false
+    this.bookReturnFlight = false
     this.bookReturnFlightDateOfFlight = ''
     this.bookReturnFlightDepartureAirport = ''
     this.bookReturnFlightArrivalAirport = ''
+
+    //BTT
+    this.flightNumber = ''
+    this.bookingReference = ''
+    this.arrivalTime = ''
+    this.typeOfFlight = ''
+    this.typeOfFlight = ''
+    this.paymentMethod = ''
+    this.xbag = ''
+    this.flightCost = ''
+    this.xbagCost = ''
+    this.hotelCost = ''
+    this.totalCost = ''
+    this.costCentre = ''
+
+    //ALL
+    this.comments = ''
 }
 
 function Email() {

@@ -13,8 +13,8 @@ router.post(BASE, async (ctx, next) => {
 
     const model = new constants.Staff()
 
+    //BS
     model.arrivalAirport = body.arrivalAirport
-    model.comment = body.comment
     model.statusUpdated = new Date()
     model.dateOfBirth = body.dateOfBirth
     model.dateOfFlight = body.dateOfFlight
@@ -38,6 +38,23 @@ router.post(BASE, async (ctx, next) => {
     model.bookReturnFlightDepartureAirport = body.bookReturnFlightDepartureAirport
     model.bookReturnFlightArrivalAirport = body.bookReturnFlightArrivalAirport
     model.railFly = body.railFly
+
+    //BTT
+    model.flightNumber = body.flightNumber
+    model.bookingReference = body.bookingReference
+    model.arrivalTime = body.arrivalTime
+    model.typeOfFlight = body.typeOfFlight
+    model.typeOfFlight = body.typeOfFlight
+    model.paymentMethod = body.paymentMethod
+    model.xbag = body.xbag
+    model.flightCost = body.flightCost
+    model.xbagCost = body.xbagCost
+    model.hotelCost = body.hotelCost
+    model.totalCost = body.totalCost
+    model.costCentre = body.costCentre
+
+    //ALL
+    model.comment = body.comment
 
     const validation = await bsValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
@@ -94,9 +111,6 @@ router.post(`${BASE}/new`, async (ctx, next) => {
     model.gender = body.Gender
     model.destination = body.Destination
     model.positionStart = body.PositionStart
-    model.hotelNeeded = false
-    model.bookReturnFlight = false
-    model.railFly = false
 
     const validation = await newValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
