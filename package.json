@@ -10,6 +10,7 @@
     "dotenv": "^4.0.0",
     "keymirror": "^0.1.1",
     "koa": "^2.4.1",
+    "koa-better-body": "^3.0.4",
     "koa-better-router": "^2.1.1",
     "koa-body": "^2.5.0",
     "koa-bodyparser": "^4.2.1",

@@ -71,20 +71,24 @@ router.post(BASE, async (ctx, next) => {
         return await next()
     }
 
-    const replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, model)).result
+    try {
+        const replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, model)).result
 
-    if (replaceOne.ok) {
-        logger.info('Updated staff', { url: ctx.url, model, replaceOne })
+        if (replaceOne.ok) {
+            logger.info('Updated staff', { url: ctx.url, model, replaceOne })
 
-        if (model.status === constants.Statuses.Confirmed) {
-            await email.send(model)
+            if (model.status === constants.Statuses.Confirmed) {
+                await email.send(model)
+            }
+
+            ctx.body = {
+                ok: true
+            }
+
+            return await next()
         }
-
-        ctx.body = {
-            ok: true
-        }
-
-        return await next()
+    } catch (err) {
+        logger.error('Error updating staff', err, params)
     }
 
     logger.warning('Update staff failed', { url: ctx.url, model, replaceOne })
@@ -127,22 +131,26 @@ router.post(`${BASE}/new`, async (ctx, next) => {
         return await next()
     }
 
-    const replaceOne = await mongo.collection('staffs').replaceOne({ id: model.id }, model, { upsert: true })
+    try {
+        const replaceOne = await mongo.collection('staffs').replaceOne({ id: model.id }, model, { upsert: true })
 
-    if (replaceOne.result.ok) {
-        logger.info('Inserted staff', { url: ctx.url, model, replaceOne })
+        if (replaceOne.result.ok) {
+            logger.info('Inserted staff', { url: ctx.url, model, replaceOne })
 
-        const upserted = replaceOne.result.upserted ? true : false
+            const upserted = replaceOne.result.upserted ? true : false
 
-        await email.send(model)
+            await email.send(model)
 
-        ctx.body = {
-            ok: true,
-            upserted,
-            id: upserted ? replaceOne.result.upserted[0]._id : (await mongo.collection('staffs').findOne({ id: model.id }))._id
+            ctx.body = {
+                ok: true,
+                upserted,
+                id: upserted ? replaceOne.result.upserted[0]._id : (await mongo.collection('staffs').findOne({ id: model.id }))._id
+            }
+
+            return await next()
         }
-
-        return await next()
+    } catch (err) {
+        logger.error('Error inserting staff', err, params)
     }
 
     logger.warning('Insert staff failed', { url: ctx.url, model, replaceOne })

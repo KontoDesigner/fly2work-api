@@ -43,6 +43,7 @@ function Staff() {
 
     //ALL
     this.comments = ''
+    this.attachments = []
 }
 
 function Email() {
