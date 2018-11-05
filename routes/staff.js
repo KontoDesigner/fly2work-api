@@ -26,14 +26,18 @@ router.post(BASE, async (ctx, next) => {
     model.name = body.name
     model.phone = body.phone
     model.role = body.role
+    model.roleConcept = body.roleConcept
     model.sourceMarket = body.sourceMarket
     model.status = body.status
     model.positionStart = body.positionStart
     model.typeOfFlight = body.typeOfFlight
-    if (model.hotelNeeded === true) {
-        model.hotelStart = body.hotelStart
-        model.hotelEnd = body.hotelEnd
-    }
+    model.hotelNeededHotelStart = body.hotelNeededHotelStart
+    model.hotelNeededHotelEnd = body.hotelNeededHotelEnd
+    model.bookReturnFlight = body.bookReturnFlight
+    model.bookReturnFlightDateOfFlight = body.bookReturnFlightDateOfFlight
+    model.bookReturnFlightDepartureAirport = body.bookReturnFlightDepartureAirport
+    model.bookReturnFlightArrivalAirport = body.bookReturnFlightArrivalAirport
+    model.railFly = body.railFly
 
     const validation = await bsValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
@@ -91,6 +95,8 @@ router.post(`${BASE}/new`, async (ctx, next) => {
     model.destination = body.Destination
     model.positionStart = body.PositionStart
     model.hotelNeeded = false
+    model.bookReturnFlight = false
+    model.railFly = false
 
     const validation = await newValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err

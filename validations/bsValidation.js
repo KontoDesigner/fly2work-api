@@ -25,6 +25,14 @@ const bsValidation = Yup.object().shape({
     role: Yup.string()
         .nullable(true)
         .required('Role is required'),
+    roleConcept: Yup.mixed()
+        .nullable(true)
+        .when('role', {
+            is: 'Concept',
+            then: Yup.string()
+                .nullable(true)
+                .required('(R) Concept is required')
+        }),
     destination: Yup.string()
         .nullable(true)
         .required('Destination is required'),
@@ -53,26 +61,57 @@ const bsValidation = Yup.object().shape({
     gender: Yup.string()
         .nullable(true)
         .required('Gender is required'),
+    railFly: Yup.boolean()
+        .nullable(true)
+        .required('Rail & Fly is required'),
     hotelNeeded: Yup.boolean()
         .nullable(true)
         .required('Hotel needed is required'),
-    hotelStart: Yup.mixed()
+    hotelNeededHotelStart: Yup.mixed()
         .nullable(true)
         .when('hotelNeeded', {
             is: true,
             then: Yup.date()
-                .typeError('Hotel start must be a datetime')
+                .typeError('(HN) Hotel start must be a datetime')
                 .nullable(true)
-                .required('Hotel start is required')
+                .required('(HN) Hotel start is required')
         }),
-    hotelEnd: Yup.mixed()
+    hotelNeededHotelEnd: Yup.mixed()
         .nullable(true)
         .when('hotelNeeded', {
             is: true,
             then: Yup.date()
-                .typeError('Hotel start must be a datetime')
+                .typeError('(HN) Hotel start must be a datetime')
                 .nullable(true)
-                .required('Hotel end is required')
+                .required('(HN) Hotel end is required')
+        }),
+    bookReturnFlight: Yup.boolean()
+        .nullable(true)
+        .required('Book return flight is required'),
+    bookReturnFlightDepartureAirport: Yup.mixed()
+        .nullable(true)
+        .when('bookReturnFlight', {
+            is: true,
+            then: Yup.string()
+                .nullable(true)
+                .required('(BRF) Departure Airport is required')
+        }),
+    bookReturnFlightArrivalAirport: Yup.mixed()
+        .nullable(true)
+        .when('bookReturnFlight', {
+            is: true,
+            then: Yup.string()
+                .nullable(true)
+                .required('(BRF) Arrival Airport is required')
+        }),
+    bookReturnFlightDateOfFlight: Yup.mixed()
+        .nullable(true)
+        .when('bookReturnFlight', {
+            is: true,
+            then: Yup.date()
+                .typeError('(BRF) Date Of Flight must be a datetime')
+                .nullable(true)
+                .required('(BRF) Date Of Flight is required')
         })
 })
 
