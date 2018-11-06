@@ -92,7 +92,7 @@ router.post(`${BASE}/delete`, async (ctx, next) => {
                 ok: true
             }
 
-            await next()
+            return await next()
         }
     } catch (err) {
         logger.error('Error deleting attachment', err, { id })
