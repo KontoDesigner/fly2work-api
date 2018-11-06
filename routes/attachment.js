@@ -1,82 +1,79 @@
 const router = require('koa-better-router')().loadMethods()
 const logger = require('tuin-logging')
-const body = require('koa-better-body')
 const mongo = require('../infrastructure/mongo')
 const moment = require('moment')
 const uuid = require('node-uuid')
 const fs = require('fs')
+const asyncBusboy = require('async-busboy')
 
 const BASE = '/attachment'
 
-router.post(`${BASE}/upload`, body(), function*(next) {
-    const staffId = this.request.fields.staffId
-    const file = this.request.fields.file[0]
+router.post(`${BASE}/upload`, async (ctx, next) => {
+    const { files, fields } = await asyncBusboy(ctx.req)
 
-    logger.info('Uploading attachment..', { id: staffId, name: file.name, size: file.size, type: file.type, path: file.path })
-
-    let res = false
+    const staffId = fields.staffId
+    const file = files[0]
 
     try {
+        const size = fs.statSync(file.path).size
+
         const attachment = {
             id: uuid.v1(),
             data: fs.readFileSync(file.path),
-            name: file.name,
-            size: file.size,
-            type: file.type,
+            name: file.filename,
+            size: size,
+            type: file.mimeType,
             created: moment()._d
         }
 
-        mongo
-            .collection('staffs')
-            .updateOne({ id: staffId }, { $push: { attachments: attachment } })
-            .then(function(result) {
-                if (result.ok === 1) {
-                    logger.info('Upload attachment successfull', {
-                        id: staffId,
-                        name: file.name,
-                        size: file.size,
-                        type: file.type,
-                        path: file.path,
-                        result
-                    })
+        const updateOne = await mongo.collection('staffs').updateOne({ id: staffId }, { $push: { attachments: attachment } })
 
-                    res = true
-                }
-            })
+        logger.info('Upload attachment result', {
+            id: uuid.v1(),
+            name: file.filename,
+            size: size,
+            type: file.mimeType,
+            created: moment()._d,
+            result: updateOne.result
+        })
+
+        if (updateOne.result.ok === 1) {
+            ctx.body = {
+                ok: true
+            }
+
+            return await next()
+        }
     } catch (err) {
         logger.error('Error uploading attachment', err, { id: staffId, name: file.name, size: file.size, type: file.type, path: file.path })
     }
 
-    this.body = {
-        ok: res
+    ctx.body = {
+        ok: false
     }
 
-    yield next
+    await next()
 })
 
 router.post(`${BASE}/download`, async (ctx, next) => {
     const staffId = ctx.request.body.staffId
     const id = ctx.request.body.id
 
-    logger.info('Downloading attachment..', { staffId, id })
-
-    const attachment = await mongo.collection('staffs').findOne(
+    const staff = await mongo.collection('staffs').findOne(
         {
             id: staffId,
             'attachments.id': id
         },
-        {
-            'attachments.$': 1
-        }
+        { fields: { 'attachments.$': 1, _id: 0 } }
     )
 
-    if (attachment) {
-        logger.info('Found attachment for download', { staffId, id, attachment })
+    if (staff) {
+        logger.info('Found attachment, downloading..', { staffId, id })
+
+        ctx.body = staff.attachments[0].data.buffer
     } else {
         logger.info('Could not find attachment for download', { staffId, id })
     }
-
-    ctx.body = attachment
 
     await next()
 })
@@ -85,24 +82,24 @@ router.post(`${BASE}/delete`, async (ctx, next) => {
     const staffId = ctx.request.body.staffId
     const id = ctx.request.body.id
 
-    logger.info('Deleting attachment..', { staffId, id })
-
-    let res = false
-
     try {
-        const result = await mongo.collection('staffs').updateOne({ id: staffId }, { $pull: { id: id } })
+        const result = (await mongo.collection('staffs').updateOne({ id: staffId }, { $pull: { attachments: { id: id } } })).result
+
+        logger.info('Delete attachment result', { staffId, id, result })
 
         if (result.ok === 1) {
-            logger.info('Deleted attachment', { staffId, id, result })
+            ctx.body = {
+                ok: true
+            }
 
-            res = true
+            await next()
         }
     } catch (err) {
         logger.error('Error deleting attachment', err, { id })
     }
 
     ctx.body = {
-        ok: res
+        ok: false
     }
 
     await next()

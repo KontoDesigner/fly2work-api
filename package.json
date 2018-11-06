@@ -5,12 +5,12 @@
   "main": "index.js",
   "dependencies": {
     "@koa/cors": "^2.2.2",
+    "async-busboy": "^0.7.0",
     "axios": "^0.18.0",
     "camelcase-keys": "^4.2.0",
     "dotenv": "^4.0.0",
     "keymirror": "^0.1.1",
     "koa": "^2.4.1",
-    "koa-better-body": "^3.0.4",
     "koa-better-router": "^2.1.1",
     "koa-body": "^2.5.0",
     "koa-bodyparser": "^4.2.1",

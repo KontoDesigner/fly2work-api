@@ -8,7 +8,7 @@ const BASE = '/geography'
 router.get(`${BASE}/sourceMarkets`, async (ctx, next) => {
     const sourceMarkets = await restClient.get(`${config.gpx}/geography/sourcemarket`)
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, sourceMarkets })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: sourceMarkets.length })
 
     ctx.body = sourceMarkets
 
@@ -18,7 +18,7 @@ router.get(`${BASE}/sourceMarkets`, async (ctx, next) => {
 router.get(`${BASE}/roles`, async (ctx, next) => {
     const roles = await restClient.get(`${config.gpx}/position/getjobtitles`)
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, roles })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: roles.length })
 
     ctx.body = roles
 
@@ -28,7 +28,7 @@ router.get(`${BASE}/roles`, async (ctx, next) => {
 router.get(`${BASE}/destinations`, async (ctx, next) => {
     const destinations = await restClient.get(`${config.gpx}/report/getalldestsingle`)
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, destinations })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: destinations.length })
 
     ctx.body = destinations
 

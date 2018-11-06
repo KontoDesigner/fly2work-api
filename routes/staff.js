@@ -74,9 +74,9 @@ router.post(BASE, async (ctx, next) => {
     try {
         const replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, model)).result
 
-        if (replaceOne.ok) {
-            logger.info('Updated staff', { url: ctx.url, model, replaceOne })
+        logger.info('Update staff result', { url: ctx.url, model, replaceOne })
 
+        if (replaceOne.ok) {
             if (model.status === constants.Statuses.Confirmed) {
                 await email.send(model)
             }
@@ -90,8 +90,6 @@ router.post(BASE, async (ctx, next) => {
     } catch (err) {
         logger.error('Error updating staff', err, params)
     }
-
-    logger.warning('Update staff failed', { url: ctx.url, model, replaceOne })
 
     ctx.body = {
         ok: false,
@@ -132,19 +130,19 @@ router.post(`${BASE}/new`, async (ctx, next) => {
     }
 
     try {
-        const replaceOne = await mongo.collection('staffs').replaceOne({ id: model.id }, model, { upsert: true })
+        const replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, model, { upsert: true })).result
 
-        if (replaceOne.result.ok) {
-            logger.info('Inserted staff', { url: ctx.url, model, replaceOne })
+        logger.info('Insert staff result', { url: ctx.url, model, replaceOne })
 
-            const upserted = replaceOne.result.upserted ? true : false
+        if (replaceOne.ok) {
+            const upserted = replaceOne.upserted ? true : false
 
             await email.send(model)
 
             ctx.body = {
                 ok: true,
                 upserted,
-                id: upserted ? replaceOne.result.upserted[0]._id : (await mongo.collection('staffs').findOne({ id: model.id }))._id
+                id: upserted ? replaceOne.upserted[0]._id : (await mongo.collection('staffs').findOne({ id: model.id }))._id
             }
 
             return await next()
@@ -152,8 +150,6 @@ router.post(`${BASE}/new`, async (ctx, next) => {
     } catch (err) {
         logger.error('Error inserting staff', err, params)
     }
-
-    logger.warning('Insert staff failed', { url: ctx.url, model, replaceOne })
 
     ctx.body = {
         ok: false,
@@ -169,7 +165,7 @@ router.get(BASE, async (ctx, next) => {
         .find()
         .toArray()
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, staffs })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staffs.length })
 
     ctx.body = staffs
 
@@ -181,11 +177,6 @@ router.get(`${BASE}/count`, async (ctx, next) => {
         .collection('staffs')
         .aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }])
         .toArray()
-
-    // const count = res.reduce(function(total, current) {
-    //     total[current._id] = current.count
-    //     return total
-    // }, {})
 
     const _new = res.find(obj => obj._id === constants.Statuses.New)
     const submitted = res.find(obj => obj._id === constants.Statuses.Submitted)
@@ -215,7 +206,7 @@ router.get(`${BASE}/getbystatus/:status`, async (ctx, next) => {
         .find({ status: ctx.params.status })
         .toArray()
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, staffs })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staffs.length })
 
     ctx.body = staffs
 
@@ -223,11 +214,11 @@ router.get(`${BASE}/getbystatus/:status`, async (ctx, next) => {
 })
 
 router.get(`${BASE}/getbyid/:id`, async (ctx, next) => {
-    const staffs = await mongo.collection('staffs').findOne({ id: ctx.params.id })
+    const staff = await mongo.collection('staffs').findOne({ id: ctx.params.id })
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, staffs })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staff ? 1 : 0 })
 
-    ctx.body = staffs
+    ctx.body = staff
 
     await next()
 })
@@ -235,7 +226,7 @@ router.get(`${BASE}/getbyid/:id`, async (ctx, next) => {
 router.get(`${BASE}/:status/:id`, async (ctx, next) => {
     const staff = await mongo.collection('staffs').findOne({ id: ctx.params.id, status: ctx.params.status })
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, staff })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staff ? 1 : 0 })
 
     ctx.body = staff
 
