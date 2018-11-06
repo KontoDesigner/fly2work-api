@@ -12,9 +12,6 @@ const bttValidation = Yup.object().shape({
         .typeError('Arrival time must be a datetime')
         .nullable(true)
         .required('Arrival time is required'),
-    typeOfFlight: Yup.string()
-        .nullable(true)
-        .required('Type of flight is required'),
     paymentMethod: Yup.string()
         .nullable(true)
         .required('Payment method is required'),

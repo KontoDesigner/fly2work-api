@@ -72,43 +72,53 @@ function getDocDefinition(staff) {
     return {
         content: [
             {
-                text: `${staff.id} (${staff.status === null ? 'New' : staff.status})\n\n`,
+                text: `${staff.name} (${staff.status === null ? 'New' : staff.status})`,
                 style: 'header',
                 alignment: 'center',
                 bold: true,
-                fontSize: 20
+                fontSize: 20,
+                margin: [0, 0, 0, 5]
             },
             {
+                text: `${staff.sourceMarket}, ${staff.destination}`,
+                style: 'header',
+                alignment: 'center',
+                bold: true,
+                fontSize: 14,
+                margin: [0, 0, 0, 8]
+            },
+            {
+                text: 'BS',
+                style: 'header',
+                alignment: 'center',
+                bold: true,
+                fontSize: 14,
+                margin: [0, 0, 0, 10]
+            },
+            {
+                margin: [0, 0, 0, 10],
                 table: {
                     headerRows: 0,
                     widths: ['*', '*', '*'],
-
                     body: [
-                        [{ text: 'Name', bold: true }, { text: 'Date Of Birth', bold: true }, { text: 'Source Market', bold: true }],
+                        [{ text: 'Date Of Birth', bold: true }, { text: 'Position Start', bold: true }, { text: 'Date Of Flight', bold: true }],
                         [
-                            { text: staff.name ? staff.name : ' ' },
                             { text: staff.dateOfBirth ? moment(staff.dateOfBirth).format('YYYY/MM/DD') : ' ' },
-                            { text: staff.sourceMarket ? staff.sourceMarket : ' ' }
-                        ],
-
-                        [{ text: 'Position Start', bold: true }, { text: 'Date Of Flight', bold: true }, { text: 'Role', bold: true }],
-                        [
                             { text: staff.positionStart ? moment(staff.positionStart).format('YYYY/MM/DD') : ' ' },
-                            { text: staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY/MM/DD') : ' ' },
-                            { text: staff.role ? staff.role : ' ' }
+                            { text: staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY/MM/DD') : ' ' }
                         ],
 
-                        [{ text: 'Concept (R)', bold: true }, { text: 'Destination', bold: true }, { text: 'Phone', bold: true }],
+                        [{ text: 'Role', bold: true }, { text: 'Phone', bold: true }, { text: 'Departure Airport', bold: true }],
                         [
-                            { text: staff.roleConcept ? staff.roleConcept : '-' },
-                            { text: staff.destination ? staff.destination : ' ' },
-                            { text: staff.phone ? staff.phone : ' ' }
+                            { text: staff.role ? staff.role : ' ' },
+                            { text: staff.phone ? staff.phone : ' ' },
+                            { text: staff.departureAirport ? staff.departureAirport : ' ' }
                         ],
 
-                        [{ text: 'Departure Airport', bold: true }, { text: 'Arrival Airport', bold: true }, { text: 'Gender', bold: true }],
+                        [{ text: 'Arrival Airport', bold: true }, { text: 'Type Of Flight', bold: true }, { text: 'Gender', bold: true }],
                         [
-                            { text: staff.departureAirport ? staff.departureAirport : ' ' },
                             { text: staff.arrivalAirport ? staff.arrivalAirport : ' ' },
+                            { text: staff.typeOfFlight ? staff.typeOfFlight : ' ' },
                             { text: staff.gender ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : ' ' }
                         ],
 
@@ -126,24 +136,51 @@ function getDocDefinition(staff) {
                         ],
                         [
                             { text: staff.bookReturnFlight ? (staff.bookReturnFlight === true ? 'YES' : 'NO') : ' ' },
-                            {
-                                text: staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY/MM/DD') : '-'
-                            },
+                            { text: staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY/MM/DD') : '-' },
                             { text: staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : '-' }
                         ],
 
-                        [{ text: 'Arrival Airport (BRF)', bold: true }, { text: 'Rail & Fly', bold: true }, { text: 'Flight Number', bold: true }],
+                        [{ text: 'Arrival Airport (BRF)', bold: true }, { text: 'Rail & Fly', bold: true }, { text: ' ', bold: true }],
                         [
                             { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : '-' },
                             { text: staff.railFly ? (staff.railFly === true ? 'YES' : 'NO') : ' ' },
-                            { text: staff.flightNumber ? staff.flightNumber : ' ' }
-                        ],
+                            { text: ' ' }
+                        ]
+                    ]
+                },
 
-                        [{ text: 'Booking Reference', bold: true }, { text: 'Arrival Time', bold: true }, { text: 'Type Of Flight', bold: true }],
+                layout: {
+                    fillColor: function(i, node) {
+                        return i % 2 === 0 ? '#CCCCCC' : null
+                    },
+                    paddingTop: function(i, node) {
+                        return 7
+                    },
+                    paddingBottom: function(i, node) {
+                        return 7
+                    }
+                },
+                alignment: 'center'
+            },
+            {
+                text: 'BTT',
+                style: 'header',
+                alignment: 'center',
+                bold: true,
+                fontSize: 14,
+                margin: [0, 0, 0, 10]
+            },
+            {
+                table: {
+                    headerRows: 0,
+                    widths: ['*', '*', '*'],
+
+                    body: [
+                        [{ text: 'Flight Number', bold: true }, { text: 'Booking Reference', bold: true }, { text: 'Arrival Time', bold: true }],
                         [
+                            { text: staff.flightNumber ? staff.flightNumber : ' ' },
                             { text: staff.bookingReference ? staff.bookingReference : ' ' },
-                            { text: staff.arrivalTime ? moment(staff.arrivalTime).format('YYYY/MM/DD') : '-' },
-                            { text: staff.typeOfFlight ? staff.typeOfFlight : ' ' }
+                            { text: staff.arrivalTime ? moment(staff.arrivalTime).format('YYYY/MM/DD') : '-' }
                         ],
 
                         [{ text: 'Payment Method', bold: true }, { text: 'Xbag', bold: true }, { text: 'Flight Cost', bold: true }],
@@ -167,15 +204,16 @@ function getDocDefinition(staff) {
                         [{ text: staff.comment ? staff.comment : ' ', colSpan: 3 }]
                     ]
                 },
+
                 layout: {
                     fillColor: function(i, node) {
                         return i % 2 === 0 ? '#CCCCCC' : null
                     },
                     paddingTop: function(i, node) {
-                        return 10
+                        return 5
                     },
                     paddingBottom: function(i, node) {
-                        return 10
+                        return 5
                     }
                 },
                 alignment: 'center'
