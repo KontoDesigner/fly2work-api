@@ -70,10 +70,24 @@ router.post(BASE, async (ctx, next) => {
         return await next()
     }
 
+    //get attachments and attach them to model
+    const staffAttachments = await mongo.collection('staffs').findOne(
+        {
+            id: model.id
+        },
+        { fields: { attachments: 1, _id: 0 } }
+    )
+
+    model.attachments = staffAttachments && staffAttachments.attachments ? staffAttachments.attachments : []
+
     try {
         const replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, { $set: model })).result
 
-        logger.info('Update staff result', { url: ctx.url, model, replaceOne })
+        //Prevent large logs
+        let logModel = Object.assign({}, model)
+        logModel.attachments = model.attachments.length
+
+        logger.info('Update staff result', { url: ctx.url, model: logModel, replaceOne })
 
         if (replaceOne.ok) {
             if (model.status === constants.Statuses.Confirmed) {
@@ -87,7 +101,7 @@ router.post(BASE, async (ctx, next) => {
             return await next()
         }
     } catch (err) {
-        logger.error('Error updating staff', err, params)
+        logger.error('Error updating staff', err, model)
     }
 
     ctx.body = {
@@ -147,7 +161,7 @@ router.post(`${BASE}/new`, async (ctx, next) => {
             return await next()
         }
     } catch (err) {
-        logger.error('Error inserting staff', err, params)
+        logger.error('Error inserting staff', err, model)
     }
 
     ctx.body = {

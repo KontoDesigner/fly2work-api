@@ -58,14 +58,14 @@ function generateExcel(staff, type = 'binary') {
             staff.arrivalAirport,
             staff.typeOfFlight,
             staff.gender ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : '',
-            staff.hotelNeeded ? (staff.hotelNeeded === true ? 'YES' : 'NO') : '',
+            staff.hotelNeeded === true ? 'YES' : 'NO',
             staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : '',
             staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : '',
-            staff.bookReturnFlight ? (staff.bookReturnFlight === true ? 'YES' : 'NO') : '',
+            staff.bookReturnFlight === true ? 'YES' : 'NO',
             staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY-MM-DD') : '',
             staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : '',
             staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : '',
-            staff.railFly ? (staff.railFly === true ? 'YES' : 'NO') : '',
+            staff.railFly === true ? 'YES' : 'NO',
             staff.flightNumber,
             staff.bookingReference,
             staff.arrivalTime ? moment(staff.arrivalTime).format('YYYY-MM-DD') : '',
@@ -84,9 +84,9 @@ function generateExcel(staff, type = 'binary') {
         var ws = xlsx.utils.aoa_to_sheet(ws_data)
         wb.Sheets[staff.name] = ws
 
-        var wbout = xlsx.write(wb, { bookType: 'xlsx', type: binary })
+        var wbout = xlsx.write(wb, { bookType: 'xlsx', type: type })
 
-        return Buffer.from(wbout, binary)
+        return Buffer.from(wbout, type)
     } catch (err) {
         logger.error('Error generating excel', err, { staff })
 

@@ -41,7 +41,7 @@ function Staff() {
 
     //ALL
     this.comment = ''
-    // this.attachments = [] //router.post(BASE, async (ctx, next) => { - SHOULD IGNORE THIS PROPERTY (NO OVERWRITE)
+    this.attachments = []
 }
 
 function Email() {

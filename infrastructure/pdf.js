@@ -116,7 +116,7 @@ function getDocDefinition(staff) {
 
                         [{ text: 'Hotel Needed', bold: true }, { text: 'Hotel Start', bold: true }, { text: 'Hotel End', bold: true }],
                         [
-                            { text: staff.hotelNeeded ? (staff.hotelNeeded === true ? 'YES' : 'NO') : ' ' },
+                            { text: staff.hotelNeeded === true ? 'YES' : 'NO' },
                             { text: staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : ' ' },
                             { text: staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : ' ' }
                         ],
@@ -127,7 +127,7 @@ function getDocDefinition(staff) {
                             { text: 'Departure Airport (BRF)', bold: true }
                         ],
                         [
-                            { text: staff.bookReturnFlight ? (staff.bookReturnFlight === true ? 'YES' : 'NO') : ' ' },
+                            { text: staff.bookReturnFlight === true ? 'YES' : 'NO' },
                             { text: staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY-MM-DD') : ' ' },
                             { text: staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : ' ' }
                         ],
@@ -135,7 +135,7 @@ function getDocDefinition(staff) {
                         [{ text: 'Arrival Airport (BRF)', bold: true }, { text: 'Rail & Fly', bold: true }, { text: ' ', bold: true }],
                         [
                             { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : ' ' },
-                            { text: staff.railFly ? (staff.railFly === true ? 'YES' : 'NO') : ' ' },
+                            { text: staff.railFly === true ? 'YES' : 'NO' },
                             { text: ' ' }
                         ]
                     ]
