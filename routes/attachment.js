@@ -39,7 +39,8 @@ router.post(`${BASE}/upload`, async (ctx, next) => {
 
         if (updateOne.result.ok === 1) {
             ctx.body = {
-                ok: true
+                ok: true,
+                attachment
             }
 
             return await next()

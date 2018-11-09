@@ -72,7 +72,7 @@ router.post(BASE, async (ctx, next) => {
     }
 
     try {
-        const replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, model)).result
+        const replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, { $set: model })).result
 
         logger.info('Update staff result', { url: ctx.url, model, replaceOne })
 
