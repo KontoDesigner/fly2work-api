@@ -3,10 +3,12 @@ const restClient = require('./restClient')
 const config = require('./config')
 const constants = require('./constants')
 const pdf = require('./pdf')
+const excel = require('./excel')
 const moment = require('moment')
+const mongo = require('./mongo')
 
 async function send(staff) {
-    logger.info('Building email body..', { staff })
+    logger.info('Sending email..', { staff })
 
     const email = new constants.Email()
     email.bccTo = []
@@ -17,22 +19,40 @@ async function send(staff) {
     email.subject = `${staff.status} Request - ${staff.id}`
     email.userAddress = config.userAddress
 
-    logger.info('Building email body successfull, generating pdf..', { staff, email })
+    const mailApi = `${config.mailApi}/${config.name}`
+    const excelData = excel.generateExcel(staff, 'base64')
+    const pdfData = await pdf.generatePdfPromise(staff)
 
-    pdf.generatePdfCallback(staff, async response => {
-        const mailApi = `${config.mailApi}/${config.name}`
+    email.attachments = [
+        //Pdf
+        { data: pdfData, name: `${staff.name} - ${moment().format('YYYY-MM-DD HH:mm')}.pdf` },
+        //Excel
+        { data: excelData, name: `${staff.name} - ${moment().format('YYYY-MM-DD HH:mm')}.pdf` }
+    ]
 
-        logger.info('PDF generation successfull, sending email..', { staff, email, mailApi, pdfBytes: response.length })
+    //Attachments
+    const staffAttachments = await mongo.collection('staffs').findOne(
+        {
+            id: staff.id
+        },
+        { fields: { 'attachments.$': 1, _id: 0 } }
+    )
 
-        email.attachments = [{ data: response, name: `${config.name} - ${staff.id} - ${moment().format('YYYY-MM-DD HH:mm')}.pdf` }]
+    if (staffAttachments && staffAttachments.attachments) {
+        for (var attachment of staffAttachments.attachments) {
+            const attachmentData = Buffer.from(attachment.data.buffer).toString('base64')
 
-        const res = await restClient.post(mailApi, email)
+            email.attachments.push({ data: attachmentData, name: attachment.name })
+        }
+    }
 
-        //Prevent large logs
-        email.attachments = null
+    //Send email
+    const res = await restClient.post(mailApi, email)
 
-        logger.info('Received result from mail api', { res, staff, email, mailApi, pdfBytes: response.length })
-    })
+    //Prevent large logs
+    email.attachments = null
+
+    logger.info('Mail api result', { res, staff, email, mailApi, attachments: email.attachments.length })
 }
 
 module.exports = {

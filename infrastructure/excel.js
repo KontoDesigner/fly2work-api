@@ -2,7 +2,7 @@ const logger = require('tuin-logging')
 const xlsx = require('xlsx')
 const moment = require('moment')
 
-function generateExcel(staff) {
+function generateExcel(staff, type = 'binary') {
     try {
         var wb = xlsx.utils.book_new()
 
@@ -84,9 +84,9 @@ function generateExcel(staff) {
         var ws = xlsx.utils.aoa_to_sheet(ws_data)
         wb.Sheets[staff.name] = ws
 
-        var wbout = xlsx.write(wb, { bookType: 'xlsx', type: 'binary' })
+        var wbout = xlsx.write(wb, { bookType: 'xlsx', type: binary })
 
-        return Buffer.from(wbout, 'binary')
+        return Buffer.from(wbout, binary)
     } catch (err) {
         logger.error('Error generating excel', err, { staff })
 
