@@ -8,10 +8,8 @@ function Staff() {
     this.sourceMarket = ''
     this.dateOfFlight = ''
     this.role = ''
-    this.roleConcept = ''
     this.departureAirport = ''
     this.arrivalAirport = ''
-    this.comment = ''
     this.hotelNeeded = false
     this.hotelNeededHotelStart = ''
     this.hotelNeededHotelEnd = ''
@@ -42,7 +40,7 @@ function Staff() {
     this.costCentre = ''
 
     //ALL
-    this.comments = ''
+    this.comment = ''
     // this.attachments = [] //router.post(BASE, async (ctx, next) => { - SHOULD IGNORE THIS PROPERTY (NO OVERWRITE)
 }
 

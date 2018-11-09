@@ -26,7 +26,6 @@ router.post(BASE, async (ctx, next) => {
     model.name = body.name
     model.phone = body.phone
     model.role = body.role
-    model.roleConcept = body.roleConcept
     model.sourceMarket = body.sourceMarket
     model.status = body.status
     model.positionStart = body.positionStart

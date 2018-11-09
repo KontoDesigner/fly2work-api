@@ -28,14 +28,6 @@ const bsValidation = Yup.object().shape({
     role: Yup.string()
         .nullable(true)
         .required('Role is required'),
-    roleConcept: Yup.mixed()
-        .nullable(true)
-        .when('role', {
-            is: 'Concept',
-            then: Yup.string()
-                .nullable(true)
-                .required('(R) Concept is required')
-        }),
     destination: Yup.string()
         .nullable(true)
         .required('Destination is required'),

@@ -24,7 +24,7 @@ async function send(staff) {
 
         logger.info('PDF generation successfull, sending email..', { staff, email, mailApi, pdfBytes: response.length })
 
-        email.attachments = [{ data: response, name: `${config.name} - ${staff.id} - ${moment().format('YYYY/MM/DD HH:mm')}.pdf` }]
+        email.attachments = [{ data: response, name: `${config.name} - ${staff.id} - ${moment().format('YYYY-MM-DD HH:mm')}.pdf` }]
 
         const res = await restClient.post(mailApi, email)
 

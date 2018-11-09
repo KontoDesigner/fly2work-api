@@ -7,7 +7,7 @@ const BASE = '/excel'
 router.post(BASE, async (ctx, next) => {
     const staff = ctx.request.body
 
-    // const response = await pdf.generatePdfPromise(staff)
+    const response = await excel.generateExcel(staff)
 
     logger.info('Excel generation result', { staff, excelBytes: response.length })
 
