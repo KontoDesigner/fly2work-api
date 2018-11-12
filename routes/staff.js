@@ -25,10 +25,10 @@ router.post(BASE, async (ctx, next) => {
     model.id = body.id
     model.name = body.name
     model.phone = body.phone
-    model.role = body.role
     model.sourceMarket = body.sourceMarket
     model.status = body.status
     model.positionStart = body.positionStart
+    model.jobTitle = body.jobTitle
     model.typeOfFlight = body.typeOfFlight
     model.hotelNeededHotelStart = body.hotelNeededHotelStart
     model.hotelNeededHotelEnd = body.hotelNeededHotelEnd
@@ -51,6 +51,7 @@ router.post(BASE, async (ctx, next) => {
     model.hotelCost = body.hotelCost
     model.totalCost = body.totalCost
     model.costCentre = body.costCentre
+    model.iataCode = body.iataCode
 
     //ALL
     model.comment = body.comment
@@ -126,6 +127,7 @@ router.post(`${BASE}/new`, async (ctx, next) => {
     model.gender = body.Gender
     model.destination = body.Destination
     model.positionStart = body.PositionStart
+    model.jobTitle = body.JobTitle
 
     const validation = await newValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err

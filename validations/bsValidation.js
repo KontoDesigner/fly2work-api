@@ -25,9 +25,9 @@ const bsValidation = Yup.object().shape({
         .typeError('Date of flight must be a datetime')
         .nullable(true)
         .required('Date of flight is required'),
-    role: Yup.string()
+    jobTitle: Yup.string()
         .nullable(true)
-        .required('Role is required'),
+        .required('Job title is required'),
     destination: Yup.string()
         .nullable(true)
         .required('Destination is required'),

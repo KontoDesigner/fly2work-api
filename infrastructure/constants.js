@@ -7,7 +7,7 @@ function Staff() {
     this.dateOfBirth = ''
     this.sourceMarket = ''
     this.dateOfFlight = ''
-    this.role = ''
+    this.jobTitle = ''
     this.departureAirport = ''
     this.arrivalAirport = ''
     this.hotelNeeded = false
@@ -38,6 +38,7 @@ function Staff() {
     this.hotelCost = ''
     this.totalCost = ''
     this.costCentre = ''
+    this.iataCode = ''
 
     //ALL
     this.comment = ''

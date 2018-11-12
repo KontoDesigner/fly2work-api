@@ -35,4 +35,14 @@ router.get(`${BASE}/destinations`, async (ctx, next) => {
     await next()
 })
 
+router.get(`${BASE}/iatacodes`, async (ctx, next) => {
+    const iataCodes = await restClient.get(`${config.gpx}/position/getiatacodes`)
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: iataCodes.length })
+
+    ctx.body = iataCodes
+
+    await next()
+})
+
 module.exports = router
