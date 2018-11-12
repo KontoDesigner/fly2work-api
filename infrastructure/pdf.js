@@ -100,9 +100,9 @@ function getDocDefinition(staff) {
                             { text: staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : ' ' }
                         ],
 
-                        [{ text: 'Role', bold: true }, { text: 'Phone', bold: true }, { text: 'Departure Airport', bold: true }],
+                        [{ text: 'Job Title', bold: true }, { text: 'Phone', bold: true }, { text: 'Departure Airport', bold: true }],
                         [
-                            { text: staff.role ? staff.role : ' ' },
+                            { text: staff.jobTitle ? staff.jobTitle : ' ' },
                             { text: staff.phone ? staff.phone : ' ' },
                             { text: staff.departureAirport ? staff.departureAirport : ' ' }
                         ],
@@ -189,8 +189,8 @@ function getDocDefinition(staff) {
                             { text: staff.totalCost ? staff.totalCost : ' ' }
                         ],
 
-                        [{ text: 'Cost Centre', bold: true }, { text: ' ', bold: true }, { text: ' ', bold: true }],
-                        [{ text: staff.costCentre ? staff.costCentre : ' ' }, { text: ' ' }, { text: ' ' }],
+                        [{ text: 'Cost Centre', bold: true }, { text: 'Iata Code', bold: true }, { text: ' ', bold: true }],
+                        [{ text: staff.costCentre ? staff.costCentre : ' ' }, { text: staff.iataCode ? staff.iataCode : ' ' }, { text: ' ' }],
 
                         [{ text: 'Comment', bold: true, colSpan: 3 }],
                         [{ text: staff.comment ? staff.comment : ' ', colSpan: 3 }]

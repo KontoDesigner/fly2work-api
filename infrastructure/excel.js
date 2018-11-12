@@ -15,7 +15,7 @@ function generateExcel(staff, type = 'binary') {
             'Source Market',
             'Position Start',
             'Date Of Flight',
-            'Role',
+            'Job Title',
             'Destination',
             'Phone',
             'Departure Airport',
@@ -40,6 +40,7 @@ function generateExcel(staff, type = 'binary') {
             'Hotel Cost',
             'Total Cost',
             'Cost Centre',
+            'Iata Code',
             'Status',
             'Comment'
         ]
@@ -51,7 +52,7 @@ function generateExcel(staff, type = 'binary') {
             staff.sourceMarket,
             staff.positionStart ? moment(staff.positionStart).format('YYYY-MM-DD') : '',
             staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : '',
-            staff.role,
+            staff.jobTitle,
             staff.destination,
             staff.phone,
             staff.departureAirport,
@@ -76,6 +77,7 @@ function generateExcel(staff, type = 'binary') {
             staff.hotelCost,
             staff.totalCost,
             staff.costCentre,
+            staff.iataCode,
             staff.status,
             staff.comment ? staff.comment.replace(/\n/g, '') : ''
         ]
