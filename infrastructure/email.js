@@ -11,7 +11,7 @@ async function send(staff) {
 
     const email = new constants.Email()
     email.bccTo = []
-    email.body = 'Please kindly find the attached file'
+    email.body = 'Please kindly find the attached files'
     email.ccTo = []
     email.emailTo = [config.emailTo]
     email.isBodyHtml = false
