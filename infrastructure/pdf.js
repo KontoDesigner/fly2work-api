@@ -192,7 +192,7 @@ function getDocDefinition(staff) {
                         ],
 
                         [{ text: 'Cost Centre', bold: true }, { text: ' ', bold: true }, { text: ' ', bold: true }],
-                        [{ text: staff.costCentre ? staff.costCentre : ' ' }, { test: ' ' }, { text: ' ' }],
+                        [{ text: staff.costCentre ? staff.costCentre : ' ' }, { text: ' ' }, { text: ' ' }],
 
                         [{ text: 'Comment', bold: true, colSpan: 3 }],
                         [{ text: staff.comment ? staff.comment : ' ', colSpan: 3 }]
