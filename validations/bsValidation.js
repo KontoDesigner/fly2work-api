@@ -104,7 +104,10 @@ const bsValidation = Yup.object().shape({
                 .typeError('(BRF) Date Of Flight must be a datetime')
                 .nullable(true)
                 .required('(BRF) Date Of Flight is required')
-        })
+        }),
+    iataCode: Yup.string()
+        .nullable(true)
+        .required('Iata code is required')
 })
 
 module.exports = bsValidation

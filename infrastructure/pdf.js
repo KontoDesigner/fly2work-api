@@ -134,11 +134,11 @@ function getDocDefinition(staff) {
                             { text: staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : ' ' }
                         ],
 
-                        [{ text: 'Arrival Airport (BRF)', bold: true }, { text: 'Rail & Fly', bold: true }, { text: ' ', bold: true }],
+                        [{ text: 'Arrival Airport (BRF)', bold: true }, { text: 'Rail & Fly', bold: true }, { text: 'Iata Code', bold: true }],
                         [
                             { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : ' ' },
                             { text: staff.railFly === true ? 'YES' : 'NO' },
-                            { text: ' ' }
+                            { text: staff.iataCode ? staff.iataCode : ' ' }
                         ]
                     ]
                 },
@@ -191,8 +191,8 @@ function getDocDefinition(staff) {
                             { text: staff.totalCost ? staff.totalCost : ' ' }
                         ],
 
-                        [{ text: 'Cost Centre', bold: true }, { text: 'Iata Code', bold: true }, { text: ' ', bold: true }],
-                        [{ text: staff.costCentre ? staff.costCentre : ' ' }, { text: staff.iataCode ? staff.iataCode : ' ' }, { text: ' ' }],
+                        [{ text: 'Cost Centre', bold: true }, { text: ' ', bold: true }, { text: ' ', bold: true }],
+                        [{ text: staff.costCentre ? staff.costCentre : ' ' }, { test: ' ' }, { text: ' ' }],
 
                         [{ text: 'Comment', bold: true, colSpan: 3 }],
                         [{ text: staff.comment ? staff.comment : ' ', colSpan: 3 }]
