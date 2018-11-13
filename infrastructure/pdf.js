@@ -139,7 +139,9 @@ function getDocDefinition(staff) {
                             { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : ' ' },
                             { text: staff.railFly === true ? 'YES' : 'NO' },
                             { text: staff.iataCode ? staff.iataCode : ' ' }
-                        ]
+                        ],
+                        [{ text: 'Passport Number', bold: true }, { text: ' ', bold: true }, { text: ' ', bold: true }],
+                        [{ text: staff.passportNumber ? staff.passportNumber : ' ' }, { text: ' ' }, { text: ' ' }]
                     ]
                 },
 

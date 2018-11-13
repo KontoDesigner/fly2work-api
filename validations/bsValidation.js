@@ -7,6 +7,9 @@ const bsValidation = Yup.object().shape({
     id: Yup.string()
         .nullable(true)
         .required('Id is required'),
+    passportNumber: Yup.string()
+        .nullable(true)
+        .required('Passport number is required'),
     firstName: Yup.string()
         .nullable(true)
         .required('First name is required'),

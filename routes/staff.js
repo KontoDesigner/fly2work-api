@@ -25,6 +25,7 @@ router.post(BASE, async (ctx, next) => {
     model.id = body.id
     model.firstName = body.firstName
     model.lastName = body.lastName
+    model.passportNumber = body.passportNumber
     model.phone = body.phone
     model.sourceMarket = body.sourceMarket
     model.status = body.status

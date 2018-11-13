@@ -5,6 +5,7 @@ function Staff() {
     this.id = ''
     this.firstName = ''
     this.lastName = ''
+    this.passportNumber = ''
     this.dateOfBirth = ''
     this.sourceMarket = ''
     this.dateOfFlight = ''
