@@ -23,7 +23,8 @@ router.post(BASE, async (ctx, next) => {
     model.gender = body.gender
     model.hotelNeeded = body.hotelNeeded
     model.id = body.id
-    model.name = body.name
+    model.firstName = body.firstName
+    model.lastName = body.lastName
     model.phone = body.phone
     model.sourceMarket = body.sourceMarket
     model.status = body.status
@@ -37,6 +38,7 @@ router.post(BASE, async (ctx, next) => {
     model.bookReturnFlightDepartureAirport = body.bookReturnFlightDepartureAirport
     model.bookReturnFlightArrivalAirport = body.bookReturnFlightArrivalAirport
     model.railFly = body.railFly
+    model.iataCode = body.iataCode
 
     //BTT
     model.flightNumber = body.flightNumber
@@ -51,7 +53,6 @@ router.post(BASE, async (ctx, next) => {
     model.hotelCost = body.hotelCost
     model.totalCost = body.totalCost
     model.costCentre = body.costCentre
-    model.iataCode = body.iataCode
 
     //ALL
     model.comment = body.comment
@@ -119,7 +120,8 @@ router.post(`${BASE}/new`, async (ctx, next) => {
     const model = new constants.Staff()
 
     model.id = body.Id
-    model.name = body.Name
+    model.firstName = body.firstName
+    model.lastName = body.lastName
     model.dateOfBirth = body.DateOfBirth
     model.sourceMarket = body.SourceMarket
     model.phone = body.Phone
@@ -128,6 +130,7 @@ router.post(`${BASE}/new`, async (ctx, next) => {
     model.destination = body.Destination
     model.positionStart = body.PositionStart
     model.jobTitle = body.JobTitle
+    model.iataCode = body.IataCode
 
     const validation = await newValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err

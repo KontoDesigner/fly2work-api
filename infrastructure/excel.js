@@ -23,7 +23,8 @@ function generateExcel(staffs, type = 'binary') {
             for (const staff of filteredStaffs) {
                 const body = [
                     staff.id,
-                    staff.name,
+                    staff.firstName,
+                    staff.lastName,
                     staff.dateOfBirth ? moment(staff.dateOfBirth).format('YYYY-MM-DD') : '',
                     staff.sourceMarket,
                     staff.positionStart ? moment(staff.positionStart).format('YYYY-MM-DD') : '',
@@ -82,7 +83,8 @@ module.exports = {
 
 const HEADER = [
     'Id',
-    'Name',
+    'First Name',
+    'Last Name',
     'Date Of Birth',
     'Source Market',
     'Position Start',

@@ -7,9 +7,12 @@ const bsValidation = Yup.object().shape({
     id: Yup.string()
         .nullable(true)
         .required('Id is required'),
-    name: Yup.string()
+    firstName: Yup.string()
         .nullable(true)
-        .required('Name is required'),
+        .required('First name is required'),
+    lastName: Yup.string()
+        .nullable(true)
+        .required('Last name is required'),
     dateOfBirth: Yup.date()
         .typeError('Date of birth must be a datetime')
         .nullable(true)

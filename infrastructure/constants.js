@@ -3,7 +3,8 @@ const keyMirror = require('keymirror')
 function Staff() {
     //BS
     this.id = ''
-    this.name = ''
+    this.firstName = ''
+    this.lastName = ''
     this.dateOfBirth = ''
     this.sourceMarket = ''
     this.dateOfFlight = ''

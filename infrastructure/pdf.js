@@ -74,7 +74,7 @@ function getDocDefinition(staff) {
     return {
         content: [
             {
-                text: `${staff.name} (${staff.status === null ? 'New' : staff.status})`,
+                text: `${staff.firstName} ${staff.lastName} (${staff.status === null ? 'New' : staff.status})`,
                 style: 'header',
                 alignment: 'center',
                 bold: true,
