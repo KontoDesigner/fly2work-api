@@ -3,7 +3,7 @@ const restClient = require('./restClient')
 const config = require('./config')
 const constants = require('./constants')
 const pdf = require('./pdf')
-const excel = require('./excel')
+// const excel = require('./excel')
 const moment = require('moment')
 
 async function send(staff) {
@@ -19,16 +19,16 @@ async function send(staff) {
     email.userAddress = config.userAddress
 
     const mailApi = `${config.mailApi}/${config.name}`
-    const excelData = excel.generateExcel(staff, 'binary')
-    const excelDataString = 'data:application/pdf;base64,' + excelData.toString('base64')
+    // const excelData = excel.generateExcel(staff, 'binary')
+    // const excelDataString = 'data:application/pdf;base64,' + excelData.toString('base64')
     const pdfData = await pdf.generatePdfPromise(staff)
     const pdfDataString = 'data:application/pdf;base64,' + pdfData.toString('base64')
 
     email.attachments = [
         //pdf
-        { data: pdfDataString, name: `${staff.name} - ${moment().format('YYYY-MM-DD HH:mm')}.pdf` },
-        //excel
-        { data: excelDataString, name: `${staff.name} - ${moment().format('YYYY-MM-DD HH:mm')}.xlsx` }
+        { data: pdfDataString, name: `${staff.name} - ${moment().format('YYYY-MM-DD HH:mm')}.pdf` }
+        // //excel
+        // { data: excelDataString, name: `${staff.name} - ${moment().format('YYYY-MM-DD HH:mm')}.xlsx` }
     ]
 
     for (var attachment of staff.attachments) {

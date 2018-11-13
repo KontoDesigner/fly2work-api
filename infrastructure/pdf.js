@@ -3,6 +3,8 @@ const pdfMakePrinter = require('pdfmake/src/printer')
 const moment = require('moment')
 
 function generatePdfCallback(staff, callback) {
+    logger.info('Started pdf export', { staff })
+
     const docDefinition = getDocDefinition(staff)
 
     try {
