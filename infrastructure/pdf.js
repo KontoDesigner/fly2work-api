@@ -95,7 +95,11 @@ function getDocDefinition(staff) {
                     headerRows: 0,
                     widths: ['*', '*', '*'],
                     body: [
-                        [{ text: 'Date Of Birth', bold: true }, { text: 'Position Start', bold: true }, { text: 'Date Of Flight', bold: true }],
+                        [
+                            { text: 'Date Of Birth', bold: true },
+                            { text: 'Planned Assignment Start Date', bold: true },
+                            { text: 'Date Of Flight', bold: true }
+                        ],
                         [
                             { text: staff.dateOfBirth ? moment(staff.dateOfBirth).format('YYYY-MM-DD') : ' ' },
                             { text: staff.positionStart ? moment(staff.positionStart).format('YYYY-MM-DD') : ' ' },

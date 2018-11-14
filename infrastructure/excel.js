@@ -89,7 +89,7 @@ const HEADER = [
     'Passport Number',
     'Date Of Birth',
     'Source Market',
-    'Position Start',
+    'Planned Assignment Start Date',
     'Date Of Flight',
     'Job Title',
     'Destination',
