@@ -44,7 +44,8 @@ router.post(BASE, async (ctx, next) => {
     //BTT
     model.flightNumber = body.flightNumber
     model.bookingReference = body.bookingReference
-    model.arrivalTime = body.arrivalTime
+    model.flightArrivalTime = body.flightArrivalTime
+    model.flightDepartureTime = body.flightDepartureTime
     model.typeOfFlight = body.typeOfFlight
     model.typeOfFlight = body.typeOfFlight
     model.paymentMethod = body.paymentMethod
@@ -121,17 +122,17 @@ router.post(`${BASE}/new`, async (ctx, next) => {
     const model = new constants.Staff()
 
     model.id = body.Id
-    model.firstName = body.firstName
-    model.lastName = body.lastName
-    model.dateOfBirth = body.DateOfBirth
-    model.sourceMarket = body.SourceMarket
-    model.phone = body.Phone
+    model.firstName = body.FirstName ? body.FirstName : ''
+    model.lastName = body.LastName ? body.LastName : ''
+    model.dateOfBirth = body.DateOfBirth ? body.DateOfBirth : ''
+    model.sourceMarket = body.SourceMarket ? body.SourceMarket : ''
+    model.phone = body.Phone ? body.Phone : ''
     model.status = constants.Statuses.New
-    model.gender = body.Gender
-    model.destination = body.Destination
-    model.positionStart = body.PositionStart
-    model.jobTitle = body.JobTitle
-    model.iataCode = body.IataCode
+    model.gender = body.Gender ? body.Gender : ''
+    model.destination = body.Destination ? body.Destination : ''
+    model.positionStart = body.PositionStart ? body.PositionStart : ''
+    model.jobTitle = body.JobTitle ? body.JobTitle : ''
+    model.iataCode = body.IataCode ? body.IataCode : ''
 
     const validation = await newValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err

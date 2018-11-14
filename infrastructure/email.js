@@ -11,7 +11,7 @@ async function send(staff) {
 
     const email = new constants.Email()
     email.bccTo = []
-    email.body = 'Please kindly find the attached files'
+    email.body = 'Please kindly find the attached file(s)'
     email.ccTo = []
     email.emailTo = [config.emailTo]
     email.isBodyHtml = false
@@ -26,7 +26,7 @@ async function send(staff) {
 
     email.attachments = [
         //pdf
-        { data: pdfDataString, name: `${staff.name} - ${moment().format('YYYY-MM-DD HH:mm')}.pdf` }
+        { data: pdfDataString, name: `${staff.firstName} ${staff.lastName} - ${moment().format('YYYY-MM-DD HH:mm')}.pdf` }
         // //excel
         // { data: excelDataString, name: `${staff.name} - ${moment().format('YYYY-MM-DD HH:mm')}.xlsx` }
     ]

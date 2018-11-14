@@ -30,7 +30,8 @@ function Staff() {
     //BTT
     this.flightNumber = ''
     this.bookingReference = ''
-    this.arrivalTime = ''
+    this.flightArrivalTime = ''
+    this.flightDepartureTime = ''
     this.typeOfFlight = ''
     this.typeOfFlight = ''
     this.paymentMethod = ''

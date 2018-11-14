@@ -8,10 +8,14 @@ const bttValidation = Yup.object().shape({
     bookingReference: Yup.string()
         .nullable(true)
         .required('Booking reference is required'),
-    arrivalTime: Yup.date()
-        .typeError('Arrival time must be a datetime')
+    flightDepartureTime: Yup.date()
+        .typeError('Flight departure time must be a datetime')
         .nullable(true)
-        .required('Arrival time is required'),
+        .required('Flight departure time is required'),
+    flightArrivalTime: Yup.date()
+        .typeError('Flight arrival time must be a datetime')
+        .nullable(true)
+        .required('Flight arrival time is required'),
     paymentMethod: Yup.string()
         .nullable(true)
         .required('Payment method is required'),
@@ -27,9 +31,6 @@ const bttValidation = Yup.object().shape({
     hotelCost: Yup.number()
         .nullable(true)
         .required('Hotel cost is required'),
-    totalCost: Yup.number()
-        .nullable(true)
-        .required('Total cost is required'),
     costCentre: Yup.string()
         .nullable(true)
         .required('Cost centre is required')

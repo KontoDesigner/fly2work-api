@@ -176,11 +176,11 @@ function getDocDefinition(staff) {
                     widths: ['*', '*', '*'],
 
                     body: [
-                        [{ text: 'Flight Number', bold: true }, { text: 'Booking Reference', bold: true }, { text: 'Arrival Time', bold: true }],
+                        [{ text: 'Flight Number', bold: true }, { text: 'Booking Reference', bold: true }, { text: 'Cost Centre', bold: true }],
                         [
                             { text: staff.flightNumber ? staff.flightNumber : ' ' },
                             { text: staff.bookingReference ? staff.bookingReference : ' ' },
-                            { text: staff.arrivalTime ? moment(staff.arrivalTime).format('YYYY-MM-DD') : ' ' }
+                            { text: staff.costCentre ? staff.costCentre : ' ' }
                         ],
 
                         [{ text: 'Payment Method', bold: true }, { text: 'Xbag', bold: true }, { text: 'Flight Cost', bold: true }],
@@ -197,8 +197,12 @@ function getDocDefinition(staff) {
                             { text: staff.totalCost ? staff.totalCost : ' ' }
                         ],
 
-                        [{ text: 'Cost Centre', bold: true }, { text: ' ', bold: true }, { text: ' ', bold: true }],
-                        [{ text: staff.costCentre ? staff.costCentre : ' ' }, { text: ' ' }, { text: ' ' }],
+                        [{ text: 'Flight Departure Time', bold: true }, { text: 'Flight Arrival Time', bold: true }, { text: ' ', bold: true }],
+                        [
+                            { text: staff.flightDepartureTime ? moment(staff.flightDepartureTime).format('YYYY-MM-DD') : ' ' },
+                            { text: staff.flightArrivalTime ? moment(staff.flightArrivalTime).format('YYYY-MM-DD') : ' ' },
+                            { text: ' ' }
+                        ],
 
                         [{ text: 'Comment', bold: true, colSpan: 3 }],
                         [{ text: staff.comment ? staff.comment : ' ', colSpan: 3 }]
