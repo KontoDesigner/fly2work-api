@@ -23,7 +23,9 @@ router.post(`${BASE}/upload`, async (ctx, next) => {
             name: file.filename,
             size: size,
             type: file.mimeType,
-            created: moment()._d
+            created: moment()._d,
+            createdBy: 'TEST',
+            group: 'TEST'
         }
 
         const updateOne = await mongo.collection('staffs').updateOne({ id: staffId }, { $push: { attachments: attachment } })

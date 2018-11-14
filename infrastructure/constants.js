@@ -33,7 +33,6 @@ function Staff() {
     this.flightArrivalTime = ''
     this.flightDepartureTime = ''
     this.typeOfFlight = ''
-    this.typeOfFlight = ''
     this.paymentMethod = ''
     this.xbag = ''
     this.flightCost = ''
@@ -44,7 +43,7 @@ function Staff() {
     this.iataCode = ''
 
     //ALL
-    this.comment = ''
+    this.comments = []
     this.attachments = []
 }
 

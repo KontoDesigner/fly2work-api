@@ -71,6 +71,21 @@ function generatePdfPromise(staff) {
 }
 
 function getDocDefinition(staff) {
+    const comments = staff.comments
+        ? staff.comments.map(c => [
+              { text: c.text ? c.text : ' ' },
+              { text: c.createdBy ? c.createdBy : ' ' },
+              { text: c.group ? c.group : ' ' },
+              { text: c.created ? moment(c.created).format('YYYY-MM-DD') : ' ' }
+          ])
+        : []
+
+    const commentBody = [
+        [{ text: 'Text', bold: true }, { text: 'Created By', bold: true }, { text: 'Group', bold: true }, { text: 'Created', bold: true }]
+    ]
+
+    commentBody.push(...comments)
+
     return {
         content: [
             {
@@ -101,7 +116,7 @@ function getDocDefinition(staff) {
                             { text: 'Date Of Flight', bold: true }
                         ],
                         [
-                            { text: staff.dateOfBirth ? moment(staff.dateOfBirth).format('YYYY-MM-DD') : ' ' },
+                            { text: staff.dateOfBirth ? moment(staff.dateOfBirth).format('DD/MM/YYYY') : ' ' },
                             { text: staff.positionStart ? moment(staff.positionStart).format('YYYY-MM-DD') : ' ' },
                             { text: staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : ' ' }
                         ],
@@ -202,11 +217,37 @@ function getDocDefinition(staff) {
                             { text: staff.flightDepartureTime ? moment(staff.flightDepartureTime).format('YYYY-MM-DD') : ' ' },
                             { text: staff.flightArrivalTime ? moment(staff.flightArrivalTime).format('YYYY-MM-DD') : ' ' },
                             { text: ' ' }
-                        ],
-
-                        [{ text: 'Comment', bold: true, colSpan: 3 }],
-                        [{ text: staff.comment ? staff.comment : ' ', colSpan: 3 }]
+                        ]
                     ]
+                },
+
+                layout: {
+                    fillColor: function(i, node) {
+                        return i % 2 === 0 ? '#CCCCCC' : null
+                    },
+                    paddingTop: function(i, node) {
+                        return 5
+                    },
+                    paddingBottom: function(i, node) {
+                        return 5
+                    }
+                },
+                alignment: 'center'
+            },
+            {
+                text: 'Comments',
+                style: 'header',
+                alignment: 'center',
+                bold: true,
+                fontSize: 14,
+                margin: [0, 4, 0, 5]
+            },
+            {
+                table: {
+                    headerRows: 0,
+                    widths: ['*', '*', '*', '*'],
+
+                    body: commentBody
                 },
 
                 layout: {

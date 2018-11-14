@@ -21,12 +21,21 @@ function generateExcel(staffs, type = 'binary') {
             wb.SheetNames.push(sheetName)
 
             for (const staff of filteredStaffs) {
+                const comments = staff.comments
+                    ? staff.comments.map(c => ({
+                          text: c.text,
+                          createdBy: c.createdBy,
+                          group: c.group,
+                          created: c.created
+                      }))
+                    : []
+
                 const body = [
                     staff.id,
                     staff.firstName,
                     staff.lastName,
                     staff.passportNumber,
-                    staff.dateOfBirth ? moment(staff.dateOfBirth).format('YYYY-MM-DD') : '',
+                    staff.dateOfBirth ? moment(staff.dateOfBirth).format('DD/MM/YYYY') : '',
                     staff.sourceMarket,
                     staff.positionStart ? moment(staff.positionStart).format('YYYY-MM-DD') : '',
                     staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : '',
@@ -57,7 +66,7 @@ function generateExcel(staffs, type = 'binary') {
                     staff.totalCost,
                     staff.costCentre,
                     staff.iataCode,
-                    staff.comment ? staff.comment.replace(/\n/g, '') : ''
+                    JSON.stringify(comments)
                 ]
 
                 ws_data.push(body)
@@ -119,5 +128,5 @@ const HEADER = [
     'Total Cost',
     'Cost Centre',
     'Iata Code',
-    'Comment'
+    'Comments'
 ]

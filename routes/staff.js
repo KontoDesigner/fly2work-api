@@ -5,6 +5,8 @@ const constants = require('../infrastructure/constants')
 const bsValidation = require('../validations/bsValidation')
 const newValidation = require('../validations/newValidation')
 const email = require('../infrastructure/email')
+const uuid = require('node-uuid')
+const moment = require('moment')
 
 const BASE = '/staff'
 
@@ -57,7 +59,18 @@ router.post(BASE, async (ctx, next) => {
     model.costCentre = body.costCentre
 
     //ALL
-    model.comment = body.comment
+    if (body.comments && body.comments.length > 0) {
+        for (var comment of body.comments) {
+            if (!comment.id) {
+                comment.id = uuid.v1()
+                comment.created = moment()._d
+                comment.createdBy = 'TEST'
+                comment.group = 'TEST'
+            }
+        }
+    }
+
+    model.comments = body.comments ? body.comments : []
 
     const validation = await bsValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
