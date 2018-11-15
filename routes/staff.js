@@ -57,6 +57,7 @@ router.post(BASE, async (ctx, next) => {
     model.hotelCost = body.hotelCost
     model.totalCost = body.totalCost
     model.costCentre = body.costCentre
+    model.travelType = body.travelType
 
     //ALL
     if (body.comments && body.comments.length > 0) {

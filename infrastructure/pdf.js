@@ -212,11 +212,15 @@ function getDocDefinition(staff) {
                             { text: staff.totalCost ? staff.totalCost : ' ' }
                         ],
 
-                        [{ text: 'Flight Departure Time', bold: true }, { text: 'Flight Arrival Time', bold: true }, { text: ' ', bold: true }],
+                        [
+                            { text: 'Flight Departure Time', bold: true },
+                            { text: 'Flight Arrival Time', bold: true },
+                            { text: 'Travel Type', bold: true }
+                        ],
                         [
                             { text: staff.flightDepartureTime ? moment(staff.flightDepartureTime).format('YYYY-MM-DD') : ' ' },
                             { text: staff.flightArrivalTime ? moment(staff.flightArrivalTime).format('YYYY-MM-DD') : ' ' },
-                            { text: ' ' }
+                            { text: staff.travelType ? staff.travelType : ' ' }
                         ]
                     ]
                 },

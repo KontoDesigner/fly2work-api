@@ -41,6 +41,7 @@ function Staff() {
     this.totalCost = ''
     this.costCentre = ''
     this.iataCode = ''
+    this.travelType = ''
 
     //ALL
     this.comments = []

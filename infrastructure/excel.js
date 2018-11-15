@@ -66,6 +66,7 @@ function generateExcel(staffs, type = 'binary') {
                     staff.totalCost,
                     staff.costCentre,
                     staff.iataCode,
+                    staff.travelType,
                     JSON.stringify(comments)
                 ]
 
@@ -128,5 +129,6 @@ const HEADER = [
     'Total Cost',
     'Cost Centre',
     'Iata Code',
+    'Travel Type',
     'Comments'
 ]

@@ -33,7 +33,10 @@ const bttValidation = Yup.object().shape({
         .required('Hotel cost is required'),
     costCentre: Yup.string()
         .nullable(true)
-        .required('Cost centre is required')
+        .required('Cost centre is required'),
+    travelType: Yup.string()
+        .nullable(true)
+        .required('Travel type is required')
 })
 
 const combined = bsValidation.concat(bttValidation)
