@@ -1,7 +1,7 @@
 const logger = require('tuin-logging')
 const xlsx = require('xlsx')
 const moment = require('moment')
-const constants = require('./constants')
+const constants = require('../infrastructure/constants')
 
 function generateExcel(staffs, type = 'binary') {
     try {

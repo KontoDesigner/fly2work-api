@@ -1,5 +1,5 @@
 const router = require('koa-better-router')().loadMethods()
-const excel = require('../infrastructure/excel')
+const excelService = require('../services/excelService')
 const logger = require('tuin-logging')
 const mongo = require('../infrastructure/mongo')
 
@@ -11,7 +11,7 @@ router.post(BASE, async (ctx, next) => {
         .find()
         .toArray()
 
-    const response = await excel.generateExcel(staffs)
+    const response = await excelService.generateExcel(staffs)
 
     logger.info('Excel generation result', { staffs, excelBytes: response.length })
 

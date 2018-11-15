@@ -1,17 +1,14 @@
 const router = require('koa-better-router')().loadMethods()
-const pdf = require('../infrastructure/pdf')
-const logger = require('tuin-logging')
+const pdfService = require('../services/pdfService')
 
 const BASE = '/pdf'
 
 router.post(BASE, async (ctx, next) => {
     const staff = ctx.request.body
 
-    const response = await pdf.generatePdfPromise(staff)
+    const res = await pdfService.generatePdfPromise(staff)
 
-    logger.info('PDF generation result', { staff, pdfBytes: response.length })
-
-    ctx.body = response
+    ctx.body = res
 
     await next()
 })
