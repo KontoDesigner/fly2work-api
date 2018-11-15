@@ -50,9 +50,14 @@ const bsValidation = Yup.object().shape({
         .max(3, 'Max 3 arrival airports')
         .required('Arrival airport is required')
         .nullable(true),
-    comment: Yup.string()
-        .nullable(true)
-        .max(200, 'Comment must contain a total 200 characters'),
+    comments: Yup.array().of(
+        Yup.object().shape({
+            text: Yup.string()
+                .nullable(true)
+                .required('Comment is required')
+                .max(200, 'Comment must contain a total 200 characters')
+        })
+    ),
     status: Yup.string()
         .nullable()
         .required('Status is required'),
