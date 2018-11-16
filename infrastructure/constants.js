@@ -28,24 +28,38 @@ function Staff() {
     this.bookReturnFlightArrivalAirport = ''
 
     //BTT
-    this.flightNumber = ''
+    // this.flightNumber = ''
     this.bookingReference = ''
-    this.flightArrivalTime = ''
-    this.flightDepartureTime = ''
+    // this.flightArrivalTime = ''
+    // this.flightDepartureTime = ''
     this.typeOfFlight = ''
     this.paymentMethod = ''
     this.xbag = ''
-    this.flightCost = ''
-    this.xbagCost = ''
-    this.hotelCost = ''
-    this.totalCost = ''
+    // this.flightCost = ''
+    // this.xbagCost = ''
+    // this.hotelCost = ''
+    // this.totalCost = ''
     this.costCentre = ''
     this.iataCode = ''
     this.travelType = ''
+    this.flights = [new Flight(true), new Flight(), new Flight()]
 
     //ALL
     this.comments = []
     this.attachments = []
+}
+
+function Flight(enabled = false) {
+    this.enabled = enabled
+    this.departureAirport = ''
+    this.arrivalAirport = ''
+    this.flightNumber = ''
+    this.flightArrivalTime = ''
+    this.flightDepartureTime = ''
+    this.hotelCost = ''
+    this.flightCost = ''
+    this.xbagCost = ''
+    this.totalCost = ''
 }
 
 function Email() {
