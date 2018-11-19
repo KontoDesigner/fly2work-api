@@ -33,9 +33,11 @@ async function logIncomingRequest(ctx, next) {
     const start = Date.now()
 
     return next().then(() => {
-        const ms = Date.now() - start
+        if (ctx.url !== '/health') {
+            const ms = Date.now() - start
 
-        logger.info(`INCOMING ${ctx.method}`, { url: ctx.url, ms })
+            logger.info(`INCOMING ${ctx.method}`, { url: ctx.url, ms })
+        }
     })
 }
 
