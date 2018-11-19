@@ -64,19 +64,17 @@ const updateStaff = async (body, ctx) => {
     const flights = []
 
     for (var flight of body.flights) {
-        if (flight.enabled === true) {
-            flights.push({
-                flightNumber: flight.flightNumber,
-                flightDepartureTime: flight.flightDepartureTime,
-                flightArrivalTime: flight.flightArrivalTime,
-                departureAirport: flight.departureAirport,
-                arrivalAirport: flight.arrivalAirport,
-                flightCost: flight.flightCost,
-                xbagCost: flight.xbagCost,
-                hotelCost: flight.hotelCost,
-                totalCost: flight.totalCost
-            })
-        }
+        flights.push({
+            flightNumber: flight.flightNumber,
+            flightDepartureTime: flight.flightDepartureTime,
+            flightArrivalTime: flight.flightArrivalTime,
+            departureAirport: flight.departureAirport,
+            arrivalAirport: flight.arrivalAirport,
+            flightCost: flight.flightCost,
+            xbagCost: flight.xbagCost,
+            hotelCost: flight.hotelCost,
+            totalCost: flight.totalCost
+        })
     }
 
     model.flights = flights
