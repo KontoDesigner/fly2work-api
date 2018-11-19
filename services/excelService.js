@@ -87,7 +87,7 @@ function generateExcel(staffs, type = 'binary') {
 
         var wbout = xlsx.write(wb, { bookType: 'xlsx', type: type })
 
-        logger.info('Excel export successfull', { staffs, status, xlsx: wbout })
+        logger.info('Excel export successfull', { staffs, xlsx: wbout })
 
         return Buffer.from(wbout, type)
     } catch (err) {

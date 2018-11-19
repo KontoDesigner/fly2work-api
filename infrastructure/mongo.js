@@ -7,7 +7,7 @@ let client = null
 let db = null
 
 const connect = async () => {
-    const connection = config.mongo
+    const connection = config.mongoConnectionString
 
     logger.info('will now try and connect to mongo', { connection })
 
