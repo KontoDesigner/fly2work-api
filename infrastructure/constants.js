@@ -10,8 +10,8 @@ function Staff() {
     this.sourceMarket = ''
     this.dateOfFlight = ''
     this.jobTitle = ''
-    this.departureAirport = ''
-    this.arrivalAirport = ''
+    this.departureAirports = ''
+    this.arrivalAirports = ''
     this.hotelNeeded = false
     this.hotelNeededHotelStart = ''
     this.hotelNeededHotelEnd = ''

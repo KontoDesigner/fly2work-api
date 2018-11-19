@@ -30,47 +30,53 @@ function generateExcel(staffs, type = 'binary') {
                       }))
                     : []
 
-                const body = [
-                    staff.id,
-                    staff.firstName,
-                    staff.lastName,
-                    staff.passportNumber,
-                    staff.dateOfBirth ? moment(staff.dateOfBirth).format('DD/MM/YYYY') : '',
-                    staff.sourceMarket,
-                    staff.positionStart ? moment(staff.positionStart).format('YYYY-MM-DD') : '',
-                    staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : '',
-                    staff.jobTitle,
-                    staff.destination,
-                    staff.phone,
-                    staff.departureAirport,
-                    staff.arrivalAirport,
-                    staff.typeOfFlight,
-                    staff.gender ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : '',
-                    staff.hotelNeeded === true ? 'YES' : 'NO',
-                    staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : '',
-                    staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : '',
-                    staff.bookReturnFlight === true ? 'YES' : 'NO',
-                    staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY-MM-DD') : '',
-                    staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : '',
-                    staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : '',
-                    staff.railFly === true ? 'YES' : 'NO',
-                    staff.flightNumber,
-                    staff.bookingReference,
-                    staff.flightDepartureTime ? moment(staff.flightDepartureTime).format('YYYY-MM-DD') : '',
-                    staff.flightArrivalTime ? moment(staff.flightArrivalTime).format('YYYY-MM-DD') : '',
-                    staff.paymentMethod,
-                    staff.xbag,
-                    staff.flightCost,
-                    staff.xbagCost,
-                    staff.hotelCost,
-                    staff.totalCost,
-                    staff.costCentre,
-                    staff.iataCode,
-                    staff.travelType,
-                    JSON.stringify(comments)
-                ]
+                for (var flight of staff.flights) {
+                    const body = [
+                        staff.id,
+                        staff.firstName,
+                        staff.lastName,
+                        staff.passportNumber,
+                        staff.dateOfBirth ? moment(staff.dateOfBirth).format('DD/MM/YYYY') : '',
+                        staff.sourceMarket,
+                        staff.positionStart ? moment(staff.positionStart).format('YYYY-MM-DD') : '',
+                        staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : '',
+                        staff.jobTitle,
+                        staff.destination,
+                        staff.phone,
+                        staff.departureAirports,
+                        staff.arrivalAirports,
+                        staff.typeOfFlight,
+                        staff.gender ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : '',
+                        staff.hotelNeeded === true ? 'YES' : 'NO',
+                        staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : '',
+                        staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : '',
+                        staff.bookReturnFlight === true ? 'YES' : 'NO',
+                        staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY-MM-DD') : '',
+                        staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : '',
+                        staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : '',
+                        staff.railFly === true ? 'YES' : 'NO',
+                        staff.iataCode,
+                        staff.bookingReference,
+                        staff.paymentMethod,
+                        staff.xbag,
+                        staff.costCentre,
+                        staff.travelType,
 
-                ws_data.push(body)
+                        flight.flightNumber,
+                        flight.flightDepartureTime ? moment(flight.flightDepartureTime).format('YYYY-MM-DD') : '',
+                        flight.flightArrivalTime ? moment(flight.flightArrivalTime).format('YYYY-MM-DD') : '',
+                        flight.departureAirport,
+                        flight.arrivalAirport,
+                        flight.flightCost,
+                        flight.xbagCost,
+                        flight.hotelCost,
+                        parseCost(flight.flightCost) + parseCost(staff.xbagCost) + parseCost(staff.hotelCost),
+
+                        JSON.stringify(comments)
+                    ]
+
+                    ws_data.push(body)
+                }
 
                 logger.info(`Pushed ${filteredStaffs.length} staff(s) to ${status} sheet`, { staffs, status })
             }
@@ -87,6 +93,16 @@ function generateExcel(staffs, type = 'binary') {
 
         throw err
     }
+}
+
+function parseCost(val) {
+    var parsed = parseInt(val)
+
+    if (isNaN(parsed)) {
+        return 0
+    }
+
+    return parsed
 }
 
 module.exports = {
@@ -117,18 +133,20 @@ const HEADER = [
     'Departure Airport (BRF)',
     'Arrival Airport (BRF)',
     'Rail & Fly',
-    'Flight Number',
+    'Iata Code',
     'Booking Reference',
-    'Flight Departure Time',
-    'Flight Arrival Time',
     'Payment Method',
     'Xbag',
+    'Cost Centre',
+    'Travel Type',
+    'Flight Number',
+    'Flight Departure Time',
+    'Flight Arrival Time',
+    'Departure Airport',
+    'Arrival Airport',
     'Flight Cost',
     'Xbag Cost',
     'Hotel Cost',
     'Total Cost',
-    'Cost Centre',
-    'Iata Code',
-    'Travel Type',
     'Comments'
 ]

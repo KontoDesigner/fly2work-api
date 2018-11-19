@@ -71,6 +71,7 @@ function generatePdfPromise(staff) {
 }
 
 function getDocDefinition(staff) {
+    //Comments
     const comments = staff.comments
         ? staff.comments.map(c => [
               { text: c.text ? c.text : ' ' },
@@ -86,6 +87,38 @@ function getDocDefinition(staff) {
 
     commentBody.push(...comments)
 
+    //Flights
+    const flights = staff.flights
+        ? staff.flights.map(f => [
+              { text: f.flightNumber ? f.flightNumber : ' ' },
+              { text: f.flightDepartureTime ? moment(f.flightDepartureTime).format('YYYY-MM-DD') : ' ' },
+              { text: f.flightArrivalTime ? moment(f.flightArrivalTime).format('YYYY-MM-DD') : ' ' },
+              { text: f.departureAirport ? f.departureAirport : ' ' },
+              { text: f.arrivalAirport ? f.arrivalAirport : ' ' },
+              { text: f.flightCost ? f.flightCost : ' ' },
+              { text: f.xbagCost ? f.xbagCost : ' ' },
+              { text: f.hotelCost ? f.hotelCost : ' ' },
+              { text: parseCost(f.flightCost) + parseCost(f.xbagCost) + parseCost(f.hotelCost) }
+          ])
+        : []
+
+    const flightBody = [
+        [
+            { text: 'Flight Number', bold: true },
+            { text: 'Flight Departure Time', bold: true },
+            { text: 'Flight Arrival Time', bold: true },
+            { text: 'Departure Airport', bold: true },
+            { text: 'Arrival Airport', bold: true },
+            { text: 'Flight Cost', bold: true },
+            { text: 'Xbag Cost', bold: true },
+            { text: 'Hotel Cost', bold: true },
+            { text: 'Total Cost', bold: true }
+        ]
+    ]
+
+    flightBody.push(...flights)
+
+    //Render
     return {
         content: [
             {
@@ -93,7 +126,7 @@ function getDocDefinition(staff) {
                 style: 'header',
                 alignment: 'center',
                 bold: true,
-                fontSize: 20,
+                fontSize: 16,
                 margin: [0, 0, 0, 5]
             },
             {
@@ -101,11 +134,12 @@ function getDocDefinition(staff) {
                 style: 'header',
                 alignment: 'center',
                 bold: true,
-                fontSize: 14,
+                fontSize: 12,
                 margin: [0, 0, 0, 8]
             },
             {
                 margin: [0, 0, 0, 5],
+                fontSize: 9,
                 table: {
                     headerRows: 0,
                     widths: ['*', '*', '*'],
@@ -121,16 +155,16 @@ function getDocDefinition(staff) {
                             { text: staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : ' ' }
                         ],
 
-                        [{ text: 'Job Title', bold: true }, { text: 'Phone', bold: true }, { text: 'Departure Airport', bold: true }],
+                        [{ text: 'Job Title', bold: true }, { text: 'Phone', bold: true }, { text: 'Departure Airports', bold: true }],
                         [
                             { text: staff.jobTitle ? staff.jobTitle : ' ' },
                             { text: staff.phone ? staff.phone : ' ' },
-                            { text: staff.departureAirport ? staff.departureAirport : ' ' }
+                            { text: staff.departureAirports ? staff.departureAirports : ' ' }
                         ],
 
-                        [{ text: 'Arrival Airport', bold: true }, { text: 'Type Of Flight', bold: true }, { text: 'Gender', bold: true }],
+                        [{ text: 'Arrival Airports', bold: true }, { text: 'Type Of Flight', bold: true }, { text: 'Gender', bold: true }],
                         [
-                            { text: staff.arrivalAirport ? staff.arrivalAirport : ' ' },
+                            { text: staff.arrivalAirports ? staff.arrivalAirports : ' ' },
                             { text: staff.typeOfFlight ? staff.typeOfFlight : ' ' },
                             { text: staff.gender ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : ' ' }
                         ],
@@ -169,10 +203,10 @@ function getDocDefinition(staff) {
                         return i % 2 === 0 ? '#CCCCCC' : null
                     },
                     paddingTop: function(i, node) {
-                        return 5
+                        return 2
                     },
                     paddingBottom: function(i, node) {
-                        return 5
+                        return 2
                     }
                 },
                 alignment: 'center'
@@ -182,46 +216,24 @@ function getDocDefinition(staff) {
                 style: 'header',
                 alignment: 'center',
                 bold: true,
-                fontSize: 14,
+                fontSize: 12,
                 margin: [0, 0, 0, 5]
             },
             {
+                fontSize: 9,
                 table: {
                     headerRows: 0,
                     widths: ['*', '*', '*'],
-
                     body: [
-                        [{ text: 'Flight Number', bold: true }, { text: 'Booking Reference', bold: true }, { text: 'Cost Centre', bold: true }],
+                        [{ text: 'Booking Reference', bold: true }, { text: 'Travel Type', bold: true }, { text: 'Payment Method', bold: true }],
                         [
-                            { text: staff.flightNumber ? staff.flightNumber : ' ' },
                             { text: staff.bookingReference ? staff.bookingReference : ' ' },
-                            { text: staff.costCentre ? staff.costCentre : ' ' }
+                            { text: staff.travelType ? staff.travelType : ' ' },
+                            { text: staff.paymentMethod ? staff.paymentMethod : ' ' }
                         ],
 
-                        [{ text: 'Payment Method', bold: true }, { text: 'Xbag', bold: true }, { text: 'Flight Cost', bold: true }],
-                        [
-                            { text: staff.paymentMethod ? staff.paymentMethod : ' ' },
-                            { text: staff.xbag ? staff.xbag : ' ' },
-                            { text: staff.flightCost ? staff.flightCost : ' ' }
-                        ],
-
-                        [{ text: 'Xbag cost', bold: true }, { text: 'Hotel Cost', bold: true }, { text: 'Total Cost', bold: true }],
-                        [
-                            { text: staff.xbagCost ? staff.xbagCost : ' ' },
-                            { text: staff.hotelCost ? staff.hotelCost : ' ' },
-                            { text: staff.totalCost ? staff.totalCost : ' ' }
-                        ],
-
-                        [
-                            { text: 'Flight Departure Time', bold: true },
-                            { text: 'Flight Arrival Time', bold: true },
-                            { text: 'Travel Type', bold: true }
-                        ],
-                        [
-                            { text: staff.flightDepartureTime ? moment(staff.flightDepartureTime).format('YYYY-MM-DD') : ' ' },
-                            { text: staff.flightArrivalTime ? moment(staff.flightArrivalTime).format('YYYY-MM-DD') : ' ' },
-                            { text: staff.travelType ? staff.travelType : ' ' }
-                        ]
+                        [{ text: 'Xbag', bold: true }, { text: 'Cost Centre', bold: true }, { text: '', bold: true }],
+                        [{ text: staff.xbag ? staff.xbag : ' ' }, { text: staff.costCentre ? staff.costCentre : ' ' }, { text: ' ' }]
                     ]
                 },
 
@@ -230,10 +242,39 @@ function getDocDefinition(staff) {
                         return i % 2 === 0 ? '#CCCCCC' : null
                     },
                     paddingTop: function(i, node) {
-                        return 5
+                        return 2
                     },
                     paddingBottom: function(i, node) {
-                        return 5
+                        return 2
+                    }
+                },
+                alignment: 'center'
+            },
+            {
+                text: 'Flights',
+                style: 'header',
+                alignment: 'center',
+                bold: true,
+                fontSize: 12,
+                margin: [0, 4, 0, 5]
+            },
+            {
+                fontSize: 9,
+                table: {
+                    headerRows: 0,
+                    widths: ['*', '*', '*', '*', '*', '*', '*', '*', '*'],
+                    body: flightBody
+                },
+
+                layout: {
+                    fillColor: function(i, node) {
+                        return i % 2 === 0 ? '#CCCCCC' : null
+                    },
+                    paddingTop: function(i, node) {
+                        return 2
+                    },
+                    paddingBottom: function(i, node) {
+                        return 2
                     }
                 },
                 alignment: 'center'
@@ -243,14 +284,14 @@ function getDocDefinition(staff) {
                 style: 'header',
                 alignment: 'center',
                 bold: true,
-                fontSize: 14,
+                fontSize: 12,
                 margin: [0, 4, 0, 5]
             },
             {
+                fontSize: 9,
                 table: {
                     headerRows: 0,
                     widths: ['*', '*', '*', '*'],
-
                     body: commentBody
                 },
 
@@ -259,16 +300,26 @@ function getDocDefinition(staff) {
                         return i % 2 === 0 ? '#CCCCCC' : null
                     },
                     paddingTop: function(i, node) {
-                        return 5
+                        return 2
                     },
                     paddingBottom: function(i, node) {
-                        return 5
+                        return 2
                     }
                 },
                 alignment: 'center'
             }
         ]
     }
+}
+
+function parseCost(val) {
+    var parsed = parseInt(val)
+
+    if (isNaN(parsed)) {
+        return 0
+    }
+
+    return parsed
 }
 
 module.exports = {

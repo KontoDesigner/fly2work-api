@@ -11,11 +11,11 @@ const updateStaff = async (body, ctx) => {
     const model = new constants.Staff()
 
     //BS
-    model.arrivalAirport = body.arrivalAirport
+    model.arrivalAirports = body.arrivalAirports
     model.statusUpdated = new Date()
     model.dateOfBirth = body.dateOfBirth
     model.dateOfFlight = body.dateOfFlight
-    model.departureAirport = body.departureAirport
+    model.departureAirports = body.departureAirports
     model.destination = body.destination
     model.gender = body.gender
     model.hotelNeeded = body.hotelNeeded

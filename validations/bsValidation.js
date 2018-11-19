@@ -40,15 +40,15 @@ const bsValidation = Yup.object().shape({
     phone: Yup.string()
         .nullable(true)
         .required('Phone is required'),
-    departureAirport: Yup.array()
+    departureAirports: Yup.array()
         .min(1, 'Min 1 departure airport')
         .max(3, 'Max 3 departure airports')
-        .required('Departure airport is required')
+        .required('Departure airports is required')
         .nullable(true),
-    arrivalAirport: Yup.array()
+    arrivalAirports: Yup.array()
         .min(1, 'Min 1 arrival airport')
         .max(3, 'Max 3 arrival airports')
-        .required('Arrival airport is required')
+        .required('Arrival airports is required')
         .nullable(true),
     comments: Yup.array().of(
         Yup.object().shape({
