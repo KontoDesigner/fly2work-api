@@ -37,24 +37,16 @@ const updateStaff = async (body, ctx) => {
     model.bookReturnFlightArrivalAirport = body.bookReturnFlightArrivalAirport
     model.railFly = body.railFly
     model.iataCode = body.iataCode
+    model.typeOfFlight = body.typeOfFlight
 
     //BTT
-    model.flightNumber = body.flightNumber
     model.bookingReference = body.bookingReference
-    model.flightArrivalTime = body.flightArrivalTime
-    model.flightDepartureTime = body.flightDepartureTime
-    model.typeOfFlight = body.typeOfFlight
-    model.typeOfFlight = body.typeOfFlight
     model.paymentMethod = body.paymentMethod
     model.xbag = body.xbag
-    model.flightCost = body.flightCost
-    model.xbagCost = body.xbagCost
-    model.hotelCost = body.hotelCost
-    model.totalCost = body.totalCost
     model.costCentre = body.costCentre
     model.travelType = body.travelType
 
-    //ALL
+    //Comments
     if (body.comments && body.comments.length > 0) {
         for (var comment of body.comments) {
             if (!comment.id) {
@@ -67,6 +59,27 @@ const updateStaff = async (body, ctx) => {
     }
 
     model.comments = body.comments ? body.comments : []
+
+    //Flights
+    const flights = []
+
+    for (var flight of body.flights) {
+        if (flight.enabled === true) {
+            flights.push({
+                flightNumber: flight.flightNumber,
+                flightDepartureTime: flight.flightDepartureTime,
+                flightArrivalTime: flight.flightArrivalTime,
+                departureAirport: flight.departureAirport,
+                arrivalAirport: flight.arrivalAirport,
+                flightCost: flight.flightCost,
+                xbagCost: flight.xbagCost,
+                hotelCost: flight.hotelCost,
+                totalCost: flight.totalCost
+            })
+        }
+    }
+
+    model.flights = flights
 
     const validation = await bsValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
@@ -81,7 +94,7 @@ const updateStaff = async (body, ctx) => {
         }
     }
 
-    //get attachments and attach them to model
+    //Attachments
     const staffAttachments = await mongo.collection('staffs').findOne(
         {
             id: model.id

@@ -26,23 +26,16 @@ function Staff() {
     this.bookReturnFlightDateOfFlight = ''
     this.bookReturnFlightDepartureAirport = ''
     this.bookReturnFlightArrivalAirport = ''
+    this.iataCode = ''
+    this.typeOfFlight = ''
 
     //BTT
-    // this.flightNumber = ''
     this.bookingReference = ''
-    // this.flightArrivalTime = ''
-    // this.flightDepartureTime = ''
-    this.typeOfFlight = ''
+    this.travelType = ''
     this.paymentMethod = ''
     this.xbag = ''
-    // this.flightCost = ''
-    // this.xbagCost = ''
-    // this.hotelCost = ''
-    // this.totalCost = ''
     this.costCentre = ''
-    this.iataCode = ''
-    this.travelType = ''
-    this.flights = [new Flight(true), new Flight(), new Flight()]
+    this.flights = [new Flight(true)]
 
     //ALL
     this.comments = []
@@ -56,10 +49,10 @@ function Flight(enabled = false) {
     this.flightNumber = ''
     this.flightArrivalTime = ''
     this.flightDepartureTime = ''
-    this.hotelCost = ''
-    this.flightCost = ''
-    this.xbagCost = ''
-    this.totalCost = ''
+    this.hotelCost = 0
+    this.flightCost = 0
+    this.xbagCost = 0
+    this.totalCost = 0
 }
 
 function Email() {
@@ -83,5 +76,6 @@ const Statuses = keyMirror({
 module.exports = {
     Statuses,
     Staff,
-    Email
+    Email,
+    Flight
 }
