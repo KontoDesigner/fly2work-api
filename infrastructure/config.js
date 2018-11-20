@@ -6,7 +6,10 @@ const config = {
     mailApi: process.env.MAIL_API,
     name: process.env.NAME,
     emailTo: process.env.EMAIL_TO,
-    emailUserAddress: process.env.EMAIL_USER_ADDRESS
+    emailUserAddress: process.env.EMAIL_USER_ADDRESS,
+    authAuthority: process.env.AUTH_AUTHORITY,
+    authClientId: process.env.AUTH_CLIENTID,
+    authTenantId: process.env.AUTH_TENANTID
 }
 
 module.exports = config
