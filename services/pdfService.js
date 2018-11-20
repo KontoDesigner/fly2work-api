@@ -73,6 +73,10 @@ function generatePdfPromise(staff) {
 }
 
 function getDocDefinition(staff) {
+    if (!staff) {
+        return null
+    }
+
     //Comments
     const comments = staff.comments
         ? staff.comments.map(c => [
