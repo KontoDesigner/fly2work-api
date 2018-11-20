@@ -57,42 +57,6 @@ async function logIncomingRequest(ctx, next) {
     })
 }
 
-async function auth(ctx, next) {
-    if (ctx.method === 'OPTIONS' || ctx.path.startsWith('/health') || ctx.url === '/') {
-        await next()
-
-        return
-    }
-
-    await passport.authenticate('oauth-bearer', { session: false })
-
-    const isAuthenticated = await ctx.isAuthenticated()
-
-    if (!isAuthenticated) {
-        logger.info(`UNAUTHORIZED ${ctx.method}`, { url: ctx.url })
-
-        ctx.throw(401)
-    }
-
-    if (ctx.path.startsWith('/staff/new')) {
-        //request from GPX, no role required(?)
-        await next()
-
-        return
-    }
-
-    // const user = ctx.state.user
-    const inRole = true
-
-    if (!inRole) {
-        logger.info(`PERMISSION DENIED ${ctx.method}`, { url: ctx.url })
-
-        ctx.throw(403)
-    }
-
-    await next()
-}
-
 async function main() {
     mongo.connect()
 
@@ -115,7 +79,6 @@ async function main() {
         }
     })
     passport.use(bearerStrategy)
-    app.use(auth)
 
     app.use(errorHandler)
     app.use(logIncomingRequest)

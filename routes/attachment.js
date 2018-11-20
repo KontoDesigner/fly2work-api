@@ -1,10 +1,11 @@
 const router = require('koa-better-router')().loadMethods()
 const attachmentService = require('../services/attachmentService')
 const asyncBusboy = require('async-busboy')
+const passport = require('koa-passport')
 
 const BASE = '/attachment'
 
-router.post(`${BASE}/upload`, async (ctx, next) => {
+router.post(`${BASE}/upload`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
     const { files, fields } = await asyncBusboy(ctx.req)
 
     const staffId = fields.staffId
@@ -17,7 +18,7 @@ router.post(`${BASE}/upload`, async (ctx, next) => {
     await next()
 })
 
-router.post(`${BASE}/download`, async (ctx, next) => {
+router.post(`${BASE}/download`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
     const staffId = ctx.request.body.staffId
     const attachmentId = ctx.request.body.attachmentId
 
@@ -28,7 +29,7 @@ router.post(`${BASE}/download`, async (ctx, next) => {
     await next()
 })
 
-router.post(`${BASE}/delete`, async (ctx, next) => {
+router.post(`${BASE}/delete`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
     const staffId = ctx.request.body.staffId
     const attachmentId = ctx.request.body.attachmentId
 
