@@ -11,7 +11,7 @@ router.post(`${BASE}/upload`, passport.authenticate('oauth-bearer', { session: f
     const staffId = fields.staffId
     const file = files[0]
 
-    const res = await attachmentService.upload(staffId, file)
+    const res = await attachmentService.upload(ctx, staffId, file)
 
     ctx.body = res
 

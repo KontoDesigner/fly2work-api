@@ -5,7 +5,7 @@ const passport = require('koa-passport')
 const BASE = '/user'
 
 router.get(`${BASE}/getuserroles`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
-    const res = await userService.getUserRoles(ctx)
+    const res = userService.getUserRoles(ctx)
 
     ctx.body = res
 

@@ -2,17 +2,24 @@ const mongo = require('../infrastructure/mongo')
 const logger = require('tuin-logging')
 const constants = require('../infrastructure/constants')
 const bsValidation = require('../validations/bsValidation')
+const bttValidation = require('../validations/bttValidation')
 const newValidation = require('../validations/newValidation')
 const email = require('../infrastructure/email')
 const uuid = require('node-uuid')
 const moment = require('moment')
+const userService = require('./userService')
 
 const updateStaff = async (body, ctx) => {
-    const model = new constants.Staff()
+    const user = userService.getUser(ctx)
+    const userName = userService.getUserName(ctx, user)
+    const userRoles = userService.getUserRoles(ctx, user)
+
+    let model = new constants.StaffBS()
 
     //BS
     model.arrivalAirports = body.arrivalAirports
-    model.statusUpdated = new Date()
+    model.updated = new Date()
+    model.updatedBy = userName
     model.dateOfBirth = body.dateOfBirth
     model.dateOfFlight = body.dateOfFlight
     model.departureAirports = body.departureAirports
@@ -39,49 +46,64 @@ const updateStaff = async (body, ctx) => {
     model.iataCode = body.iataCode
     model.typeOfFlight = body.typeOfFlight
 
-    //BTT
-    model.bookingReference = body.bookingReference
-    model.paymentMethod = body.paymentMethod
-    model.xbag = body.xbag
-    model.costCentre = body.costCentre
-    model.travelType = body.travelType
-
     //Comments
     if (body.comments && body.comments.length > 0) {
         for (var comment of body.comments) {
             if (!comment.id) {
                 comment.id = uuid.v1()
                 comment.created = moment()._d
-                comment.createdBy = 'TEST'
-                comment.group = 'TEST'
+                comment.createdBy = userName
+                comment.group = userRoles.join(', ')
             }
         }
     }
 
     model.comments = body.comments ? body.comments : []
 
-    //Flights
-    const flights = []
+    let validation = null
 
-    for (var flight of body.flights) {
-        flights.push({
-            flightNumber: flight.flightNumber,
-            flightDepartureTime: flight.flightDepartureTime,
-            flightArrivalTime: flight.flightArrivalTime,
-            departureAirport: flight.departureAirport,
-            arrivalAirport: flight.arrivalAirport,
-            flightCost: flight.flightCost,
-            xbagCost: flight.xbagCost,
-            hotelCost: flight.hotelCost,
-            totalCost: flight.totalCost
+    if (userRoles.includes(constants.UserRoles.BTT)) {
+        console.log('BEFORE', model)
+
+        // model = { model.staffBS, ...new constants.StaffBTT() }
+        model = Object.assign(model, new constants.StaffBTT())
+
+        //BTT
+        model.bookingReference = body.bookingReference
+        model.paymentMethod = body.paymentMethod
+        model.xbag = body.xbag
+        model.costCentre = body.costCentre
+        model.travelType = body.travelType
+
+        console.log('AFTER', model)
+
+        //Flights
+        const flights = []
+
+        for (var flight of body.flights) {
+            flights.push({
+                flightNumber: flight.flightNumber,
+                flightDepartureTime: flight.flightDepartureTime,
+                flightArrivalTime: flight.flightArrivalTime,
+                departureAirport: flight.departureAirport,
+                arrivalAirport: flight.arrivalAirport,
+                flightCost: flight.flightCost,
+                xbagCost: flight.xbagCost,
+                hotelCost: flight.hotelCost,
+                totalCost: flight.totalCost
+            })
+        }
+
+        model.flights = flights
+
+        validation = await bttValidation.validate(model, { abortEarly: false }).catch(function(err) {
+            return err
+        })
+    } else {
+        validation = await bsValidation.validate(model, { abortEarly: false }).catch(function(err) {
+            return err
         })
     }
-
-    model.flights = flights
-
-    const validation = await bsValidation.validate(model, { abortEarly: false }).catch(function(err) {
-        return err
-    })
 
     if (validation.errors && validation.errors.length > 0) {
         logger.warning('Staff model validation failed, aborting', { url: ctx.url, model, validation })

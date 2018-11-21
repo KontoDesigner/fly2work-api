@@ -3,8 +3,13 @@ const mongo = require('../infrastructure/mongo')
 const moment = require('moment')
 const uuid = require('node-uuid')
 const fs = require('fs')
+const userService = require('./userService')
 
-const upload = async (staffId, file) => {
+const upload = async (ctx, staffId, file) => {
+    const user = userService.getUser(ctx)
+    const userName = userService.getUserName(ctx, user)
+    const userRoles = userService.getUserRoles(ctx, user)
+
     try {
         const size = fs.statSync(file.path).size
 
@@ -15,8 +20,8 @@ const upload = async (staffId, file) => {
             size: size,
             type: file.mimeType,
             created: moment()._d,
-            createdBy: 'TEST',
-            group: 'TEST'
+            createdBy: userName,
+            group: userRoles.join(', ')
         }
 
         const updateOne = await mongo.collection('staffs').updateOne({ id: staffId }, { $push: { attachments: attachment } })

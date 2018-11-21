@@ -1,24 +1,33 @@
 const constants = require('../infrastructure/constants')
-const logger = require('tuin-logging')
 
-const getUserRoles = async ctx => {
-    const user = ctx.state.user
+const getUserRoles = (ctx, user = null) => {
+    // const u = user ? user : getUser(ctx)
 
     let userRoles = []
 
     userRoles.push(constants.UserRoles.BTT)
 
-    // if (user.roles.contains('BTT')) {
+    // if (u.roles.contains('BTT')) {
     //     userRoles.push(constants.UserRoles.BTT)
-    // } else if (user.roles.contains('BS')) {
+    // } else if (u.roles.contains('BS'))ks {
     //     userRoles.push(constants.UserRoles.BS)
     // }
-
-    logger.info(`OUTGOING ${ctx.method}`, { user, url: ctx.url, userRoles })
 
     return userRoles
 }
 
+const getUserName = (ctx, user = null) => {
+    const u = user ? user : getUser(ctx)
+
+    return u.name
+}
+
+const getUser = ctx => {
+    return ctx.state.user
+}
+
 module.exports = {
+    getUser,
+    getUserName,
     getUserRoles
 }

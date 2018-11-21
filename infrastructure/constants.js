@@ -1,7 +1,6 @@
 const keyMirror = require('keymirror')
 
-function Staff() {
-    //BS
+function StaffBS() {
     this.id = ''
     this.firstName = ''
     this.lastName = ''
@@ -20,7 +19,8 @@ function Staff() {
     this.gender = ''
     this.destination = ''
     this.positionStart = ''
-    this.statusUpdated = ''
+    this.updated = ''
+    this.updatedBy = ''
     this.railFly = false
     this.bookReturnFlight = false
     this.bookReturnFlightDateOfFlight = ''
@@ -29,17 +29,21 @@ function Staff() {
     this.iataCode = ''
     this.typeOfFlight = ''
 
-    //BTT
+    this.comments = []
+    this.attachments = []
+}
+
+function StaffBTT() {
     this.bookingReference = ''
     this.travelType = ''
     this.paymentMethod = ''
     this.xbag = ''
     this.costCentre = ''
     this.flights = [new Flight(true)]
+}
 
-    //ALL
-    this.comments = []
-    this.attachments = []
+function Staff() {
+    return { ...new StaffBS(), ...new StaffBTT() }
 }
 
 function Flight(enabled = false) {
@@ -80,6 +84,8 @@ const Statuses = keyMirror({
 module.exports = {
     Statuses,
     Staff,
+    StaffBS,
+    StaffBTT,
     Email,
     Flight,
     UserRoles
