@@ -6,6 +6,7 @@ router.extend(require('./staff'))
 router.extend(require('./pdf'))
 router.extend(require('./attachment'))
 router.extend(require('./excel'))
+router.extend(require('./user'))
 
 router.get('/', async (ctx, next) => {
     const res = router.routes

@@ -65,6 +65,11 @@ function Email() {
     this.attachments = null
 }
 
+const UserRoles = keyMirror({
+    BS: null,
+    BTT: null
+})
+
 const Statuses = keyMirror({
     New: null,
     Submitted: null,
@@ -76,5 +81,6 @@ module.exports = {
     Statuses,
     Staff,
     Email,
-    Flight
+    Flight,
+    UserRoles
 }
