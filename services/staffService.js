@@ -64,9 +64,9 @@ const updateOrInsertStaff = async (body, ctx) => {
 
     let validation = null
 
-    if (userRoles.includes(constants.UserRoles.BTT)) {
-        model = Object.assign(model, new constants.StaffBTT())
+    model = Object.assign(model, new constants.StaffBTT())
 
+    if (userRoles.includes(constants.UserRoles.BTT)) {
         //BTT
         model.bookingReference = body.bookingReference
         model.paymentMethod = body.paymentMethod
