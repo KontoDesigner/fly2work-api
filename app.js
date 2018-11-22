@@ -57,6 +57,32 @@ async function logIncomingRequest(ctx, next) {
     })
 }
 
+async function roleCheck(ctx, next) {
+    if (ctx.method === 'OPTIONS' || ctx.path.startsWith('/health') || ctx.path.startsWith('/staff/new')) {
+        await next()
+
+        return
+    }
+
+    const user = ctx.state.user
+
+    if (!user) {
+        logger.warning(`NOT AUTHENTICATED`, { url: ctx.url })
+
+        ctx.throw(401)
+    }
+
+    const isUserInRole = true
+
+    if (!isUserInRole) {
+        logger.warning(`NOT AUTHORIZED`, { url: ctx.url, user })
+
+        ctx.throw(403)
+    }
+
+    await next()
+}
+
 async function main() {
     mongo.connect()
 
@@ -84,6 +110,7 @@ async function main() {
     app.use(logIncomingRequest)
     app.use(camelCase)
     app.use(routes)
+    app.use(roleCheck)
 
     module.exports = app
 }
