@@ -7,7 +7,7 @@ const BASE = '/staff'
 router.post(BASE, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
     const body = ctx.request.body
 
-    const res = await staffService.updateStaff(body, ctx)
+    const res = await staffService.updateOrInsertStaff(body, ctx)
 
     ctx.body = res
 

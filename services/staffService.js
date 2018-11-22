@@ -9,12 +9,14 @@ const uuid = require('node-uuid')
 const moment = require('moment')
 const userService = require('./userService')
 
-const updateStaff = async (body, ctx) => {
+const updateOrInsertStaff = async (body, ctx) => {
     const user = userService.getUser(ctx)
     const userName = userService.getUserName(ctx, user)
     const userRoles = userService.getUserRoles(ctx, user)
 
     let model = new constants.StaffBS()
+
+    const add = body.add
 
     //BS
     model.arrivalAirports = body.arrivalAirports
@@ -63,9 +65,6 @@ const updateStaff = async (body, ctx) => {
     let validation = null
 
     if (userRoles.includes(constants.UserRoles.BTT)) {
-        console.log('BEFORE', model)
-
-        // model = { model.staffBS, ...new constants.StaffBTT() }
         model = Object.assign(model, new constants.StaffBTT())
 
         //BTT
@@ -74,8 +73,6 @@ const updateStaff = async (body, ctx) => {
         model.xbag = body.xbag
         model.costCentre = body.costCentre
         model.travelType = body.travelType
-
-        console.log('AFTER', model)
 
         //Flights
         const flights = []
@@ -125,26 +122,53 @@ const updateStaff = async (body, ctx) => {
     model.attachments = staffAttachments && staffAttachments.attachments ? staffAttachments.attachments : []
 
     try {
-        const replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, { $set: model })).result
+        if (add === true) {
+            const staffExists = await mongo.collection('staffs').findOne({ id: model.id })
 
-        logger.info('Update staff result', { url: ctx.url, model, replaceOne })
+            if (staffExists) {
+                logger.warning(`Staff with id: '${model.id}' already exists`, { url: ctx.url, model })
 
-        if (replaceOne.ok) {
-            if (model.status === constants.Statuses.Confirmed) {
-                await email.send(model)
+                return {
+                    ok: false,
+                    alreadyExists: true
+                }
+            } else {
+                const insertOne = (await mongo.collection('staffs').insertOne(model)).result
+
+                logger.info('Insert staff result', { url: ctx.url, model, insertOne })
+
+                if (insertOne.ok) {
+                    if (model.status === constants.Statuses.Confirmed) {
+                        await email.send(model)
+                    }
+
+                    return {
+                        ok: true
+                    }
+                }
             }
+        } else {
+            const replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, { $set: model })).result
 
-            return {
-                ok: true
+            logger.info('Update staff result', { url: ctx.url, model, replaceOne })
+
+            if (replaceOne.ok) {
+                if (model.status === constants.Statuses.Confirmed) {
+                    await email.send(model)
+                }
+
+                return {
+                    ok: true
+                }
             }
         }
     } catch (err) {
-        logger.error('Error updating staff', err, model)
+        logger.error('Error updating/inserting staff', err, model)
     }
 
     return {
         ok: false,
-        errors: ['Update staff failed']
+        errors: ['Update/insert staff failed']
     }
 }
 
@@ -268,7 +292,7 @@ const getStaffByIdAndStatus = async (id, status, ctx) => {
 }
 
 module.exports = {
-    updateStaff,
+    updateOrInsertStaff,
     insertStaff,
     getStaffs,
     getStaffCount,
