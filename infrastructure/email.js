@@ -16,7 +16,7 @@ async function send(staff) {
     email.emailTo = [config.emailTo]
     email.isBodyHtml = false
     email.subject = `${staff.status} Request - ${staff.id}`
-    email.emailUserAddress = config.emailUserAddress
+    email.userAddress = config.emailUserAddress
 
     const mailApi = `${config.mailApi}/${config.name}`
     // const excelData = excel.generateExcel(staff, 'binary')

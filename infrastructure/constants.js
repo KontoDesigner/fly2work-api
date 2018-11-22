@@ -61,7 +61,7 @@ function Flight() {
 }
 
 function Email() {
-    this.emailUserAddress = null
+    this.userAddress = null
     this.emailTo = null
     this.ccTo = null
     this.bccTo = null
