@@ -46,8 +46,7 @@ function Staff() {
     return { ...new StaffBS(), ...new StaffBTT() }
 }
 
-function Flight(enabled = false) {
-    this.enabled = enabled
+function Flight() {
     this.departureAirport = ''
     this.arrivalAirport = ''
     this.flightNumber = ''
