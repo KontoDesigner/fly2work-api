@@ -74,6 +74,21 @@ const updateOrInsertStaff = async (body, ctx) => {
         model.costCentre = body.costCentre
         model.travelType = body.travelType
 
+        const staffGreenLight = await mongo.collection('staffs').findOne(
+            {
+                id: model.id
+            },
+            { fields: { greenLight: 1, _id: 0 } }
+        )
+
+        if (staffGreenLight.greenLight === false && body.greenLight === true) {
+            model.greenLight = body.greenLight
+            model.greenLightUpdated = new Date()
+            model.greenLightUpdatedBy = userName
+        } else {
+            model.greenLight = staffGreenLight.greenLight
+        }
+
         //Flights
         const flights = []
 
@@ -187,6 +202,7 @@ const insertStaff = async (body, ctx) => {
     model.positionStart = body.PositionStart ? body.PositionStart : ''
     model.jobTitle = body.JobTitle ? body.JobTitle : ''
     model.iataCode = body.IataCode ? body.IataCode : ''
+    model.greenLight = body.GreenLight ? body.GreenLight : null
 
     const validation = await newValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
@@ -239,37 +255,74 @@ const getStaffs = async ctx => {
 }
 
 const getStaffCount = async ctx => {
-    const res = await mongo
+    // const res = await mongo
+    //     .collection('staffs')
+    //     .aggregate([{ $match: { hr: { $ne: true } } }, { $group: { _id: '$status', count: { $sum: 1 } } }])
+    //     .toArray()
+
+    // const waitingForApproval = await mongo
+    //     .collection('staffs')
+    //     .find({ hr: true, status: { $ne: constants.Statuses.New } })
+    //     .count()
+
+    const staffs = await mongo
         .collection('staffs')
-        .aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }])
+        .find({}, { fields: { status: 1, greenLight: 1, _id: 0 } })
         .toArray()
 
-    const _new = res.find(obj => obj._id === constants.Statuses.New)
-    const waitingForApproval = res.find(obj => obj._id === constants.Statuses.WaitingForApproval)
-    const submitted = res.find(obj => obj._id === constants.Statuses.Submitted)
-    const pending = res.find(obj => obj._id === constants.Statuses.Pending)
-    const confirmed = res.find(obj => obj._id === constants.Statuses.Confirmed)
+    const _new = staffs.filter(staff => staff.status === constants.Statuses.New)
+    const submitted = staffs.filter(
+        staff => staff.status === constants.Statuses.Submitted && (staff.greenLight === null || staff.greenLight === true)
+    )
+    const pending = staffs.filter(staff => staff.status === constants.Statuses.Pending && (staff.greenLight === null || staff.greenLight === true))
+    const confirmed = staffs.filter(
+        staff => staff.status === constants.Statuses.Confirmed && (staff.greenLight === null || staff.greenLight === true)
+    )
+    const waitingForApproval = staffs.filter(staff => staff.status !== constants.Statuses.New && staff.greenLight === false)
 
     const count = {
-        new: _new ? _new.count : 0,
-        waitingForApproval: waitingForApproval ? waitingForApproval.count : 0,
-        submitted: submitted ? submitted.count : 0,
-        pending: pending ? pending.count : 0,
-        confirmed: confirmed ? confirmed.count : 0,
+        new: _new ? _new.length : 0,
+        waitingForApproval: waitingForApproval ? waitingForApproval.length : 0,
+        submitted: submitted ? submitted.length : 0,
+        pending: pending ? pending.length : 0,
+        confirmed: confirmed ? confirmed.length : 0,
         overview: null
     }
 
-    count.overview = count.new + count.submitted + count.pending + count.confirmed
+    count.overview = count.new + count.submitted + count.pending + count.confirmed + count.waitingForApproval
 
     logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count })
 
     return count
 }
 
+const getStaffsByGreenLight = async (greenLight, ctx) => {
+    const parseGreenLight = greenLight === 'true'
+
+    const staffs = await mongo
+        .collection('staffs')
+        .find({ greenLight: parseGreenLight, status: { $ne: constants.Statuses.New } })
+        .toArray()
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staffs.length })
+
+    return staffs
+}
+
+const getStaffByIdAndGreenLight = async (id, greenLight, ctx) => {
+    const parseGreenLight = greenLight === 'true'
+
+    const staff = await mongo.collection('staffs').findOne({ id: id, greenLight: parseGreenLight })
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staff ? 1 : 0 })
+
+    return staff
+}
+
 const getStaffsByStatus = async (status, ctx) => {
     const staffs = await mongo
         .collection('staffs')
-        .find({ status: status })
+        .find({ status: status, greenLight: { $ne: false } })
         .toArray()
 
     logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staffs.length })
@@ -286,7 +339,7 @@ const getStaffById = async (id, ctx) => {
 }
 
 const getStaffByIdAndStatus = async (id, status, ctx) => {
-    const staff = await mongo.collection('staffs').findOne({ id: id, status: status })
+    const staff = await mongo.collection('staffs').findOne({ id: id, status: status, greenLight: { $ne: false } })
 
     logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staff ? 1 : 0 })
 
@@ -300,5 +353,7 @@ module.exports = {
     getStaffCount,
     getStaffsByStatus,
     getStaffById,
-    getStaffByIdAndStatus
+    getStaffByIdAndStatus,
+    getStaffsByGreenLight,
+    getStaffByIdAndGreenLight
 }

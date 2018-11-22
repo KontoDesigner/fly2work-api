@@ -50,6 +50,27 @@ router.get(`${BASE}/getbystatus/:status`, passport.authenticate('oauth-bearer', 
     await next()
 })
 
+router.get(`${BASE}/getbygreenlight/:greenlight`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+    const greenLight = ctx.params.greenlight
+
+    const res = await staffService.getStaffsByGreenLight(greenLight, ctx)
+
+    ctx.body = res
+
+    await next()
+})
+
+router.get(`${BASE}/getbyidandgreenlight/:id/:greenlight`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+    const id = ctx.params.id
+    const greenLight = ctx.params.greenlight
+
+    const res = await staffService.getStaffByIdAndGreenLight(id, greenLight, ctx)
+
+    ctx.body = res
+
+    await next()
+})
+
 router.get(`${BASE}/getbyid/:id`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
     const id = ctx.params.id
 

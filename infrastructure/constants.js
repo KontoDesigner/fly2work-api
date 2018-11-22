@@ -40,6 +40,9 @@ function StaffBTT() {
     this.xbag = ''
     this.costCentre = ''
     this.flights = [new Flight(true)]
+    this.greenLight = null
+    this.greenLightUpdated = null
+    this.greenLightUpdatedBy = null
 }
 
 function Staff() {
@@ -75,7 +78,6 @@ const UserRoles = keyMirror({
 
 const Statuses = keyMirror({
     New: null,
-    WaitingForApproval: null,
     Submitted: null,
     Pending: null,
     Confirmed: null
