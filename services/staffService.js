@@ -245,12 +245,14 @@ const getStaffCount = async ctx => {
         .toArray()
 
     const _new = res.find(obj => obj._id === constants.Statuses.New)
+    const waitingForApproval = res.find(obj => obj._id === constants.Statuses.WaitingForApproval)
     const submitted = res.find(obj => obj._id === constants.Statuses.Submitted)
     const pending = res.find(obj => obj._id === constants.Statuses.Pending)
     const confirmed = res.find(obj => obj._id === constants.Statuses.Confirmed)
 
     const count = {
         new: _new ? _new.count : 0,
+        waitingForApproval: waitingForApproval ? waitingForApproval.count : 0,
         submitted: submitted ? submitted.count : 0,
         pending: pending ? pending.count : 0,
         confirmed: confirmed ? confirmed.count : 0,

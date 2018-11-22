@@ -75,6 +75,7 @@ const UserRoles = keyMirror({
 
 const Statuses = keyMirror({
     New: null,
+    WaitingForApproval: null,
     Submitted: null,
     Pending: null,
     Confirmed: null
