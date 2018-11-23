@@ -15,7 +15,10 @@ const bsValidation = Yup.object().shape({
         .required('First name is required'),
     lastName: Yup.string()
         .nullable(true)
-        .required('Last name is required'),
+        .required('Sur name is required'),
+    lastName2: Yup.string()
+        .nullable(true)
+        .required('2nd sur name is required'),
     dateOfBirth: Yup.date()
         .typeError('Date of birth must be a datetime')
         .nullable(true)

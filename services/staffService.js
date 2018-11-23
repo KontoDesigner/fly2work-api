@@ -31,6 +31,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.id = body.id
     model.firstName = body.firstName
     model.lastName = body.lastName
+    model.lastName2 = body.lastName2
     model.passportNumber = body.passportNumber
     model.phone = body.phone
     model.sourceMarket = body.sourceMarket
@@ -192,6 +193,7 @@ const insertStaff = async (body, ctx) => {
 
     model.id = body.Id
     model.firstName = body.FirstName ? body.FirstName : ''
+    model.lastName2 = body.LastName2 ? body.LastName2 : ''
     model.lastName = body.LastName ? body.LastName : ''
     model.dateOfBirth = body.DateOfBirth ? body.DateOfBirth : ''
     model.sourceMarket = body.SourceMarket ? body.SourceMarket : ''
