@@ -7,83 +7,86 @@ function generateExcel(staffs, type = 'binary') {
     try {
         var wb = xlsx.utils.book_new()
 
-        const statuses = Object.keys(constants.Statuses).map(s => constants.Statuses[s])
+        logger.info(`Started excel export with ${staffs.length} staff(s)`, { staffs })
 
-        logger.info(`Started excel export with ${staffs.length} staff(s) and ${statuses.length} status(es)`, { staffs, statuses })
+        var ws_data = [HEADER]
 
-        for (const status of statuses) {
-            var ws_data = [HEADER]
+        const sheetName = `Requests (${staffs.length})`
 
-            const filteredStaffs = staffs.filter(s => s.status === status)
+        wb.SheetNames.push(sheetName)
 
-            const sheetName = `${status} (${filteredStaffs.length})`
+        for (const staff of staffs) {
+            const comments = staff.comments
+                ? staff.comments.map(c => ({
+                      text: c.text,
+                      createdBy: c.createdBy,
+                      group: c.group,
+                      created: c.created
+                  }))
+                : []
 
-            wb.SheetNames.push(sheetName)
+            const body = [
+                staff.id,
+                //status
+                staff.greenLight === false && staff.status !== constants.Statuses.New ? `Waiting For Approval (${staff.status})` : staff.status,
+                staff.firstName,
+                staff.lastName,
+                staff.passportNumber,
+                staff.dateOfBirth ? moment(staff.dateOfBirth).format('DD/MM/YYYY') : '',
+                staff.sourceMarket,
+                staff.positionStart ? moment(staff.positionStart).format('YYYY-MM-DD') : '',
+                staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : '',
+                staff.jobTitle,
+                staff.destination,
+                staff.phone,
+                staff.departureAirports,
+                staff.arrivalAirports,
+                staff.typeOfFlight,
+                staff.gender ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : '',
+                staff.hotelNeeded === true ? 'YES' : 'NO',
+                staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : '',
+                staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : '',
+                staff.bookReturnFlight === true ? 'YES' : 'NO',
+                staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY-MM-DD') : '',
+                staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : '',
+                staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : '',
+                staff.railFly === true ? 'YES' : 'NO',
+                staff.iataCode,
+                staff.bookingReference,
+                staff.paymentMethod,
+                staff.xbag,
+                staff.costCentre,
+                staff.travelType,
+                staff.greenLight ? (staff.greenlight == true ? 'YES' : 'NO') : ''
+            ]
 
-            for (const staff of filteredStaffs) {
-                const comments = staff.comments
-                    ? staff.comments.map(c => ({
-                          text: c.text,
-                          createdBy: c.createdBy,
-                          group: c.group,
-                          created: c.created
-                      }))
-                    : []
+            for (var i = 0; i < 3; i++) {
+                const flight = staff.flights[i]
 
-                for (var flight of staff.flights) {
-                    const body = [
-                        staff.id,
-                        staff.firstName,
-                        staff.lastName,
-                        staff.passportNumber,
-                        staff.dateOfBirth ? moment(staff.dateOfBirth).format('DD/MM/YYYY') : '',
-                        staff.sourceMarket,
-                        staff.positionStart ? moment(staff.positionStart).format('YYYY-MM-DD') : '',
-                        staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : '',
-                        staff.jobTitle,
-                        staff.destination,
-                        staff.phone,
-                        staff.departureAirports,
-                        staff.arrivalAirports,
-                        staff.typeOfFlight,
-                        staff.gender ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : '',
-                        staff.hotelNeeded === true ? 'YES' : 'NO',
-                        staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : '',
-                        staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : '',
-                        staff.bookReturnFlight === true ? 'YES' : 'NO',
-                        staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY-MM-DD') : '',
-                        staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : '',
-                        staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : '',
-                        staff.railFly === true ? 'YES' : 'NO',
-                        staff.iataCode,
-                        staff.bookingReference,
-                        staff.paymentMethod,
-                        staff.xbag,
-                        staff.costCentre,
-                        staff.travelType,
-
-                        flight.flightNumber,
-                        flight.flightDepartureTime ? moment(flight.flightDepartureTime).format('YYYY-MM-DD') : '',
-                        flight.flightArrivalTime ? moment(flight.flightArrivalTime).format('YYYY-MM-DD') : '',
-                        flight.departureAirport,
-                        flight.arrivalAirport,
-                        flight.flightCost,
-                        flight.xbagCost,
-                        flight.hotelCost,
-                        parseCost(flight.flightCost) + parseCost(staff.xbagCost) + parseCost(staff.hotelCost),
-
-                        JSON.stringify(comments)
-                    ]
-
-                    ws_data.push(body)
+                if (flight) {
+                    body.push(flight.flightNumber)
+                    body.push(flight.flightDepartureTime ? moment(flight.flightDepartureTime).format('YYYY-MM-DD') : '')
+                    body.push(flight.flightArrivalTime ? moment(flight.flightArrivalTime).format('YYYY-MM-DD') : '')
+                    body.push(flight.departureAirport)
+                    body.push(flight.arrivalAirport)
+                    body.push(flight.flightCost)
+                    body.push(flight.xbagCost)
+                    body.push(flight.hotelCost)
+                    body.push(parseCost(flight.flightCost) + parseCost(staff.xbagCost) + parseCost(staff.hotelCost))
+                } else {
+                    body.push('', '', '', '', '', '', '', '', '')
                 }
-
-                logger.info(`Pushed ${filteredStaffs.length} staff(s) to ${status} sheet`, { staffs, status })
             }
 
-            var ws = xlsx.utils.aoa_to_sheet(ws_data)
-            wb.Sheets[sheetName] = ws
+            body.push(JSON.stringify(comments))
+
+            ws_data.push(body)
+
+            logger.info(`Pushed ${staffs.length} staff(s) to sheet`, { staffs })
         }
+
+        var ws = xlsx.utils.aoa_to_sheet(ws_data)
+        wb.Sheets[sheetName] = ws
 
         var wbout = xlsx.write(wb, { bookType: 'xlsx', type: type })
 
@@ -113,6 +116,7 @@ module.exports = {
 
 const HEADER = [
     'Id',
+    'Status',
     'First Name',
     'Last Name',
     'Passport Number',
@@ -141,14 +145,37 @@ const HEADER = [
     'Xbag',
     'Cost Centre',
     'Travel Type',
-    'Flight Number',
-    'Flight Departure Time',
-    'Flight Arrival Time',
-    'Departure Airport',
-    'Arrival Airport',
-    'Flight Cost',
-    'Xbag Cost',
-    'Hotel Cost',
-    'Total Cost',
+    'Green Light',
+
+    '1st Flight Number',
+    '1st Flight Departure Time',
+    '1st Flight Arrival Time',
+    '1st Departure Airport',
+    '1st Arrival Airport',
+    '1st Flight Cost',
+    '1st Xbag Cost',
+    '1st Hotel Cost',
+    '1st Total Cost',
+
+    '2nd Flight Number',
+    '2nd Flight Departure Time',
+    '2nd Flight Arrival Time',
+    '2nd Departure Airport',
+    '2nd Arrival Airport',
+    '2nd Flight Cost',
+    '2nd Xbag Cost',
+    '2nd Hotel Cost',
+    '2nd Total Cost',
+
+    '3nd Flight Number',
+    '3nd Flight Departure Time',
+    '3nd Flight Arrival Time',
+    '3nd Departure Airport',
+    '3nd Arrival Airport',
+    '3nd Flight Cost',
+    '3nd Xbag Cost',
+    '3nd Hotel Cost',
+    '3nd Total Cost',
+
     'Comments'
 ]
