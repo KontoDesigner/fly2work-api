@@ -47,7 +47,7 @@ function StaffBTT() {
 }
 
 function Staff() {
-    return { ...new StaffBS(), ...new StaffBTT() }
+    return Object.assign(new StaffBS(), new StaffBTT())
 }
 
 function Flight() {

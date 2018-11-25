@@ -1,6 +1,7 @@
 const logger = require('tuin-logging')
 const pdfMakePrinter = require('pdfmake/src/printer')
 const moment = require('moment')
+const constants = require('../infrastructure/constants')
 
 function generatePdfCallback(staff, callback) {
     logger.info('Started pdf export', { staff })
@@ -128,7 +129,9 @@ function getDocDefinition(staff) {
     return {
         content: [
             {
-                text: `${staff.firstName} ${staff.lastName} (${staff.status === null ? 'New' : staff.status})`,
+                text: `${staff.firstName} ${staff.lastName} (${
+                    staff.greenLight === false && staff.status !== constants.Statuses.New ? `Waiting For Approval (${staff.status})` : staff.status
+                })`,
                 style: 'header',
                 alignment: 'center',
                 bold: true,
@@ -238,8 +241,12 @@ function getDocDefinition(staff) {
                             { text: staff.paymentMethod ? staff.paymentMethod : ' ' }
                         ],
 
-                        [{ text: 'Xbag', bold: true }, { text: 'Cost Centre', bold: true }, { text: '', bold: true }],
-                        [{ text: staff.xbag ? staff.xbag : ' ' }, { text: staff.costCentre ? staff.costCentre : ' ' }, { text: ' ' }]
+                        [{ text: 'Xbag', bold: true }, { text: 'Cost Centre', bold: true }, { text: 'Green Light', bold: true }],
+                        [
+                            { text: staff.xbag ? staff.xbag : ' ' },
+                            { text: staff.costCentre ? staff.costCentre : ' ' },
+                            { text: staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : '' }
+                        ]
                     ]
                 },
 

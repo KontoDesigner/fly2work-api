@@ -58,7 +58,7 @@ function generateExcel(staffs, type = 'binary') {
                 staff.xbag,
                 staff.costCentre,
                 staff.travelType,
-                staff.greenLight ? (staff.greenlight == true ? 'YES' : 'NO') : ''
+                staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : ''
             ]
 
             for (var i = 0; i < 3; i++) {
