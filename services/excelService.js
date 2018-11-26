@@ -11,7 +11,7 @@ function generateExcel(staffs, type = 'binary') {
 
         var ws_data = [HEADER]
 
-        const sheetName = `Requests (${staffs.length})`
+        const sheetName = `Request(s) (${staffs.length})`
 
         wb.SheetNames.push(sheetName)
 
@@ -44,7 +44,7 @@ function generateExcel(staffs, type = 'binary') {
                 staff.arrivalAirports,
                 staff.typeOfFlight,
                 staff.iataCode,
-                staff.gender ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : '',
+                staff.gender !== null && staff.gender !== undefined ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : '',
                 staff.hotelNeeded === true ? 'YES' : 'NO',
                 staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : '',
                 staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : '',

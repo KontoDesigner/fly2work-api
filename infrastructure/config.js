@@ -9,7 +9,8 @@ const config = {
     emailUserAddress: process.env.EMAIL_USER_ADDRESS,
     authAuthority: process.env.AUTH_AUTHORITY,
     authClientId: process.env.AUTH_CLIENTID,
-    authTenantId: process.env.AUTH_TENANTID
+    authTenantId: process.env.AUTH_TENANTID,
+    web: process.env.WEB
 }
 
 module.exports = config

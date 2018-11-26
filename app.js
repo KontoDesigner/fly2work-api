@@ -94,10 +94,8 @@ async function main() {
     app.use(passport.initialize())
     app.use(passport.session())
     const bearerStrategy = new BearerStrategy(authOptions, function(token, done) {
-        logger.info(token, 'was the token retrieved')
-
         if (!token.oid) {
-            done(new Error('oid is not found in token'))
+            done(new Error('oid was not found in token'))
         } else {
             owner = token.oid
 

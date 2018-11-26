@@ -160,8 +160,12 @@ const updateOrInsertStaff = async (body, ctx) => {
                 logger.info('Insert staff result', { url: ctx.url, model, insertOne })
 
                 if (insertOne.ok) {
-                    //Add BTT to emails (NEW => SUBMITTED)
+                    //Add createdBy and BTT to emails (NEW => SUBMITTED)
                     const statusText = `${constants.Statuses.New} => ${constants.Statuses.Submitted}`
+
+                    if (model.createdByEmail) {
+                        model.emails.push(model.createdByEmail)
+                    }
 
                     model.emails.push(config.emailBTT)
 
@@ -180,11 +184,13 @@ const updateOrInsertStaff = async (body, ctx) => {
             if (replaceOne.ok) {
                 const statusText = `${getStaff.status} => ${model.status}`
 
-                //Add createdBy to emails (SUBMITTED => CONFIRMED)
+                //Add BTT and createdBy to emails (SUBMITTED => CONFIRMED)
                 if (getStaff.status === constants.Statuses.Submitted && model.status === constants.Statuses.Confirmed) {
                     if (model.createdByEmail) {
                         model.emails.push(model.createdByEmail)
                     }
+
+                    model.emails.push(config.emailBTT)
 
                     await email.send(model, statusText)
                 }
