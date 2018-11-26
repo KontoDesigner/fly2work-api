@@ -5,7 +5,7 @@ const config = {
     gpxApi: process.env.GPX_API,
     mailApi: process.env.MAIL_API,
     name: process.env.NAME,
-    emailTo: process.env.EMAIL_TO,
+    emailBTT: process.env.EMAIL_BTT,
     emailUserAddress: process.env.EMAIL_USER_ADDRESS,
     authAuthority: process.env.AUTH_AUTHORITY,
     authClientId: process.env.AUTH_CLIENTID,

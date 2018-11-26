@@ -8,11 +8,13 @@ const email = require('../infrastructure/email')
 const uuid = require('node-uuid')
 const moment = require('moment')
 const userService = require('./userService')
+const config = require('../infrastructure/config')
 
 const updateOrInsertStaff = async (body, ctx) => {
     const user = userService.getUser(ctx)
     const userName = userService.getUserName(ctx, user)
     const userRoles = userService.getUserRoles(ctx, user)
+    const userEmail = userService.getUserEmail(ctx, user)
 
     let model = new constants.StaffBS()
 
@@ -48,6 +50,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.railFly = body.railFly
     model.iataCode = body.iataCode
     model.typeOfFlight = body.typeOfFlight
+    model.emails = body.emails
 
     //Comments
     if (body.comments && body.comments.length > 0) {
@@ -127,21 +130,20 @@ const updateOrInsertStaff = async (body, ctx) => {
         }
     }
 
-    //Attachments
-    const staffAttachments = await mongo.collection('staffs').findOne(
-        {
-            id: model.id
-        },
-        { fields: { attachments: 1, _id: 0 } }
-    )
+    const getStaff = await mongo.collection('staffs').findOne({ id: model.id })
 
-    model.attachments = staffAttachments && staffAttachments.attachments ? staffAttachments.attachments : []
+    //Attachments
+    model.attachments = getStaff && getStaff.attachments ? getStaff.attachments : []
+
+    //Misc
+    model.createdBy = getStaff ? getStaff.createdBy : null
+    model.createdByEmail = getStaff ? getStaff.createdByEmail : null
 
     try {
         if (add === true) {
-            const staffExists = await mongo.collection('staffs').findOne({ id: model.id })
+            // const staffExists = await mongo.collection('staffs').findOne({ id: model.id })
 
-            if (staffExists) {
+            if (getStaff) {
                 logger.warning(`Staff with id: '${model.id}' already exists`, { url: ctx.url, model })
 
                 return {
@@ -149,14 +151,21 @@ const updateOrInsertStaff = async (body, ctx) => {
                     alreadyExists: true
                 }
             } else {
+                model.createdBy = userName
+                model.createdByEmail = userEmail
+                model.status = constants.Statuses.Submitted
+
                 const insertOne = (await mongo.collection('staffs').insertOne(model)).result
 
                 logger.info('Insert staff result', { url: ctx.url, model, insertOne })
 
                 if (insertOne.ok) {
-                    if (model.status === constants.Statuses.Confirmed) {
-                        await email.send(model)
-                    }
+                    //Add BTT to emails (NEW => SUBMITTED)
+                    const statusText = `${constants.Statuses.New} => ${constants.Statuses.Submitted}`
+
+                    model.emails.push(config.emailBTT)
+
+                    await email.send(model, statusText)
 
                     return {
                         ok: true
@@ -169,8 +178,33 @@ const updateOrInsertStaff = async (body, ctx) => {
             logger.info('Update staff result', { url: ctx.url, model, replaceOne })
 
             if (replaceOne.ok) {
-                if (model.status === constants.Statuses.Confirmed) {
-                    await email.send(model)
+                const statusText = `${getStaff.status} => ${model.status}`
+
+                //Add createdBy to emails (SUBMITTED => CONFIRMED)
+                if (getStaff.status === constants.Statuses.Submitted && model.status === constants.Statuses.Confirmed) {
+                    if (model.createdByEmail) {
+                        model.emails.push(model.createdByEmail)
+                    }
+
+                    await email.send(model, statusText)
+                }
+
+                //Set emails to BTT only (PENDING => SUBMITTED)
+                else if (getStaff.status === constants.Statuses.Pending && model.status === constants.Statuses.Submitted) {
+                    model.emails = [config.emailBTT]
+
+                    await email.send(model, statusText)
+                }
+
+                //Add BTT and createdBy to emails (X => CONFIRMED)
+                else if (model.status === constants.Statuses.Confirmed) {
+                    if (model.createdByEmail) {
+                        model.emails.push(model.createdByEmail)
+                    }
+
+                    model.emails.push(config.emailBTT)
+
+                    await email.send(model, statusText)
                 }
 
                 return {

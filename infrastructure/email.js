@@ -6,15 +6,21 @@ const pdfService = require('../services/pdfService')
 // const excel = require('./excel')
 const moment = require('moment')
 
-async function send(staff) {
-    logger.info('Sending email..', { staff })
+async function send(staff, statusText) {
+    logger.info('Started send email', { staff })
+
+    if (!staff.emails || staff.emails.length === 0) {
+        logger.info('No emails specified in request, aborting send', { staff })
+
+        return
+    }
 
     const email = new constants.Email()
     email.bccTo = []
-    email.body = 'Please kindly find the attached file(s)'
+    email.body = `${statusText}<br><br>Please kindly find the attached file(s)`
     email.ccTo = []
-    email.emailTo = [config.emailTo]
-    email.isBodyHtml = false
+    email.emailTo = staff.emails
+    email.isBodyHtml = true
     email.subject = `${staff.status} Request - ${staff.id}`
     email.userAddress = config.emailUserAddress
 
@@ -36,6 +42,8 @@ async function send(staff) {
 
         email.attachments.push({ data: attachmentData, name: attachment.name })
     }
+
+    logger.info('Sending email', { staff, email })
 
     //Send email
     const res = await restClient.post(mailApi, email)

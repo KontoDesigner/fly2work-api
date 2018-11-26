@@ -29,9 +29,12 @@ function StaffBS() {
     this.bookReturnFlightArrivalAirport = ''
     this.iataCode = ''
     this.typeOfFlight = ''
+    this.createdBy = null
+    this.createdByEmail = null
 
     this.comments = []
     this.attachments = []
+    this.emails = []
 }
 
 function StaffBTT() {

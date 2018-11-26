@@ -5,7 +5,7 @@ const getUserRoles = (ctx, user = null) => {
 
     let userRoles = []
 
-    userRoles.push(constants.UserRoles.BTT)
+    userRoles.push(constants.UserRoles.BS)
 
     // if (u.roles.contains('BTT')) {
     //     userRoles.push(constants.UserRoles.BTT)
@@ -26,8 +26,15 @@ const getUser = ctx => {
     return ctx.state.user
 }
 
+const getUserEmail = (ctx, user = null) => {
+    const u = user ? user : getUser(ctx)
+
+    return u.upn
+}
+
 module.exports = {
     getUser,
     getUserName,
-    getUserRoles
+    getUserRoles,
+    getUserEmail
 }
