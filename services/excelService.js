@@ -43,6 +43,7 @@ function generateExcel(staffs, type = 'binary') {
                 staff.departureAirports,
                 staff.arrivalAirports,
                 staff.typeOfFlight,
+                staff.iataCode,
                 staff.gender ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : '',
                 staff.hotelNeeded === true ? 'YES' : 'NO',
                 staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : '',
@@ -52,7 +53,6 @@ function generateExcel(staffs, type = 'binary') {
                 staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : '',
                 staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : '',
                 staff.railFly === true ? 'YES' : 'NO',
-                staff.iataCode,
                 staff.bookingReference,
                 staff.paymentMethod,
                 staff.xbag,
@@ -79,7 +79,11 @@ function generateExcel(staffs, type = 'binary') {
                 }
             }
 
-            body.push(JSON.stringify(comments))
+            if (comments && comments.length > 0) {
+                body.push(JSON.stringify(comments))
+            } else {
+                body.push(' ')
+            }
 
             ws_data.push(body)
 
@@ -129,9 +133,10 @@ const HEADER = [
     'Job Title',
     'Destination',
     'Phone',
-    'Departure Airport',
-    'Arrival Airport',
+    'Departure Airports',
+    'Arrival Airports',
     'Type Of Flight',
+    'Iata Code',
     'Gender',
     'Hotel Needed',
     'Hotel Start (HN)',
@@ -140,8 +145,7 @@ const HEADER = [
     'Date Of Flight (BRF)',
     'Departure Airport (BRF)',
     'Arrival Airport (BRF)',
-    'Rail & Fly',
-    'Iata Code',
+    'Rail & Fly (Only In Germany)',
     'Booking Reference',
     'Payment Method',
     'Xbag',
