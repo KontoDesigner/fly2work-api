@@ -19,7 +19,7 @@ async function send(staff, statusText) {
     email.bccTo = []
     email.body = `${statusText}<br><br>Please kindly find the attached file(s)<br><br>Click <a href="${config.web}/${staff.status}/${
         staff.id
-    }">Click</a> to go to request`
+    }">here</a> to go to request`
     email.ccTo = []
     email.emailTo = staff.emails
     email.isBodyHtml = true
