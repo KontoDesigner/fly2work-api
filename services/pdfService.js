@@ -196,7 +196,11 @@ function getDocDefinition(staff) {
                             { text: staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : ' ' }
                         ],
 
-                        [{ text: 'Arrival Airport (BRF)', bold: true }, { text: 'Rail & Fly', bold: true }, { text: 'Iata Code', bold: true }],
+                        [
+                            { text: 'Arrival Airport (BRF)', bold: true },
+                            { text: 'Rail & Fly (Only In Germany)', bold: true },
+                            { text: 'Iata Code', bold: true }
+                        ],
                         [
                             { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : ' ' },
                             { text: staff.railFly === true ? 'YES' : 'NO' },
