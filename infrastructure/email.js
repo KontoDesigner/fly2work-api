@@ -15,11 +15,49 @@ async function send(staff, statusText) {
         return
     }
 
+    const comments = staff.comments
+        ? staff.comments.sort(function(a, c) {
+              return new Date(c.created) - new Date(c.created)
+          })
+        : []
+
+    let trs = []
+
+    for (var comment of comments) {
+        trs.push(
+            `
+            <tr>
+                <td>${comment.text}</td>
+                <td>${comment.createdBy}</td>
+                <td>${comment.group}</td>
+                <td>${moment(comment.created).format('YYYY-MM-DD HH:mm')}</td>
+            </tr>
+            `
+        )
+    }
+
+    const table = `
+        <table width="600" style="border:1px solid #333">
+            <tr>
+                <th align="left">Comment</th>
+                <th align="left">Created By</th>
+                <th align="left">Group</th>
+                <th align="left">Created</th>
+            </tr>
+            
+            ${trs.toString()}
+        </table>
+    `
+
     const email = new constants.Email()
     email.bccTo = []
-    email.body = `${statusText}<br><br>Please kindly find the attached file(s)<br><br>Click <a href="${config.web}/${staff.status}/${
-        staff.id
-    }">here</a> to go to request`
+
+    email.body = `
+    ${statusText}
+    ${comments.length > 0 ? `<br><br>${table}<br>` : '<br><br>'}
+    Please kindly find the attached file(s)
+    <br><br>Click <a href="${config.web}/${staff.status}/${staff.id}">here</a> to go to request`
+
     email.ccTo = []
     email.emailTo = staff.emails
     email.isBodyHtml = true
