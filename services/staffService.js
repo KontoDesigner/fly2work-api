@@ -227,8 +227,6 @@ const insertStaff = async (body, ctx) => {
         if (replaceOne.ok) {
             const upserted = replaceOne.upserted ? true : false
 
-            await email.send(model)
-
             return {
                 ok: true,
                 upserted,
