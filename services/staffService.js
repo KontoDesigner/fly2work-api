@@ -206,8 +206,6 @@ const insertStaff = async (body, ctx) => {
     model.iataCode = body.IataCode ? body.IataCode : ''
     model.greenLight = body.GreenLight !== null && body.GreenLight !== undefined ? body.GreenLight : null
 
-    console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXX', body.GreenLight)
-
     const validation = await newValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
     })
