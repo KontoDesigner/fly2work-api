@@ -73,143 +73,145 @@ function generatePdfPromise(staff) {
     })
 }
 
+function getFlights(staff) {
+    let res = []
+
+    const flightBodies = staff.flights
+        ? staff.flights.map(flight => [
+              [
+                  { text: 'Flight Number', bold: true, style: 'header' },
+                  { text: flight.flightNumber ? flight.flightNumber : ' ', style: 'cell' },
+                  { text: 'Flight Departure Time', bold: true, style: 'header' },
+                  {
+                      text: flight.flightDepartureTime ? moment(flight.flightDepartureTime).format('YYYY-MM-DD') : ' ',
+                      style: 'cell'
+                  },
+                  { text: 'Flight Arrival Time', bold: true, style: 'header' },
+                  {
+                      text: flight.flightArrivalTime ? moment(flight.flightArrivalTime).format('YYYY-MM-DD') : ' ',
+                      style: 'cell'
+                  }
+              ],
+              [
+                  { text: 'Departure Airport', bold: true, style: 'header' },
+                  { text: flight.departureAirport ? flight.departureAirport : ' ', style: 'cell' },
+                  { text: 'Arrival Airport', bold: true, style: 'header' },
+                  { text: flight.arrivalAirport ? flight.arrivalAirport : ' ', style: 'cell' },
+                  { text: 'Flight Cost', bold: true, style: 'header' },
+                  { text: flight.flightCost ? flight.flightCost : ' ', style: 'cell' }
+              ],
+              [
+                  { text: 'Xbag Cost', bold: true, style: 'header' },
+                  { text: flight.xbagCost ? flight.xbagCost : ' ', style: 'cell' },
+                  { text: 'Hotel Cost', bold: true, style: 'header' },
+                  { text: flight.hotelCost ? flight.hotelCost : ' ', style: 'cell' },
+                  { text: 'Total Cost', bold: true, style: 'header' },
+                  {
+                      text: parseCost(flight.flightCost) + parseCost(flight.xbagCost) + parseCost(flight.hotelCost),
+                      style: 'cell'
+                  }
+              ]
+          ])
+        : []
+
+    for (var i = 0; i < flightBodies.length; i++) {
+        res.push(
+            {
+                text: `#${i + 1} Flight`,
+                style: 'header',
+                alignment: 'center',
+                bold: true,
+                fontSize: 12,
+                margin: [0, 4, 0, 5]
+            },
+            {
+                fontSize: 9,
+                table: {
+                    headerRows: 0,
+                    widths: ['*', '*', 'auto', '*', '*', '*'],
+                    body: flightBodies[i]
+                },
+
+                layout: {
+                    paddingTop: function(i, node) {
+                        return 2
+                    },
+                    paddingBottom: function(i, node) {
+                        return 2
+                    }
+                },
+                alignment: 'center'
+            }
+        )
+    }
+
+    return res
+}
+
+function getComments(staff) {
+    let res = []
+
+    const commentBodies = staff.comments
+        ? staff.comments.map(comment => [
+              [
+                  { text: 'Created By', bold: true, style: 'header' },
+                  { text: comment.createdBy ? comment.createdBy : ' ', style: 'cell' },
+                  { text: 'Group', bold: true, style: 'header' },
+                  { text: comment.group ? comment.group : ' ', style: 'cell' },
+                  { text: 'Created', bold: true, style: 'header' },
+                  { text: comment.created ? moment(comment.created).format('YYYY-MM-DD') : ' ', style: 'cell' }
+              ],
+              [{ text: 'Comment', bold: true, style: 'header' }, { text: comment.text ? comment.text : ' ', style: 'cell', colSpan: 5 }]
+          ])
+        : []
+
+    for (var i = 0; i < commentBodies.length; i++) {
+        res.push({
+            margin: i === 0 ? [0, 0, 0, 0] : [0, 10, 0, 0],
+            fontSize: 9,
+            table: {
+                headerRows: 0,
+                widths: ['*', '*', '*', '*', '*', '*'],
+                body: commentBodies[i]
+            },
+            layout: {
+                paddingTop: function(i, node) {
+                    return 2
+                },
+                paddingBottom: function(i, node) {
+                    return 2
+                }
+            },
+            alignment: 'center'
+        })
+    }
+
+    return res
+}
+
 function getDocDefinition(staff) {
     if (!staff) {
         return null
     }
 
-    //Comments
-    const comments = staff.comments
-        ? staff.comments.map(c => [
-              { text: c.text ? c.text : ' ' },
-              { text: c.createdBy ? c.createdBy : ' ' },
-              { text: c.group ? c.group : ' ' },
-              { text: c.created ? moment(c.created).format('YYYY-MM-DD') : ' ' }
-          ])
-        : []
-
-    const commentBody = [
-        [{ text: 'Text', bold: true }, { text: 'Created By', bold: true }, { text: 'Group', bold: true }, { text: 'Created', bold: true }]
-    ]
-
-    commentBody.push(...comments)
-
     //Flights
-    const flights = staff.flights
-        ? staff.flights.map(f => [
-              { text: f.flightNumber ? f.flightNumber : ' ' },
-              { text: f.flightDepartureTime ? moment(f.flightDepartureTime).format('YYYY-MM-DD') : ' ' },
-              { text: f.flightArrivalTime ? moment(f.flightArrivalTime).format('YYYY-MM-DD') : ' ' },
-              { text: f.departureAirport ? f.departureAirport : ' ' },
-              { text: f.arrivalAirport ? f.arrivalAirport : ' ' },
-              { text: f.flightCost ? f.flightCost : ' ' },
-              { text: f.xbagCost ? f.xbagCost : ' ' },
-              { text: f.hotelCost ? f.hotelCost : ' ' },
-              { text: parseCost(f.flightCost) + parseCost(f.xbagCost) + parseCost(f.hotelCost) }
-          ])
-        : []
+    const flights = getFlights(staff)
 
-    const flightBody = [
-        [
-            { text: 'Flight Number', bold: true },
-            { text: 'Flight Departure Time', bold: true },
-            { text: 'Flight Arrival Time', bold: true },
-            { text: 'Departure Airport', bold: true },
-            { text: 'Arrival Airport', bold: true },
-            { text: 'Flight Cost', bold: true },
-            { text: 'Xbag Cost', bold: true },
-            { text: 'Hotel Cost', bold: true },
-            { text: 'Total Cost', bold: true }
-        ]
-    ]
-
-    flightBody.push(...flights)
+    //Comments
+    const comments = getComments(staff)
 
     //Render
     return {
         styles: {
-            cell: { fillColor: '#dde4ff' }
+            cell: { fillColor: '#dde4ff' },
+            header: { fillColor: '#ccc' }
         },
         pageMargins: 15,
-        // content: [
-        //     {
-        //         margin: [0, 0, 0, 5],
-        //         fontSize: 9,
-        //         table: {
-        //             headerRows: 0,
-        //             widths: ['*', '*', '*', '*', '*', '*'],
-        //             body: [
-        //                 [
-        //                     { text: 'Date Of Birth', bold: true },
-        //                     { text: staff.dateOfBirth ? moment(staff.dateOfBirth).format('DD/MM/YYYY') : ' ', style: 'cell' },
-        //                     { text: 'Planned Assignment Start Date', bold: true },
-        //                     { text: staff.positionStart ? moment(staff.positionStart).format('YYYY-MM-DD') : ' ', style: 'cell' },
-        //                     { text: 'Date Of Flight', bold: true },
-        //                     { text: staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : ' ', style: 'cell' }
-        //                 ],
-        //                 [
-        //                     { text: 'Job Title', bold: true },
-        //                     { text: staff.jobTitle ? staff.jobTitle : ' ', style: 'cell' },
-        //                     { text: 'Phone', bold: true },
-        //                     { text: staff.phone ? staff.phone : ' ', style: 'cell' },
-        //                     { text: 'Departure Airports', bold: true },
-        //                     { text: staff.departureAirports ? staff.departureAirports : ' ', style: 'cell' }
-        //                 ],
-        //                 [
-        //                     { text: 'Arrival Airports', bold: true },
-        //                     { text: staff.arrivalAirports ? staff.arrivalAirports : ' ', style: 'cell' },
-        //                     { text: 'Type Of Flight', bold: true },
-        //                     { text: staff.typeOfFlight ? staff.typeOfFlight : ' ', style: 'cell' },
-        //                     { text: 'Gender', bold: true },
-        //                     {
-        //                         text: staff.gender !== undefined && staff.gender !== null ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : ' ',
-        //                         style: 'cell'
-        //                     },
-        //                     { text: 'Hotel Needed', bold: true },
-        //                     { text: staff.hotelNeeded === true ? 'YES' : 'NO', style: 'cell' }
-        //                 ],
-        //                 [
-        //                     { text: 'Hotel Start', bold: true },
-        //                     { text: staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : ' ', style: 'cell' },
-        //                     { text: 'Hotel End', bold: true },
-        //                     { text: staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : ' ', style: 'cell' },
-        //                     { text: 'Book Return Flight', bold: true },
-        //                     { text: staff.bookReturnFlight === true ? 'YES' : 'NO', style: 'cell' },
-        //                     { text: 'Date Of Flight (BRF)', bold: true },
-        //                     {
-        //                         text: staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY-MM-DD') : ' ',
-        //                         style: 'cell'
-        //                     }
-        //                 ],
-        //                 [
-        //                     { text: 'Departure Airport (BRF)', bold: true },
-        //                     { text: staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : ' ', style: 'cell' },
-        //                     { text: 'Arrival Airport (BRF)', bold: true },
-        //                     { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : ' ', style: 'cell' },
-        //                     { text: 'Rail & Fly (Only In Germany)', bold: true },
-        //                     { text: staff.railFly === true ? 'YES' : 'NO', style: 'cell' },
-        //                     { text: 'Iata Code', bold: true },
-        //                     { text: staff.iataCode ? staff.iataCode : ' ', style: 'cell' }
-        //                 ],
-        //                 [
-        //                     { text: 'Passport Number', bold: true },
-        //                     { text: staff.passportNumber ? staff.passportNumber : ' ', style: 'cell' },
-        //                     { text: ' ' },
-        //                     { text: ' ', style: 'cell' },
-        //                     { text: ' ' },
-        //                     { text: ' ', style: 'cell' },
-        //                     { text: ' ' },
-        //                     { text: ' ', style: 'cell' }
-        //                 ]
-        //             ]
-        //         }
-        //     }
-        // ]
         content: [
             {
-                text: `${staff.firstName} ${staff.lastName} ${staff.lastName2 ? staff.lastName2 + ' ' : ''}(${
+                text: `${staff.firstName} ${staff.lastName} ${staff.lastName2 ? staff.lastName2 + ' ' : ''}- ${
                     staff.greenLight === false && staff.status !== constants.Statuses.New ? `Waiting For Approval (${staff.status})` : staff.status
-                })`,
+                }`,
                 style: 'header',
                 alignment: 'center',
                 bold: true,
@@ -229,70 +231,76 @@ function getDocDefinition(staff) {
                 fontSize: 9,
                 table: {
                     headerRows: 0,
-                    widths: ['*', '*', '*'],
+                    widths: ['*', '*', '*', '*', '*', '*'],
                     body: [
                         [
-                            { text: 'Date Of Birth', bold: true },
-                            { text: 'Planned Assignment Start Date', bold: true },
-                            { text: 'Date Of Flight', bold: true }
+                            { text: 'Date Of Birth', bold: true, style: 'header' },
+                            { text: staff.dateOfBirth ? moment(staff.dateOfBirth).format('DD/MM/YYYY') : ' ', style: 'cell' },
+                            { text: 'Passport Number', bold: true, style: 'header' },
+                            { text: staff.passportNumber ? staff.passportNumber : ' ', style: 'cell' },
+                            { text: 'Date Of Flight', bold: true, style: 'header' },
+                            { text: staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : ' ', style: 'cell' }
                         ],
                         [
-                            { text: staff.dateOfBirth ? moment(staff.dateOfBirth).format('DD/MM/YYYY') : ' ' },
-                            { text: staff.positionStart ? moment(staff.positionStart).format('YYYY-MM-DD') : ' ' },
-                            { text: staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : ' ' }
-                        ],
-
-                        [{ text: 'Job Title', bold: true }, { text: 'Phone', bold: true }, { text: 'Departure Airports', bold: true }],
-                        [
-                            { text: staff.jobTitle ? staff.jobTitle : ' ' },
-                            { text: staff.phone ? staff.phone : ' ' },
-                            { text: staff.departureAirports ? staff.departureAirports : ' ' }
-                        ],
-
-                        [{ text: 'Arrival Airports', bold: true }, { text: 'Type Of Flight', bold: true }, { text: 'Gender', bold: true }],
-                        [
-                            { text: staff.arrivalAirports ? staff.arrivalAirports : ' ' },
-                            { text: staff.typeOfFlight ? staff.typeOfFlight : ' ' },
-                            { text: staff.gender ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : ' ' }
-                        ],
-
-                        [{ text: 'Hotel Needed', bold: true }, { text: 'Hotel Start', bold: true }, { text: 'Hotel End', bold: true }],
-                        [
-                            { text: staff.hotelNeeded === true ? 'YES' : 'NO' },
-                            { text: staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : ' ' },
-                            { text: staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : ' ' }
-                        ],
-
-                        [
-                            { text: 'Book Return Flight', bold: true },
-                            { text: 'Date Of Flight (BRF)', bold: true },
-                            { text: 'Departure Airport (BRF)', bold: true }
+                            { text: 'Job Title', bold: true, style: 'header' },
+                            { text: staff.jobTitle ? staff.jobTitle : ' ', style: 'cell' },
+                            { text: 'Phone', bold: true, style: 'header' },
+                            { text: staff.phone ? staff.phone : ' ', style: 'cell' },
+                            { text: 'Departure Airports', bold: true, style: 'header' },
+                            { text: staff.departureAirports ? staff.departureAirports : ' ', style: 'cell' }
                         ],
                         [
-                            { text: staff.bookReturnFlight === true ? 'YES' : 'NO' },
-                            { text: staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY-MM-DD') : ' ' },
-                            { text: staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : ' ' }
+                            { text: 'Arrival Airports', bold: true, style: 'header' },
+                            { text: staff.arrivalAirports ? staff.arrivalAirports : ' ', style: 'cell' },
+                            { text: 'Type Of Flight', bold: true, style: 'header' },
+                            { text: staff.typeOfFlight ? staff.typeOfFlight : ' ', style: 'cell' },
+                            { text: 'Gender', bold: true, style: 'header' },
+                            {
+                                text: staff.gender !== undefined && staff.gender !== null ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : ' ',
+                                style: 'cell'
+                            }
                         ],
-
                         [
-                            { text: 'Arrival Airport (BRF)', bold: true },
-                            { text: 'Rail & Fly (Only In Germany)', bold: true },
-                            { text: 'Iata Code', bold: true }
+                            { text: 'Hotel Needed', bold: true, style: 'header' },
+                            { text: staff.hotelNeeded === true ? 'YES' : 'NO', style: 'cell' },
+                            { text: 'Hotel Start', bold: true, style: 'header' },
+                            {
+                                text: staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : ' ',
+                                style: 'cell'
+                            },
+                            { text: 'Hotel End', bold: true, style: 'header' },
+                            {
+                                text: staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : ' ',
+                                style: 'cell'
+                            }
                         ],
                         [
-                            { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : ' ' },
-                            { text: staff.railFly === true ? 'YES' : 'NO' },
-                            { text: staff.iataCode ? staff.iataCode : ' ' }
+                            { text: 'Book Return Flight', bold: true, style: 'header' },
+                            { text: staff.bookReturnFlight === true ? 'YES' : 'NO', style: 'cell' },
+                            { text: 'Date Of Flight (BRF)', bold: true, style: 'header' },
+                            {
+                                text: staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY-MM-DD') : ' ',
+                                style: 'cell'
+                            },
+                            { text: 'Departure Airport (BRF)', bold: true, style: 'header' },
+                            { text: staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : ' ', style: 'cell' }
                         ],
-                        [{ text: 'Passport Number', bold: true }, { text: ' ', bold: true }, { text: ' ', bold: true }],
-                        [{ text: staff.passportNumber ? staff.passportNumber : ' ' }, { text: ' ' }, { text: ' ' }]
+                        [
+                            { text: 'Arrival Airport (BRF)', bold: true, style: 'header' },
+                            { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : ' ', style: 'cell' },
+                            { text: 'Rail & Fly (Only In Germany)', bold: true, style: 'header' },
+                            { text: staff.railFly === true ? 'YES' : 'NO', style: 'cell' },
+                            { text: 'Iata Code', bold: true, style: 'header' },
+                            { text: staff.iataCode ? staff.iataCode : ' ', style: 'cell' }
+                        ],
+                        [
+                            { text: 'Planned Assignment Start Date', bold: true, style: 'header' },
+                            { text: staff.positionStart ? moment(staff.positionStart).format('YYYY-MM-DD') : ' ', style: 'cell' },
+                            { text: ' ', colSpan: 4 }
+                        ]
                     ]
                 },
-
                 layout: {
-                    fillColor: function(i, node) {
-                        return i % 2 === 0 ? '#CCCCCC' : null
-                    },
                     paddingTop: function(i, node) {
                         return 2
                     },
@@ -314,28 +322,36 @@ function getDocDefinition(staff) {
                 fontSize: 9,
                 table: {
                     headerRows: 0,
-                    widths: ['*', '*', '*'],
+                    widths: ['*', '*', '*', '*', '*', '*'],
                     body: [
-                        [{ text: 'Booking Reference', bold: true }, { text: 'Travel Type', bold: true }, { text: 'Payment Method', bold: true }],
                         [
-                            { text: staff.bookingReference ? staff.bookingReference : ' ' },
-                            { text: staff.travelType ? staff.travelType : ' ' },
-                            { text: staff.paymentMethod ? staff.paymentMethod : ' ' }
+                            { text: 'Booking Reference', bold: true, style: 'header' },
+                            { text: staff.bookingReference ? staff.bookingReference : ' ', style: 'cell' },
+                            { text: 'Travel Type', bold: true, style: 'header' },
+                            { text: staff.travelType ? staff.travelType : ' ', style: 'cell' },
+                            { text: 'Payment Method', bold: true, style: 'header' },
+                            { text: staff.paymentMethod ? staff.paymentMethod : ' ', style: 'cell' }
                         ],
-
-                        [{ text: 'Xbag', bold: true }, { text: 'Cost Centre', bold: true }, { text: 'Green Light', bold: true }],
                         [
-                            { text: staff.xbag ? staff.xbag : ' ' },
-                            { text: staff.costCentre ? staff.costCentre : ' ' },
-                            { text: staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : '' }
+                            { text: 'Xbag', bold: true, style: 'header' },
+                            { text: staff.xbag ? staff.xbag : ' ', style: 'cell' },
+                            { text: 'Cost Centre', bold: true, style: 'header' },
+                            { text: staff.costCentre ? staff.costCentre : ' ', style: 'cell' },
+                            { text: 'Currency', bold: true, style: 'header' },
+                            { text: staff.currency ? staff.currency : ' ', style: 'cell' }
+                        ],
+                        [
+                            { text: 'Green Light', bold: true, style: 'header' },
+                            {
+                                text: staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : ' ',
+                                style: 'cell'
+                            },
+                            { text: ' ', colSpan: 4 }
                         ]
                     ]
                 },
 
                 layout: {
-                    fillColor: function(i, node) {
-                        return i % 2 === 0 ? '#CCCCCC' : null
-                    },
                     paddingTop: function(i, node) {
                         return 2
                     },
@@ -345,35 +361,7 @@ function getDocDefinition(staff) {
                 },
                 alignment: 'center'
             },
-            {
-                text: 'Flights',
-                style: 'header',
-                alignment: 'center',
-                bold: true,
-                fontSize: 12,
-                margin: [0, 4, 0, 5]
-            },
-            {
-                fontSize: 9,
-                table: {
-                    headerRows: 0,
-                    widths: ['*', '*', '*', '*', '*', '*', '*', '*', '*'],
-                    body: flightBody
-                },
-
-                layout: {
-                    fillColor: function(i, node) {
-                        return i % 2 === 0 ? '#CCCCCC' : null
-                    },
-                    paddingTop: function(i, node) {
-                        return 2
-                    },
-                    paddingBottom: function(i, node) {
-                        return 2
-                    }
-                },
-                alignment: 'center'
-            },
+            flights.map(f => f),
             {
                 text: 'Comments',
                 style: 'header',
@@ -382,27 +370,7 @@ function getDocDefinition(staff) {
                 fontSize: 12,
                 margin: [0, 4, 0, 5]
             },
-            {
-                fontSize: 9,
-                table: {
-                    headerRows: 0,
-                    widths: ['*', '*', '*', '*'],
-                    body: commentBody
-                },
-
-                layout: {
-                    fillColor: function(i, node) {
-                        return i % 2 === 0 ? '#CCCCCC' : null
-                    },
-                    paddingTop: function(i, node) {
-                        return 2
-                    },
-                    paddingBottom: function(i, node) {
-                        return 2
-                    }
-                },
-                alignment: 'center'
-            }
+            comments.map(m => m)
         ]
     }
 }
