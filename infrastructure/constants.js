@@ -29,8 +29,6 @@ function StaffBS() {
     this.bookReturnFlightArrivalAirport = ''
     this.iataCode = ''
     this.typeOfFlight = ''
-    this.createdBy = null
-    this.createdByEmail = null
 
     this.comments = []
     this.attachments = []
@@ -45,8 +43,7 @@ function StaffBTT() {
     this.costCentre = ''
     this.flights = [new Flight(true)]
     this.greenLight = null
-    this.greenLightUpdated = null
-    this.greenLightUpdatedBy = null
+    this.currency = null
 }
 
 function Staff() {

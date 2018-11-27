@@ -40,7 +40,6 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.status = body.status
     model.positionStart = body.positionStart
     model.jobTitle = body.jobTitle
-    model.typeOfFlight = body.typeOfFlight
     model.hotelNeededHotelStart = body.hotelNeededHotelStart
     model.hotelNeededHotelEnd = body.hotelNeededHotelEnd
     model.bookReturnFlight = body.bookReturnFlight
@@ -79,6 +78,7 @@ const updateOrInsertStaff = async (body, ctx) => {
         model.xbag = body.xbag
         model.costCentre = body.costCentre
         model.travelType = body.travelType
+        model.currency = body.currency
 
         if (getStaff.greenLight === false && body.greenLight === true) {
             model.greenLight = body.greenLight

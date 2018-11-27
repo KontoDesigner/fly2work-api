@@ -17,6 +17,9 @@ const bttValidation = Yup.object().shape({
     costCentre: Yup.string()
         .nullable(true)
         .required('Cost centre is required'),
+    currency: Yup.string()
+        .nullable(true)
+        .required('Currency is required'),
     flights: Yup.array()
         .of(
             Yup.object().shape({
