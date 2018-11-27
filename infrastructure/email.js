@@ -6,13 +6,13 @@ const pdfService = require('../services/pdfService')
 // const excel = require('./excel')
 const moment = require('moment')
 
-async function send(staff, statusText) {
+async function send(staff, statusText, emails) {
     logger.info('Started send email', { staff })
 
-    if (!staff.emails || staff.emails.length === 0) {
+    if (!emails || !emails.to || !emails.cc || emails.to.length === 0) {
         logger.info('No emails specified in request, aborting send', { staff })
 
-        return
+        return false
     }
 
     const comments = staff.comments
@@ -58,8 +58,8 @@ async function send(staff, statusText) {
     Please kindly find the attached file(s)
     <br><br>Click <a href="${config.web}/${staff.status}/${staff.id}">here</a> to go to request`
 
-    email.ccTo = []
-    email.emailTo = staff.emails
+    email.ccTo = emails.cc
+    email.emailTo = emails.to
     email.isBodyHtml = true
     email.subject = `${staff.status} Request - ${staff.id}`
     email.userAddress = config.emailUserAddress
@@ -86,9 +86,21 @@ async function send(staff, statusText) {
     logger.info('Sending email', { staff, email })
 
     //Send email
-    const res = await restClient.post(mailApi, email)
+    let res = {}
 
-    logger.info('Mail api result', { res, staff, email, mailApi })
+    try {
+        res = await restClient.post(mailApi, email)
+
+        logger.info('Mail api result', { res, staff, email, mailApi, statusText, emails })
+
+        if (res.ok === true) {
+            return true
+        }
+    } catch (err) {
+        logger.error('Error sending email', staff, email, mailApi, statusText, emails)
+    }
+
+    return false
 }
 
 module.exports = {

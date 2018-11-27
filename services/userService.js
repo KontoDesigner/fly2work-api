@@ -5,7 +5,7 @@ const getUserRoles = (ctx, user = null) => {
 
     let userRoles = []
 
-    userRoles.push(constants.UserRoles.BS)
+    userRoles.push(constants.UserRoles.BTT)
 
     // if (u.roles.contains('BTT')) {
     //     userRoles.push(constants.UserRoles.BTT)

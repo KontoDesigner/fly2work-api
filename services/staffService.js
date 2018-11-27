@@ -8,7 +8,7 @@ const email = require('../infrastructure/email')
 const uuid = require('node-uuid')
 const moment = require('moment')
 const userService = require('./userService')
-const config = require('../infrastructure/config')
+const helpers = require('../infrastructure/helpers')
 
 const updateOrInsertStaff = async (body, ctx) => {
     const user = userService.getUser(ctx)
@@ -70,6 +70,8 @@ const updateOrInsertStaff = async (body, ctx) => {
 
     model = Object.assign(model, new constants.StaffBTT())
 
+    const getStaff = await mongo.collection('staffs').findOne({ id: model.id })
+
     if (userRoles.includes(constants.UserRoles.BTT)) {
         //BTT
         model.bookingReference = body.bookingReference
@@ -78,19 +80,12 @@ const updateOrInsertStaff = async (body, ctx) => {
         model.costCentre = body.costCentre
         model.travelType = body.travelType
 
-        const staffGreenLight = await mongo.collection('staffs').findOne(
-            {
-                id: model.id
-            },
-            { fields: { greenLight: 1, _id: 0 } }
-        )
-
-        if (staffGreenLight.greenLight === false && body.greenLight === true) {
+        if (getStaff.greenLight === false && body.greenLight === true) {
             model.greenLight = body.greenLight
             model.greenLightUpdated = new Date()
             model.greenLightUpdatedBy = userName
         } else {
-            model.greenLight = staffGreenLight.greenLight
+            model.greenLight = getStaff.greenLight
         }
 
         //Flights
@@ -130,101 +125,158 @@ const updateOrInsertStaff = async (body, ctx) => {
         }
     }
 
-    const getStaff = await mongo.collection('staffs').findOne({ id: model.id })
-
-    //Attachments
+    //Attachments (should not be overwritten from request)
     model.attachments = getStaff && getStaff.attachments ? getStaff.attachments : []
 
-    //Misc
-    model.createdBy = getStaff ? getStaff.createdBy : null
-    model.createdByEmail = getStaff ? getStaff.createdByEmail : null
+    if (add === true) {
+        if (getStaff) {
+            logger.warning(`Staff with id: '${model.id}' already exists`, { url: ctx.url, model })
 
-    try {
-        if (add === true) {
-            // const staffExists = await mongo.collection('staffs').findOne({ id: model.id })
+            return {
+                ok: false,
+                error: `Staff with id: '${model.id}' already exists`
+            }
+        } else {
+            model.createdBy = userName
+            model.createdByEmail = userEmail
+            model.status = constants.Statuses.Submitted
 
-            if (getStaff) {
-                logger.warning(`Staff with id: '${model.id}' already exists`, { url: ctx.url, model })
+            let insertOne = {}
+
+            try {
+                insertOne = (await mongo.collection('staffs').insertOne(model)).result
+            } catch (err) {
+                logger.error('Error inserting staff', err, model)
 
                 return {
                     ok: false,
-                    alreadyExists: true
-                }
-            } else {
-                model.createdBy = userName
-                model.createdByEmail = userEmail
-                model.status = constants.Statuses.Submitted
-
-                const insertOne = (await mongo.collection('staffs').insertOne(model)).result
-
-                logger.info('Insert staff result', { url: ctx.url, model, insertOne })
-
-                if (insertOne.ok) {
-                    //Add createdBy and BTT to emails (NEW => SUBMITTED)
-                    const statusText = `${constants.Statuses.New} => ${constants.Statuses.Submitted}`
-
-                    if (model.createdByEmail) {
-                        model.emails.push(model.createdByEmail)
-                    }
-
-                    model.emails.push(config.emailBTT)
-
-                    await email.send(model, statusText)
-
-                    return {
-                        ok: true
-                    }
+                    error: 'Add staff failed'
                 }
             }
-        } else {
-            const replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, { $set: model })).result
 
-            logger.info('Update staff result', { url: ctx.url, model, replaceOne })
+            logger.info('Insert staff result', { url: ctx.url, model, insertOne })
 
-            if (replaceOne.ok) {
-                const statusText = `${getStaff.status} => ${model.status}`
+            if (insertOne.ok) {
+                //Add createdBy and BTT to emails (NEW => SUBMITTED)
+                const statusText = `${constants.Statuses.New} => ${constants.Statuses.Submitted}`
 
-                //Add BTT and createdBy to emails (SUBMITTED => CONFIRMED)
-                if (getStaff.status === constants.Statuses.Submitted && model.status === constants.Statuses.Confirmed) {
-                    if (model.createdByEmail) {
-                        model.emails.push(model.createdByEmail)
+                //Get BTT to/cc based on sourceMarket
+                let emails = helpers.getBTTEmails(model.sourceMarket)
+
+                if (model.createdByEmail) {
+                    emails.to.push(model.createdByEmail)
+                }
+
+                //Add additional emails to email
+                if (model.emails && model.emails.length > 0) {
+                    emails.to.push(model.emails)
+                }
+
+                const emailRes = await email.send(model, statusText, emails)
+
+                if (emailRes === false) {
+                    return {
+                        ok: false,
+                        error: 'Staff added but could not send email notification'
                     }
-
-                    model.emails.push(config.emailBTT)
-
-                    await email.send(model, statusText)
-                }
-
-                //Set emails to BTT only (PENDING => SUBMITTED)
-                else if (getStaff.status === constants.Statuses.Pending && model.status === constants.Statuses.Submitted) {
-                    model.emails = [config.emailBTT]
-
-                    await email.send(model, statusText)
-                }
-
-                //Add BTT and createdBy to emails (X => CONFIRMED)
-                else if (model.status === constants.Statuses.Confirmed) {
-                    if (model.createdByEmail) {
-                        model.emails.push(model.createdByEmail)
-                    }
-
-                    model.emails.push(config.emailBTT)
-
-                    await email.send(model, statusText)
-                }
-
-                return {
-                    ok: true
                 }
             }
         }
-    } catch (err) {
-        logger.error('Error updating/inserting staff', err, model)
+    } else {
+        //Misc (should not be overwritten from request)
+        model.createdBy = getStaff ? getStaff.createdBy : null
+        model.createdByEmail = getStaff ? getStaff.createdByEmail : null
+
+        let replaceOne = {}
+
+        try {
+            replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, { $set: model })).result
+        } catch (err) {
+            logger.error('Error updating staff', err, model)
+
+            return {
+                ok: false,
+                error: 'Update staff failed'
+            }
+        }
+
+        logger.info('Update staff result', { url: ctx.url, model, replaceOne })
+
+        if (replaceOne.ok) {
+            const statusText = `${getStaff.status} => ${model.status}`
+
+            //Add BTT and createdBy to emails (SUBMITTED => CONFIRMED)
+            if (getStaff.status === constants.Statuses.Submitted && model.status === constants.Statuses.Confirmed) {
+                //Get BTT to/cc based on sourceMarket
+                let emails = helpers.getBTTEmails(model.sourceMarket)
+
+                if (model.createdByEmail) {
+                    emails.to.push(model.createdByEmail)
+                }
+
+                //Add additional emails to email
+                if (model.emails && model.emails.length > 0) {
+                    emails.to.push(model.emails)
+                }
+
+                const emailRes = await email.send(model, statusText, emails)
+
+                if (emailRes === false) {
+                    return {
+                        ok: false,
+                        error: 'Staff updated but could not send email notification'
+                    }
+                }
+            }
+
+            //Set emails to BTT only (PENDING => SUBMITTED)
+            else if (getStaff.status === constants.Statuses.Pending && model.status === constants.Statuses.Submitted) {
+                //Get BTT to/cc based on sourceMarket
+                let emails = helpers.getBTTEmails(model.sourceMarket)
+
+                //Add additional emails to email
+                if (model.emails && model.emails.length > 0) {
+                    emails.to.push(model.emails)
+                }
+
+                const emailRes = await email.send(model, statusText, emails)
+
+                if (emailRes === false) {
+                    return {
+                        ok: false,
+                        error: 'Staff updated but could not send email notification'
+                    }
+                }
+            }
+
+            //Add BTT and createdBy to emails (X => CONFIRMED)
+            else if (model.status === constants.Statuses.Confirmed) {
+                //Get BTT to/cc based on sourceMarket
+                let emails = helpers.getBTTEmails(model.sourceMarket)
+
+                if (model.createdByEmail) {
+                    emails.to.push(model.createdByEmail)
+                }
+
+                //Add additional emails to email
+                if (model.emails && model.emails.length > 0) {
+                    emails.to.push(model.emails)
+                }
+
+                const emailRes = await email.send(model, statusText, emails)
+
+                if (emailRes === false) {
+                    return {
+                        ok: false,
+                        error: 'Staff updated but could not send email notification'
+                    }
+                }
+            }
+        }
     }
 
     return {
-        ok: false,
-        errors: ['Update/insert staff failed']
+        ok: true
     }
 }
 
@@ -295,16 +347,6 @@ const getStaffs = async ctx => {
 }
 
 const getStaffCount = async ctx => {
-    // const res = await mongo
-    //     .collection('staffs')
-    //     .aggregate([{ $match: { hr: { $ne: true } } }, { $group: { _id: '$status', count: { $sum: 1 } } }])
-    //     .toArray()
-
-    // const waitingForApproval = await mongo
-    //     .collection('staffs')
-    //     .find({ hr: true, status: { $ne: constants.Statuses.New } })
-    //     .count()
-
     const staffs = await mongo
         .collection('staffs')
         .find({}, { fields: { status: 1, greenLight: 1, _id: 0 } })
