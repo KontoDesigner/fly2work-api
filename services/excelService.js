@@ -57,6 +57,7 @@ function generateExcel(staffs, type = 'binary') {
                 staff.paymentMethod,
                 staff.xbag,
                 staff.costCentre,
+                staff.currency,
                 staff.travelType,
                 staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : ''
             ]
@@ -150,6 +151,7 @@ const HEADER = [
     'Payment Method',
     'Xbag',
     'Cost Centre',
+    'Currency',
     'Travel Type',
     'Green Light',
 
