@@ -1,9 +1,15 @@
 const constants = require('../infrastructure/constants')
 
 const getUserRoles = (ctx, user = null) => {
-    // const u = user ? user : getUser(ctx)
+    const u = user ? user : getUser(ctx)
 
     let userRoles = []
+
+    if (user.name === 'Therese.Bellhammar') {
+        userRoles.push(constants.UserRoles.BS)
+
+        return userRoles
+    }
 
     userRoles.push(constants.UserRoles.BTT)
 
