@@ -205,12 +205,11 @@ const updateOrInsertStaff = async (body, ctx) => {
 
         if (replaceOne.ok) {
             const statusText = `${getStaff.status} => ${model.status}`
+            //Get BTT to/cc based on sourceMarket
+            let emails = helpers.getBTTEmails(model.sourceMarket)
 
             //Add BTT and createdBy to emails (SUBMITTED => CONFIRMED)
             if (getStaff.status === constants.Statuses.Submitted && model.status === constants.Statuses.Confirmed) {
-                //Get BTT to/cc based on sourceMarket
-                let emails = helpers.getBTTEmails(model.sourceMarket)
-
                 if (model.createdByEmail) {
                     emails.to.push(model.createdByEmail)
                 }
@@ -220,41 +219,39 @@ const updateOrInsertStaff = async (body, ctx) => {
                     emails.to.push(model.emails)
                 }
 
-                const emailRes = await email.send(model, statusText, emails)
+                if (emails.to.length > 0) {
+                    const emailRes = await email.send(model, statusText, emails)
 
-                if (emailRes === false) {
-                    return {
-                        ok: false,
-                        error: 'Staff updated but could not send email notification'
+                    if (emailRes === false) {
+                        return {
+                            ok: false,
+                            error: 'Staff updated but could not send email notification'
+                        }
                     }
                 }
             }
 
-            //Set emails to BTT only (PENDING => SUBMITTED)
+            //Add BTT to emails (PENDING => SUBMITTED)
             else if (getStaff.status === constants.Statuses.Pending && model.status === constants.Statuses.Submitted) {
-                //Get BTT to/cc based on sourceMarket
-                let emails = helpers.getBTTEmails(model.sourceMarket)
-
                 //Add additional emails to email
                 if (model.emails && model.emails.length > 0) {
                     emails.to.push(model.emails)
                 }
 
-                const emailRes = await email.send(model, statusText, emails)
+                if (emails.to.length > 0) {
+                    const emailRes = await email.send(model, statusText, emails)
 
-                if (emailRes === false) {
-                    return {
-                        ok: false,
-                        error: 'Staff updated but could not send email notification'
+                    if (emailRes === false) {
+                        return {
+                            ok: false,
+                            error: 'Staff updated but could not send email notification'
+                        }
                     }
                 }
             }
 
             //Add BTT and createdBy to emails (X => CONFIRMED)
             else if (model.status === constants.Statuses.Confirmed) {
-                //Get BTT to/cc based on sourceMarket
-                let emails = helpers.getBTTEmails(model.sourceMarket)
-
                 if (model.createdByEmail) {
                     emails.to.push(model.createdByEmail)
                 }
@@ -264,12 +261,14 @@ const updateOrInsertStaff = async (body, ctx) => {
                     emails.to.push(model.emails)
                 }
 
-                const emailRes = await email.send(model, statusText, emails)
+                if (emails.to.length > 0) {
+                    const emailRes = await email.send(model, statusText, emails)
 
-                if (emailRes === false) {
-                    return {
-                        ok: false,
-                        error: 'Staff updated but could not send email notification'
+                    if (emailRes === false) {
+                        return {
+                            ok: false,
+                            error: 'Staff updated but could not send email notification'
+                        }
                     }
                 }
             }
