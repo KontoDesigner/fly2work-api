@@ -430,7 +430,13 @@ const getStaffById = async (id, ctx) => {
 }
 
 const getStaffByIdAndStatus = async (id, status, ctx) => {
-    const staff = await mongo.collection('staffs').findOne({ id: id, status: status, greenLight: { $ne: false } })
+    let staff = null
+
+    if (status === constants.Statuses.New) {
+        staff = await mongo.collection('staffs').findOne({ id: id, status: status })
+    } else {
+        staff = await mongo.collection('staffs').findOne({ id: id, status: status, greenLight: { $ne: false } })
+    }
 
     logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staff ? 1 : 0 })
 
