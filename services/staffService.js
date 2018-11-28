@@ -135,7 +135,7 @@ const updateOrInsertStaff = async (body, ctx) => {
 
             return {
                 ok: false,
-                error: `Staff with id: '${model.id}' already exists`
+                error: `Request with id: '${model.id}' already exists`
             }
         } else {
             model.createdBy = userName
@@ -151,7 +151,7 @@ const updateOrInsertStaff = async (body, ctx) => {
 
                 return {
                     ok: false,
-                    error: 'Add staff failed'
+                    error: 'Add request failed'
                 }
             }
 
@@ -178,7 +178,7 @@ const updateOrInsertStaff = async (body, ctx) => {
                 if (emailRes === false) {
                     return {
                         ok: false,
-                        error: 'Staff added but could not send email notification'
+                        error: 'Request added but could not send email notification'
                     }
                 }
             }
@@ -197,7 +197,7 @@ const updateOrInsertStaff = async (body, ctx) => {
 
             return {
                 ok: false,
-                error: 'Update staff failed'
+                error: 'Update request failed'
             }
         }
 
@@ -225,7 +225,7 @@ const updateOrInsertStaff = async (body, ctx) => {
                     if (emailRes === false) {
                         return {
                             ok: false,
-                            error: 'Staff updated but could not send email notification'
+                            error: 'Request updated but could not send email notification'
                         }
                     }
                 }
@@ -244,7 +244,7 @@ const updateOrInsertStaff = async (body, ctx) => {
                     if (emailRes === false) {
                         return {
                             ok: false,
-                            error: 'Staff updated but could not send email notification'
+                            error: 'Request updated but could not send email notification'
                         }
                     }
                 }
@@ -267,7 +267,7 @@ const updateOrInsertStaff = async (body, ctx) => {
                     if (emailRes === false) {
                         return {
                             ok: false,
-                            error: 'Staff updated but could not send email notification'
+                            error: 'Request updated but could not send email notification'
                         }
                     }
                 }
