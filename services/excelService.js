@@ -71,6 +71,7 @@ function generateExcel(staffs, type = 'binary') {
                     body.push(flight.flightArrivalTime ? moment(flight.flightArrivalTime).format('YYYY-MM-DD') : '')
                     body.push(flight.departureAirport)
                     body.push(flight.arrivalAirport)
+                    body.push(flight.dateOfFlight ? moment(flight.dateOfFlight).format('YYYY-MM-DD') : '')
                     body.push(flight.flightCost)
                     body.push(flight.xbagCost)
                     body.push(flight.hotelCost)
@@ -160,6 +161,7 @@ const HEADER = [
     '1st Flight Arrival Time',
     '1st Departure Airport',
     '1st Arrival Airport',
+    '1st Date Of Flight',
     '1st Flight Cost',
     '1st Xbag Cost',
     '1st Hotel Cost',
@@ -170,6 +172,7 @@ const HEADER = [
     '2nd Flight Arrival Time',
     '2nd Departure Airport',
     '2nd Arrival Airport',
+    '2st Date Of Flight',
     '2nd Flight Cost',
     '2nd Xbag Cost',
     '2nd Hotel Cost',
@@ -180,6 +183,7 @@ const HEADER = [
     '3nd Flight Arrival Time',
     '3nd Departure Airport',
     '3nd Arrival Airport',
+    '3st Date Of Flight',
     '3nd Flight Cost',
     '3nd Xbag Cost',
     '3nd Hotel Cost',

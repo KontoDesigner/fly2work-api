@@ -101,7 +101,8 @@ const updateOrInsertStaff = async (body, ctx) => {
                 flightCost: flight.flightCost,
                 xbagCost: flight.xbagCost,
                 hotelCost: flight.hotelCost,
-                totalCost: flight.totalCost
+                totalCost: flight.totalCost,
+                dateOfFlight: flight.dateOfFlight
             })
         }
 

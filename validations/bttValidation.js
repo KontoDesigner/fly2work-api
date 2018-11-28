@@ -51,7 +51,11 @@ const bttValidation = Yup.object().shape({
                 hotelCost: Yup.number()
                     .typeError('Hotel cost must be a number')
                     .nullable(true)
-                    .required('Hotel cost is required')
+                    .required('Hotel cost is required'),
+                dateOfFlight: Yup.date()
+                    .typeError('Date of flight must be a datetime')
+                    .nullable(true)
+                    .required('Date of flight is required')
             })
         )
         .min(1, 'Min 1 flight')

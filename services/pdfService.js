@@ -110,6 +110,11 @@ function getFlights(staff) {
                       text: parseCost(flight.flightCost) + parseCost(flight.xbagCost) + parseCost(flight.hotelCost),
                       style: 'cell'
                   }
+              ],
+              [
+                  { text: 'Date Of Flight', bold: true, style: 'header' },
+                  { text: flight.dateOfFlight ? flight.dateOfFlight : ' ', style: 'cell' },
+                  { text: ' ', style: 'cell', colSpan: 4 }
               ]
           ])
         : []
