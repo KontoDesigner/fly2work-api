@@ -402,10 +402,19 @@ const getStaffByIdAndGreenLight = async (id, greenLight, ctx) => {
 }
 
 const getStaffsByStatus = async (status, ctx) => {
-    const staffs = await mongo
-        .collection('staffs')
-        .find({ status: status, greenLight: { $ne: false } })
-        .toArray()
+    let staffs = []
+
+    if (status === constants.Statuses.New) {
+        staffs = await mongo
+            .collection('staffs')
+            .find({ status: status })
+            .toArray()
+    } else {
+        staffs = await mongo
+            .collection('staffs')
+            .find({ status: status, greenLight: { $ne: false } })
+            .toArray()
+    }
 
     logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staffs.length })
 
