@@ -215,7 +215,7 @@ function getDocDefinition(staff) {
         content: [
             {
                 text: `${staff.firstName} ${staff.lastName} ${staff.lastName2 ? staff.lastName2 + ' ' : ''}- ${
-                    staff.greenLight === false && staff.status !== constants.Statuses.New ? `Waiting For Approval (${staff.status})` : staff.status
+                    staff.greenLight === false && staff.status !== constants.Statuses.New ? `Pending HR (${staff.status})` : staff.status
                 }`,
                 style: 'header',
                 alignment: 'center',

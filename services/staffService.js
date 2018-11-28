@@ -231,8 +231,8 @@ const updateOrInsertStaff = async (body, ctx) => {
                 }
             }
 
-            //Add BTT to emails (PENDING => SUBMITTED)
-            else if (getStaff.status === constants.Statuses.Pending && model.status === constants.Statuses.Submitted) {
+            //Add BTT to emails (PENDINGBTT => SUBMITTED)
+            else if (getStaff.status === constants.Statuses.PendingBTT && model.status === constants.Statuses.Submitted) {
                 //Add additional emails to email
                 if (model.emails && model.emails.length > 0) {
                     emails.to.push(model.emails)
@@ -356,22 +356,24 @@ const getStaffCount = async ctx => {
     const submitted = staffs.filter(
         staff => staff.status === constants.Statuses.Submitted && (staff.greenLight === null || staff.greenLight === true)
     )
-    const pending = staffs.filter(staff => staff.status === constants.Statuses.Pending && (staff.greenLight === null || staff.greenLight === true))
+    const pendingBTT = staffs.filter(
+        staff => staff.status === constants.Statuses.PendingBTT && (staff.greenLight === null || staff.greenLight === true)
+    )
     const confirmed = staffs.filter(
         staff => staff.status === constants.Statuses.Confirmed && (staff.greenLight === null || staff.greenLight === true)
     )
-    const waitingForApproval = staffs.filter(staff => staff.status !== constants.Statuses.New && staff.greenLight === false)
+    const pendingHR = staffs.filter(staff => staff.status !== constants.Statuses.New && staff.greenLight === false)
 
     const count = {
         new: _new ? _new.length : 0,
-        waitingForApproval: waitingForApproval ? waitingForApproval.length : 0,
+        pendingHR: pendingHR ? pendingHR.length : 0,
         submitted: submitted ? submitted.length : 0,
-        pending: pending ? pending.length : 0,
+        pendingBTT: pendingBTT ? pendingBTT.length : 0,
         confirmed: confirmed ? confirmed.length : 0,
         overview: null
     }
 
-    count.overview = count.new + count.submitted + count.pending + count.confirmed + count.waitingForApproval
+    count.overview = count.new + count.submitted + count.pendingBTT + count.confirmed + count.pendingHR
 
     logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count })
 
