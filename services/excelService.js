@@ -67,8 +67,8 @@ function generateExcel(staffs, type = 'binary') {
 
                 if (flight) {
                     body.push(flight.flightNumber)
-                    body.push(flight.flightDepartureTime ? moment(flight.flightDepartureTime).format('YYYY-MM-DD') : '')
-                    body.push(flight.flightArrivalTime ? moment(flight.flightArrivalTime).format('YYYY-MM-DD') : '')
+                    body.push(flight.flightDepartureTime ? moment(flight.flightDepartureTime).format('HH:mm') : '')
+                    body.push(flight.flightArrivalTime ? moment(flight.flightArrivalTime).format('HH:mm') : '')
                     body.push(flight.departureAirport)
                     body.push(flight.arrivalAirport)
                     body.push(flight.dateOfFlight ? moment(flight.dateOfFlight).format('YYYY-MM-DD') : '')

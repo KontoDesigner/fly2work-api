@@ -83,12 +83,12 @@ function getFlights(staff) {
                   { text: flight.flightNumber ? flight.flightNumber : ' ', style: 'cell' },
                   { text: 'Flight Departure Time', bold: true, style: 'header' },
                   {
-                      text: flight.flightDepartureTime ? moment(flight.flightDepartureTime).format('YYYY-MM-DD') : ' ',
+                      text: flight.flightDepartureTime ? moment(flight.flightDepartureTime).format('HH:mm') : ' ',
                       style: 'cell'
                   },
                   { text: 'Flight Arrival Time', bold: true, style: 'header' },
                   {
-                      text: flight.flightArrivalTime ? moment(flight.flightArrivalTime).format('YYYY-MM-DD') : ' ',
+                      text: flight.flightArrivalTime ? moment(flight.flightArrivalTime).format('HH:mm') : ' ',
                       style: 'cell'
                   }
               ],
