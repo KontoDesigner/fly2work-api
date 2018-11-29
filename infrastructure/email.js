@@ -49,6 +49,8 @@ async function send(staff, statusText, emails) {
         </table>
     `
 
+    const status = staff.status !== constants.Statuses.New && staff.greenLight === false ? 'pendinghr' : staff.status
+
     const email = new constants.Email()
     email.bccTo = []
 
@@ -56,7 +58,7 @@ async function send(staff, statusText, emails) {
     ${statusText}
     ${comments.length > 0 ? `<br><br>${table}<br>` : '<br><br>'}
     Please kindly find the attached file(s)
-    <br><br>Click <a href="${config.web}/${staff.status}/${staff.id}">here</a> to go to request`
+    <br><br>Click <a href="${config.web}/${status}/${staff.id}">here</a> to go to request`
 
     email.ccTo = emails.cc
     email.emailTo = emails.to

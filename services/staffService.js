@@ -64,7 +64,10 @@ const updateOrInsertStaff = async (body, ctx) => {
         model.travelType = body.travelType
         model.currency = body.currency
 
+        let greenLightChanged = false
+
         if (getStaff.greenLight === false && body.greenLight === true) {
+            greenLightChanged = true
             model.greenLight = body.greenLight
             model.greenLightUpdated = new Date()
             model.greenLightUpdatedBy = userName
@@ -189,7 +192,10 @@ const updateOrInsertStaff = async (body, ctx) => {
         logger.info('Update staff result', { url: ctx.url, model, replaceOne })
 
         if (replaceOne.ok) {
-            const statusText = `${getStaff.status} => ${model.status}`
+            const statusText =
+                greenLightChanged === false
+                    ? `${getStaff.status} => ${model.status}`
+                    : `${getStaff.status} Green Light (NO) => ${model.status} Green Light (YES)`
             //Get BTT to/cc based on sourceMarket
             let emails = helpers.getBTTEmails(model.sourceMarket)
 
