@@ -2,6 +2,7 @@ const router = require('koa-better-router')().loadMethods()
 const staffService = require('../services/staffService')
 const passport = require('koa-passport')
 const constants = require('../infrastructure/constants')
+const uuid = require('node-uuid')
 
 const BASE = '/staff'
 
@@ -95,6 +96,8 @@ router.get(`${BASE}/:status/:id`, passport.authenticate('oauth-bearer', { sessio
 
 router.get(`${BASE}/model`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
     const res = new constants.Staff()
+
+    res.id = uuid.v1()
 
     ctx.body = res
 
