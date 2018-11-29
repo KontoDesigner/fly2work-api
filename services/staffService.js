@@ -64,7 +64,7 @@ const updateOrInsertStaff = async (body, ctx) => {
         model.travelType = body.travelType
         model.currency = body.currency
 
-        let greenLightChanged = false
+        var greenLightChanged = false
 
         if (getStaff.greenLight === false && body.greenLight === true) {
             greenLightChanged = true
