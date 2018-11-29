@@ -192,7 +192,12 @@ const updateOrInsertStaff = async (body, ctx) => {
         logger.info('Update staff result', { url: ctx.url, model, replaceOne })
 
         if (replaceOne.ok) {
-            const statusText = greenLightChanged === false ? `${getStaff.status} => ${model.status}` : `Pending HR => ${model.status}`
+            const statusText =
+                greenLightChanged === false
+                    ? `${getStaff.greenLight === false ? 'Pending HR' : getStaff.status} => ${
+                          getStaff.greenLight === false ? 'Pending HR' : model.status
+                      }`
+                    : `Pending HR => ${model.status}`
             //Get BTT to/cc based on sourceMarket
             let emails = helpers.getBTTEmails(model.sourceMarket)
 
