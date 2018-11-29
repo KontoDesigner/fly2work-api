@@ -11,7 +11,7 @@ router.post(`${BASE}/upload`, passport.authenticate('oauth-bearer', { session: f
     const staffId = fields.staffId
     const file = files[0]
 
-    const res = await attachmentService.upload(ctx, staffId, file)
+    const res = await attachmentService.upload(staffId, file, ctx)
 
     ctx.body = res
 
@@ -22,7 +22,7 @@ router.post(`${BASE}/download`, passport.authenticate('oauth-bearer', { session:
     const staffId = ctx.request.body.staffId
     const attachmentId = ctx.request.body.attachmentId
 
-    const res = await attachmentService.download(staffId, attachmentId)
+    const res = await attachmentService.download(staffId, attachmentId, ctx)
 
     ctx.body = res
 
@@ -33,7 +33,7 @@ router.post(`${BASE}/delete`, passport.authenticate('oauth-bearer', { session: f
     const staffId = ctx.request.body.staffId
     const attachmentId = ctx.request.body.attachmentId
 
-    const res = await attachmentService.delete(staffId, attachmentId)
+    const res = await attachmentService.delete(staffId, attachmentId, ctx)
 
     ctx.body = res
 

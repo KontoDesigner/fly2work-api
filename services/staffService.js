@@ -5,8 +5,6 @@ const bsValidation = require('../validations/bsValidation')
 const bttValidation = require('../validations/bttValidation')
 const newValidation = require('../validations/newValidation')
 const email = require('../infrastructure/email')
-const uuid = require('node-uuid')
-const moment = require('moment')
 const userService = require('./userService')
 const helpers = require('../infrastructure/helpers')
 
@@ -51,27 +49,13 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.typeOfFlight = body.typeOfFlight
     model.emails = body.emails
 
-    //Comments
-    if (body.comments && body.comments.length > 0) {
-        for (var comment of body.comments) {
-            if (!comment.id) {
-                comment.id = uuid.v1()
-                comment.created = moment()._d
-                comment.createdBy = userName
-                comment.group = userRoles.join(', ')
-            }
-        }
-    }
-
-    model.comments = body.comments ? body.comments : []
-
     let validation = null
-
-    model = Object.assign(model, new constants.StaffBTT())
 
     const getStaff = await mongo.collection('staffs').findOne({ id: model.id })
 
     if (userRoles.includes(constants.UserRoles.BTT)) {
+        model = Object.assign(model, new constants.StaffBTT())
+
         //BTT
         model.bookingReference = body.bookingReference
         model.paymentMethod = body.paymentMethod
@@ -126,10 +110,15 @@ const updateOrInsertStaff = async (body, ctx) => {
         }
     }
 
-    //Attachments (should not be overwritten from request)
+    //Should not be overwritten from request
     model.attachments = getStaff && getStaff.attachments ? getStaff.attachments : []
+    model.createdBy = getStaff ? getStaff.createdBy : null
+    model.createdByEmail = getStaff ? getStaff.createdByEmail : null
+    model.comments = getStaff ? getStaff.comments : []
 
     if (add === true) {
+        model = Object.assign(model, new constants.StaffBTT())
+
         if (getStaff) {
             logger.warning(`Staff with id: '${model.id}' already exists`, { url: ctx.url, model })
 
@@ -184,10 +173,6 @@ const updateOrInsertStaff = async (body, ctx) => {
             }
         }
     } else {
-        //Misc (should not be overwritten from request)
-        model.createdBy = getStaff ? getStaff.createdBy : null
-        model.createdByEmail = getStaff ? getStaff.createdByEmail : null
-
         let replaceOne = {}
 
         try {
