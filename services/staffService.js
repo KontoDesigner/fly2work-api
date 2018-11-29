@@ -53,6 +53,8 @@ const updateOrInsertStaff = async (body, ctx) => {
 
     const getStaff = await mongo.collection('staffs').findOne({ id: model.id })
 
+    var greenLightChanged = false
+
     if (userRoles.includes(constants.UserRoles.BTT)) {
         model = Object.assign(model, new constants.StaffBTT())
 
@@ -63,8 +65,6 @@ const updateOrInsertStaff = async (body, ctx) => {
         model.costCentre = body.costCentre
         model.travelType = body.travelType
         model.currency = body.currency
-
-        var greenLightChanged = false
 
         if (getStaff.greenLight === false && body.greenLight === true) {
             greenLightChanged = true
@@ -151,7 +151,7 @@ const updateOrInsertStaff = async (body, ctx) => {
 
             if (insertOne.ok) {
                 //Add createdBy and BTT to emails (NEW => SUBMITTED)
-                const statusText = `${constants.Statuses.New} => ${constants.Statuses.Submitted}`
+                const statusText = `${constants.Statuses.New} => ${model.greenLight === false ? 'Pending HR' : constants.Statuses.Submitted}`
 
                 //Get BTT to/cc based on sourceMarket
                 let emails = helpers.getBTTEmails(model.sourceMarket)
@@ -192,10 +192,7 @@ const updateOrInsertStaff = async (body, ctx) => {
         logger.info('Update staff result', { url: ctx.url, model, replaceOne })
 
         if (replaceOne.ok) {
-            const statusText =
-                greenLightChanged === false
-                    ? `${getStaff.status} => ${model.status}`
-                    : `${getStaff.status} Green Light (NO) => ${model.status} Green Light (YES)`
+            const statusText = greenLightChanged === false ? `${getStaff.status} => ${model.status}` : `Pending HR => ${model.status}`
             //Get BTT to/cc based on sourceMarket
             let emails = helpers.getBTTEmails(model.sourceMarket)
 
