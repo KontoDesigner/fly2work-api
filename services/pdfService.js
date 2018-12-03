@@ -80,7 +80,7 @@ function getFlights(staff) {
         ? staff.flights.map(flight => [
               [
                   { text: 'Flight Number', bold: true, style: 'header' },
-                  { text: flight.flightNumber ? flight.flightNumber : ' ', style: 'cell' },
+                  { text: flight.flightNumber ? flight.flightNumber.toUpperCase() : ' ', style: 'cell' },
                   { text: 'Flight Departure Time', bold: true, style: 'header' },
                   {
                       text: flight.flightDepartureTime ? moment(flight.flightDepartureTime).format('HH:mm') : ' ',
@@ -94,9 +94,9 @@ function getFlights(staff) {
               ],
               [
                   { text: 'Departure Airport', bold: true, style: 'header' },
-                  { text: flight.departureAirport ? flight.departureAirport : ' ', style: 'cell' },
+                  { text: flight.departureAirport ? flight.departureAirport.toUpperCase() : ' ', style: 'cell' },
                   { text: 'Arrival Airport', bold: true, style: 'header' },
-                  { text: flight.arrivalAirport ? flight.arrivalAirport : ' ', style: 'cell' },
+                  { text: flight.arrivalAirport ? flight.arrivalAirport.toUpperCase() : ' ', style: 'cell' },
                   { text: 'Flight Cost', bold: true, style: 'header' },
                   { text: flight.flightCost ? flight.flightCost : ' ', style: 'cell' }
               ],
