@@ -113,7 +113,7 @@ function getFlights(staff) {
               ],
               [
                   { text: 'Date Of Flight', bold: true, style: 'header' },
-                  { text: flight.dateOfFlight ? flight.dateOfFlight : ' ', style: 'cell' },
+                  { text: flight.dateOfFlight ? moment(flight.dateOfFlight).format('YYYY-MM-DD') : ' ', style: 'cell' },
                   { text: ' ', style: 'cell', colSpan: 4 }
               ]
           ])
@@ -133,7 +133,7 @@ function getFlights(staff) {
                 fontSize: 9,
                 table: {
                     headerRows: 0,
-                    widths: ['*', '*', 'auto', '*', '*', '*'],
+                    widths: ['*', '*', '*', '*', '*', '*'],
                     body: flightBodies[i]
                 },
 
@@ -144,8 +144,7 @@ function getFlights(staff) {
                     paddingBottom: function(i, node) {
                         return 2
                     }
-                },
-                alignment: 'center'
+                }
             }
         )
     }
@@ -186,8 +185,7 @@ function getComments(staff) {
                 paddingBottom: function(i, node) {
                     return 2
                 }
-            },
-            alignment: 'center'
+            }
         })
     }
 
@@ -312,8 +310,7 @@ function getDocDefinition(staff) {
                     paddingBottom: function(i, node) {
                         return 2
                     }
-                },
-                alignment: 'center'
+                }
             },
             {
                 text: 'BTT',
@@ -363,8 +360,7 @@ function getDocDefinition(staff) {
                     paddingBottom: function(i, node) {
                         return 2
                     }
-                },
-                alignment: 'center'
+                }
             },
             flights.map(f => f),
             {
