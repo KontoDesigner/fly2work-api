@@ -7,6 +7,7 @@ const newValidation = require('../validations/newValidation')
 const email = require('../infrastructure/email')
 const userService = require('./userService')
 const helpers = require('../infrastructure/helpers')
+const moment = require('moment')
 
 const updateOrInsertStaff = async (body, ctx) => {
     const user = userService.getUser(ctx)
@@ -276,11 +277,19 @@ const updateOrInsertStaff = async (body, ctx) => {
 const insertStaff = async (body, ctx) => {
     const model = new constants.Staff()
 
+    if (body.DateOfBirth) {
+        const dateOfBirth = moment(body.DateOfBirth)
+        const dateOfBirthValid = dateOfBirth.isValid()
+
+        if (dateOfBirthValid === true) {
+            model.dateOfBirth = moment(body.DateOfBirth).format('DD/MM/YYYY')
+        }
+    }
+
     model.id = body.Id
     model.firstName = body.FirstName ? body.FirstName : ''
     model.lastName2 = body.LastName2 ? body.LastName2 : ''
     model.lastName = body.LastName ? body.LastName : ''
-    model.dateOfBirth = body.DateOfBirth ? body.DateOfBirth : ''
     model.sourceMarket = body.SourceMarket ? body.SourceMarket : ''
     model.phone = body.Phone ? body.Phone : ''
     model.status = constants.Statuses.New

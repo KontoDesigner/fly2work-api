@@ -1,6 +1,22 @@
 const Yup = require('yup')
+const moment = require('moment')
+
+const invalidDate = new Date('')
+
+Yup.addMethod(Yup.date, 'format', function(format) {
+    return this.transform((value, input) => {
+        const parsed = moment(input, format, true)
+
+        return parsed.isValid() ? parsed.toDate() : invalidDate
+    })
+})
 
 const bsValidation = Yup.object().shape({
+    positionStart: Yup.date()
+        .nullable(true)
+        .notRequired()
+        .typeError('Planned assignment start date must be a datetime')
+        .format('YYYY-MM-DD'),
     typeOfFlight: Yup.string()
         .nullable(true)
         .required('Type of flight is required'),
@@ -17,6 +33,7 @@ const bsValidation = Yup.object().shape({
         .nullable(true)
         .required('Sur name is required'),
     dateOfBirth: Yup.date()
+        .format('DD/MM/YYYY')
         .typeError('Date of birth must be a datetime')
         .nullable(true)
         .required('Date of birth is required'),
@@ -24,6 +41,7 @@ const bsValidation = Yup.object().shape({
         .nullable(true)
         .required('Source market is required'),
     dateOfFlight: Yup.date()
+        .format('YYYY-MM-DD')
         .typeError('Date of flight must be a datetime')
         .nullable(true)
         .required('Date of flight is required'),
@@ -66,6 +84,7 @@ const bsValidation = Yup.object().shape({
                 .typeError('(HN) Hotel start must be a datetime')
                 .nullable(true)
                 .required('(HN) Hotel start is required')
+                .format('YYYY-MM-DD')
         }),
     hotelNeededHotelEnd: Yup.mixed()
         .nullable(true)
@@ -75,6 +94,7 @@ const bsValidation = Yup.object().shape({
                 .typeError('(HN) Hotel start must be a datetime')
                 .nullable(true)
                 .required('(HN) Hotel end is required')
+                .format('YYYY-MM-DD')
         }),
     bookReturnFlight: Yup.boolean()
         .nullable(true)
@@ -100,6 +120,7 @@ const bsValidation = Yup.object().shape({
         .when('bookReturnFlight', {
             is: true,
             then: Yup.date()
+                .format('YYYY-MM-DD')
                 .typeError('(BRF) Date Of Flight must be a datetime')
                 .nullable(true)
                 .required('(BRF) Date Of Flight is required')

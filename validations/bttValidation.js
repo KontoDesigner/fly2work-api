@@ -1,5 +1,18 @@
 const Yup = require('yup')
 const bsValidation = require('./bsValidation')
+const moment = require('moment')
+
+const invalidDate = new Date('')
+
+Yup.addMethod(Yup.date, 'format', function(format) {
+    return this.transform((value, input) => {
+        if (input && input !== '') {
+            const parsed = moment(input, format, true)
+
+            return parsed.isValid() ? parsed.toDate() : invalidDate
+        }
+    })
+})
 
 const bttValidation = Yup.object().shape({
     bookingReference: Yup.string()
@@ -27,11 +40,13 @@ const bttValidation = Yup.object().shape({
                     .nullable(true)
                     .required('Flight number is required'),
                 flightDepartureTime: Yup.date()
-                    .typeError('Flight departure time must be a datetime')
+                    .format('HH:mm')
+                    .typeError('Flight departure time must be a time')
                     .nullable(true)
                     .required('Flight departure time is required'),
                 flightArrivalTime: Yup.date()
-                    .typeError('Flight arrival time must be a datetime')
+                    .format('HH:mm')
+                    .typeError('Flight arrival time must be a time')
                     .nullable(true)
                     .required('Flight arrival time is required'),
                 departureAirport: Yup.string()
@@ -53,6 +68,7 @@ const bttValidation = Yup.object().shape({
                     .nullable(true)
                     .required('Hotel cost is required'),
                 dateOfFlight: Yup.date()
+                    .format('YYYY-MM-DD')
                     .typeError('Date of flight must be a datetime')
                     .nullable(true)
                     .required('Date of flight is required')

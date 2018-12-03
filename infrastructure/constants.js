@@ -59,6 +59,7 @@ function Flight() {
     this.hotelCost = 0
     this.flightCost = 0
     this.xbagCost = 0
+    this.dateOfFlight = ''
 }
 
 function Email() {
