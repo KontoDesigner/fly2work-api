@@ -13,8 +13,6 @@ function StaffBS() {
     this.departureAirports = ''
     this.arrivalAirports = ''
     this.hotelNeeded = false
-    this.hotelNeededHotelStart = ''
-    this.hotelNeededHotelEnd = ''
     this.phone = ''
     this.status = ''
     this.gender = ''
@@ -42,6 +40,9 @@ function StaffBTT() {
     this.paymentMethod = ''
     this.luggage = ''
     this.costCentre = ''
+    this.hotelNeededHotelName = ''
+    this.hotelNeededHotelStart = ''
+    this.hotelNeededHotelEnd = ''
     this.flights = [new Flight(true)]
     this.greenLight = null
     this.greenLightUpdated = null

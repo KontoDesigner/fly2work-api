@@ -33,6 +33,34 @@ const bttValidation = Yup.object().shape({
     currency: Yup.string()
         .nullable(true)
         .required('Currency is required'),
+    hotelNeededHotelName: Yup.mixed()
+        .nullable(true)
+        .when('hotelNeeded', {
+            is: true,
+            then: Yup.string()
+                .nullable(true)
+                .required('(HN) Hotel name is required')
+        }),
+    hotelNeededHotelStart: Yup.mixed()
+        .nullable(true)
+        .when('hotelNeeded', {
+            is: true,
+            then: Yup.date()
+                .typeError('(HN) Hotel start must be a datetime')
+                .nullable(true)
+                .required('(HN) Hotel start is required')
+                .format('YYYY-MM-DD')
+        }),
+    hotelNeededHotelEnd: Yup.mixed()
+        .nullable(true)
+        .when('hotelNeeded', {
+            is: true,
+            then: Yup.date()
+                .typeError('(HN) Hotel start must be a datetime')
+                .nullable(true)
+                .required('(HN) Hotel end is required')
+                .format('YYYY-MM-DD')
+        }),
     flights: Yup.array()
         .of(
             Yup.object().shape({

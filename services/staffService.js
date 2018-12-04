@@ -37,8 +37,6 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.status = body.status
     model.plannedAssignmentStartDate = body.plannedAssignmentStartDate
     model.jobTitle = body.jobTitle
-    model.hotelNeededHotelStart = body.hotelNeededHotelStart
-    model.hotelNeededHotelEnd = body.hotelNeededHotelEnd
     model.bookReturnFlight = body.bookReturnFlight
     model.bookReturnFlightDateOfFlight = body.bookReturnFlightDateOfFlight
     model.bookReturnFlightDepartureAirport = body.bookReturnFlightDepartureAirport
@@ -64,6 +62,9 @@ const updateOrInsertStaff = async (body, ctx) => {
         model.costCentre = body.costCentre
         model.travelType = body.travelType
         model.currency = body.currency
+        model.hotelNeededHotelName = body.hotelNeededHotelName
+        model.hotelNeededHotelStart = body.hotelNeededHotelStart
+        model.hotelNeededHotelEnd = body.hotelNeededHotelEnd
 
         if (getStaff.greenLight === false && body.greenLight === true) {
             greenLightChanged = true

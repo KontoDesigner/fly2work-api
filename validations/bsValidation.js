@@ -76,26 +76,6 @@ const bsValidation = Yup.object().shape({
     hotelNeeded: Yup.boolean()
         .nullable(true)
         .required('Hotel needed is required'),
-    hotelNeededHotelStart: Yup.mixed()
-        .nullable(true)
-        .when('hotelNeeded', {
-            is: true,
-            then: Yup.date()
-                .typeError('(HN) Hotel start must be a datetime')
-                .nullable(true)
-                .required('(HN) Hotel start is required')
-                .format('YYYY-MM-DD')
-        }),
-    hotelNeededHotelEnd: Yup.mixed()
-        .nullable(true)
-        .when('hotelNeeded', {
-            is: true,
-            then: Yup.date()
-                .typeError('(HN) Hotel start must be a datetime')
-                .nullable(true)
-                .required('(HN) Hotel end is required')
-                .format('YYYY-MM-DD')
-        }),
     bookReturnFlight: Yup.boolean()
         .nullable(true)
         .required('Book return flight is required'),
