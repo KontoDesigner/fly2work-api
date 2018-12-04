@@ -83,12 +83,12 @@ function getFlights(staff) {
                   { text: flight.flightNumber ? flight.flightNumber.toUpperCase() : ' ', style: 'cell' },
                   { text: 'Flight Departure Time', bold: true, style: 'header' },
                   {
-                      text: flight.flightDepartureTime ? moment(flight.flightDepartureTime).format('HH:mm') : ' ',
+                      text: flight.flightDepartureTime ? flight.flightDepartureTime : ' ',
                       style: 'cell'
                   },
                   { text: 'Flight Arrival Time', bold: true, style: 'header' },
                   {
-                      text: flight.flightArrivalTime ? moment(flight.flightArrivalTime).format('HH:mm') : ' ',
+                      text: flight.flightArrivalTime ? flight.flightArrivalTime : ' ',
                       style: 'cell'
                   }
               ],
@@ -113,7 +113,7 @@ function getFlights(staff) {
               ],
               [
                   { text: 'Date Of Flight', bold: true, style: 'header' },
-                  { text: flight.dateOfFlight ? moment(flight.dateOfFlight).format('YYYY-MM-DD') : ' ', style: 'cell' },
+                  { text: flight.dateOfFlight ? flight.dateOfFlight : ' ', style: 'cell' },
                   { text: ' ', style: 'cell', colSpan: 4 }
               ]
           ])
@@ -152,42 +152,48 @@ function getFlights(staff) {
     return res
 }
 
+// function getComments(staff) {
+//     let res = []
+
+//     const commentBodies = staff.comments
+//         ? staff.comments.map(comment => [
+//               [
+//                   { text: 'Created By', bold: true, style: 'header' },
+//                   { text: comment.createdBy ? comment.createdBy : ' ', style: 'cell' },
+//                   { text: 'Group', bold: true, style: 'header' },
+//                   { text: comment.group ? comment.group : ' ', style: 'cell' },
+//                   { text: 'Created', bold: true, style: 'header' },
+//                   { text: comment.created ? moment(comment.created).format('YYYY-MM-DD') : ' ', style: 'cell' }
+//               ],
+//               [{ text: 'Comment', bold: true, style: 'header' }, { text: comment.text ? comment.text : ' ', style: 'cell', colSpan: 5 }]
+//           ])
+//         : []
+
+//     for (var i = 0; i < commentBodies.length; i++) {
+//         res.push({
+//             margin: i === 0 ? [0, 0, 0, 0] : [0, 10, 0, 0],
+//             fontSize: 9,
+//             table: {
+//                 headerRows: 0,
+//                 widths: ['*', '*', '*', '*', '*', '*'],
+//                 body: commentBodies[i]
+//             },
+//             layout: {
+//                 paddingTop: function(i, node) {
+//                     return 2
+//                 },
+//                 paddingBottom: function(i, node) {
+//                     return 2
+//                 }
+//             }
+//         })
+//     }
+
+//     return res
+// }
+
 function getComments(staff) {
-    let res = []
-
-    const commentBodies = staff.comments
-        ? staff.comments.map(comment => [
-              [
-                  { text: 'Created By', bold: true, style: 'header' },
-                  { text: comment.createdBy ? comment.createdBy : ' ', style: 'cell' },
-                  { text: 'Group', bold: true, style: 'header' },
-                  { text: comment.group ? comment.group : ' ', style: 'cell' },
-                  { text: 'Created', bold: true, style: 'header' },
-                  { text: comment.created ? moment(comment.created).format('YYYY-MM-DD') : ' ', style: 'cell' }
-              ],
-              [{ text: 'Comment', bold: true, style: 'header' }, { text: comment.text ? comment.text : ' ', style: 'cell', colSpan: 5 }]
-          ])
-        : []
-
-    for (var i = 0; i < commentBodies.length; i++) {
-        res.push({
-            margin: i === 0 ? [0, 0, 0, 0] : [0, 10, 0, 0],
-            fontSize: 9,
-            table: {
-                headerRows: 0,
-                widths: ['*', '*', '*', '*', '*', '*'],
-                body: commentBodies[i]
-            },
-            layout: {
-                paddingTop: function(i, node) {
-                    return 2
-                },
-                paddingBottom: function(i, node) {
-                    return 2
-                }
-            }
-        })
-    }
+    const res = staff.comments ? staff.comments.map(comment => [{ text: comment.text ? comment.text : ' ', style: 'cell' }]) : []
 
     return res
 }
@@ -238,11 +244,11 @@ function getDocDefinition(staff) {
                     body: [
                         [
                             { text: 'Date Of Birth', bold: true, style: 'header' },
-                            { text: staff.dateOfBirth ? moment(staff.dateOfBirth).format('DD/MM/YYYY') : ' ', style: 'cell' },
+                            { text: staff.dateOfBirth ? staff.dateOfBirth : ' ', style: 'cell' },
                             { text: 'Passport Number', bold: true, style: 'header' },
                             { text: staff.passportNumber ? staff.passportNumber : ' ', style: 'cell' },
                             { text: 'Date Of Flight', bold: true, style: 'header' },
-                            { text: staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : ' ', style: 'cell' }
+                            { text: staff.dateOfFlight ? staff.dateOfFlight : ' ', style: 'cell' }
                         ],
                         [
                             { text: 'Job Title', bold: true, style: 'header' },
@@ -270,7 +276,7 @@ function getDocDefinition(staff) {
                             { text: staff.bookReturnFlight === true ? 'YES' : 'NO', style: 'cell' },
                             { text: 'Date Of Flight (BRF)', bold: true, style: 'header' },
                             {
-                                text: staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY-MM-DD') : ' ',
+                                text: staff.bookReturnFlightDateOfFlight ? staff.bookReturnFlightDateOfFlight : ' ',
                                 style: 'cell'
                             }
                         ],
@@ -287,7 +293,7 @@ function getDocDefinition(staff) {
                             { text: staff.iataCode ? staff.iataCode : ' ', style: 'cell' },
                             { text: 'Planned Assignment Start Date', bold: true, style: 'header' },
                             {
-                                text: staff.plannedAssignmentStartDate ? moment(staff.plannedAssignmentStartDate).format('YYYY-MM-DD') : ' ',
+                                text: staff.plannedAssignmentStartDate ? staff.plannedAssignmentStartDate : ' ',
                                 style: 'cell'
                             },
                             { text: 'Hotel Name (HN)', bold: true, style: 'header' },
@@ -296,12 +302,12 @@ function getDocDefinition(staff) {
                         [
                             { text: 'Hotel Start (HN)', bold: true, style: 'header' },
                             {
-                                text: staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : ' ',
+                                text: staff.hotelNeededHotelStart ? staff.hotelNeededHotelStart : ' ',
                                 style: 'cell'
                             },
                             { text: 'Hotel End (HN)', bold: true, style: 'header' },
                             {
-                                text: staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : ' ',
+                                text: staff.hotelNeededHotelEnd ? staff.hotelNeededHotelEnd : ' ',
                                 style: 'cell'
                             },
                             { text: ' ', colSpan: 2 }
@@ -376,7 +382,23 @@ function getDocDefinition(staff) {
                 fontSize: 12,
                 margin: [0, 4, 0, 5]
             },
-            comments.map(m => m)
+            // comments.map(m => m)
+            {
+                fontSize: 9,
+                table: {
+                    headerRows: 0,
+                    widths: ['*'],
+                    body: comments
+                },
+                layout: {
+                    paddingTop: function(i, node) {
+                        return 2
+                    },
+                    paddingBottom: function(i, node) {
+                        return 2
+                    }
+                }
+            }
         ]
     }
 }
