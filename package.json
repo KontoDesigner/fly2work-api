@@ -1,5 +1,5 @@
 {
-  "name": "ctx-api",
+  "name": "fly2work-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -30,12 +30,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TUI-Nordic/ctx-api.git"
+    "url": "git+https://github.com/TUI-Nordic/fly2work-api.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/TUI-Nordic/ctx-api/issues"
+    "url": "https://github.com/TUI-Nordic/fly2work-api/issues"
   },
-  "homepage": "https://github.com/TUI-Nordic/ctx-api#readme"
+  "homepage": "https://github.com/TUI-Nordic/fly2work-api#readme"
 }

@@ -7,7 +7,7 @@ let client = null
 let db = null
 
 const connect = async () => {
-    const connection = config.mongoConnectionString
+    const connection = `${config.mongoConnectionString}/${config.mongoName}`
 
     logger.info('will now try and connect to mongo', { connection })
 
@@ -17,7 +17,7 @@ const connect = async () => {
             { useNewUrlParser: true }
         )
 
-        db = client.db('ctx')
+        db = client.db(config.mongoName)
 
         logger.info('successfully connected to mongo')
     } catch (err) {

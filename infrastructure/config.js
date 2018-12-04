@@ -2,6 +2,7 @@ require('dotenv').config()
 
 const config = {
     mongoConnectionString: process.env.MONGO_CONNECTIONSTRING,
+    mongoName: process.env.MONGO_NAME,
     gpxApi: process.env.GPX_API,
     mailApi: process.env.MAIL_API,
     name: process.env.NAME,
