@@ -21,8 +21,6 @@ const updateOrInsertStaff = async (body, ctx) => {
 
     //BS
     model.arrivalAirports = body.arrivalAirports
-    model.updated = new Date()
-    model.updatedBy = userName
     model.dateOfBirth = body.dateOfBirth
     model.dateOfFlight = body.dateOfFlight
     model.departureAirports = body.departureAirports
@@ -119,6 +117,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.createdBy = getStaff ? getStaff.createdBy : null
     model.createdByEmail = getStaff ? getStaff.createdByEmail : null
     model.comments = getStaff ? getStaff.comments : []
+    model.audit = getStaff ? getStaff.audit : []
 
     if (add === true) {
         model = Object.assign(model, new constants.StaffBTT())
@@ -177,6 +176,15 @@ const updateOrInsertStaff = async (body, ctx) => {
             }
         }
     } else {
+        model.audit.push({
+            updatedBy: userName,
+            greenLightFrom: getStaff.greenLight,
+            greenLightTo: model.greenLight,
+            statusFrom: getStaff.status,
+            statusTo: model.status,
+            date: new Date()
+        })
+
         let replaceOne = {}
 
         try {

@@ -20,8 +20,6 @@ function StaffBS() {
     this.gender = ''
     this.destination = ''
     this.plannedAssignmentStartDate = ''
-    this.updated = ''
-    this.updatedBy = ''
     this.railFly = false
     this.bookReturnFlight = false
     this.bookReturnFlightDateOfFlight = ''
@@ -30,9 +28,12 @@ function StaffBS() {
     this.iataCode = ''
     this.typeOfFlight = ''
 
+    this.createdBy = null
+    this.createdByEmail = null
     this.comments = []
     this.attachments = []
     this.emails = []
+    this.audit = []
 }
 
 function StaffBTT() {
@@ -43,6 +44,8 @@ function StaffBTT() {
     this.costCentre = ''
     this.flights = [new Flight(true)]
     this.greenLight = null
+    this.greenLightUpdated = null
+    this.greenLightUpdatedBy = null
     this.currency = null
 }
 
