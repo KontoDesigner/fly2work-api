@@ -74,8 +74,6 @@ function generatePdfPromise(staff) {
 }
 
 function getFlights(staff) {
-    let res = []
-
     const flightBodies = staff.flights
         ? staff.flights.map(flight => [
               [
@@ -118,6 +116,12 @@ function getFlights(staff) {
               ]
           ])
         : []
+
+    if (flightBodies.length === 0) {
+        return [{}]
+    }
+
+    let res = []
 
     for (var i = 0; i < flightBodies.length; i++) {
         res.push(
@@ -194,6 +198,10 @@ function getFlights(staff) {
 
 function getComments(staff) {
     const res = staff.comments ? staff.comments.map(comment => [{ text: comment.text ? comment.text : ' ', style: 'cell' }]) : []
+
+    if (res.length === 0) {
+        return [{}]
+    }
 
     return res
 }
