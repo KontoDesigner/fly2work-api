@@ -266,43 +266,45 @@ function getDocDefinition(staff) {
                         [
                             { text: 'Hotel Needed', bold: true, style: 'header' },
                             { text: staff.hotelNeeded === true ? 'YES' : 'NO', style: 'cell' },
-                            { text: 'Hotel Start', bold: true, style: 'header' },
-                            {
-                                text: staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : ' ',
-                                style: 'cell'
-                            },
-                            { text: 'Hotel End', bold: true, style: 'header' },
-                            {
-                                text: staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : ' ',
-                                style: 'cell'
-                            }
-                        ],
-                        [
                             { text: 'Book Return Flight', bold: true, style: 'header' },
                             { text: staff.bookReturnFlight === true ? 'YES' : 'NO', style: 'cell' },
                             { text: 'Date Of Flight (BRF)', bold: true, style: 'header' },
                             {
                                 text: staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY-MM-DD') : ' ',
                                 style: 'cell'
-                            },
-                            { text: 'Departure Airport (BRF)', bold: true, style: 'header' },
-                            { text: staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : ' ', style: 'cell' }
+                            }
                         ],
                         [
+                            { text: 'Departure Airport (BRF)', bold: true, style: 'header' },
+                            { text: staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : ' ', style: 'cell' },
                             { text: 'Arrival Airport (BRF)', bold: true, style: 'header' },
                             { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : ' ', style: 'cell' },
                             { text: 'Rail & Fly (Only In Germany)', bold: true, style: 'header' },
-                            { text: staff.railFly === true ? 'YES' : 'NO', style: 'cell' },
-                            { text: 'Iata Code', bold: true, style: 'header' },
-                            { text: staff.iataCode ? staff.iataCode : ' ', style: 'cell' }
+                            { text: staff.railFly === true ? 'YES' : 'NO', style: 'cell' }
                         ],
                         [
+                            { text: 'Iata Code', bold: true, style: 'header' },
+                            { text: staff.iataCode ? staff.iataCode : ' ', style: 'cell' },
                             { text: 'Planned Assignment Start Date', bold: true, style: 'header' },
                             {
                                 text: staff.plannedAssignmentStartDate ? moment(staff.plannedAssignmentStartDate).format('YYYY-MM-DD') : ' ',
                                 style: 'cell'
                             },
-                            { text: ' ', colSpan: 4 }
+                            { text: 'Hotel Name (HN)', bold: true, style: 'header' },
+                            { text: staff.hotelNeededHotelName ? staff.hotelNeededHotelName : ' ', style: 'cell' }
+                        ],
+                        [
+                            { text: 'Hotel Start (HN)', bold: true, style: 'header' },
+                            {
+                                text: staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : ' ',
+                                style: 'cell'
+                            },
+                            { text: 'Hotel End (HN)', bold: true, style: 'header' },
+                            {
+                                text: staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : ' ',
+                                style: 'cell'
+                            },
+                            { text: ' ', colSpan: 2 }
                         ]
                     ]
                 },

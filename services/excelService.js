@@ -46,8 +46,6 @@ function generateExcel(staffs, type = 'binary') {
                 staff.iataCode,
                 staff.gender !== null && staff.gender !== undefined ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : '',
                 staff.hotelNeeded === true ? 'YES' : 'NO',
-                staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : '',
-                staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : '',
                 staff.bookReturnFlight === true ? 'YES' : 'NO',
                 staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY-MM-DD') : '',
                 staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : '',
@@ -58,6 +56,9 @@ function generateExcel(staffs, type = 'binary') {
                 staff.luggage,
                 staff.costCentre,
                 staff.currency,
+                staff.hotelNeededHotelName,
+                staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : '',
+                staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : '',
                 staff.travelType,
                 staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : ''
             ]
@@ -141,8 +142,6 @@ const HEADER = [
     'Iata Code',
     'Gender',
     'Hotel Needed',
-    'Hotel Start (HN)',
-    'Hotel End (HN)',
     'Book Return Flight',
     'Date Of Flight (BRF)',
     'Departure Airport (BRF)',
@@ -153,6 +152,9 @@ const HEADER = [
     'Luggage',
     'Cost Centre',
     'Currency',
+    'Hotel Name (HN)',
+    'Hotel Start (HN)',
+    'Hotel End (HN)',
     'Travel Type',
     'Green Light',
 
