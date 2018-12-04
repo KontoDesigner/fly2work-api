@@ -19,7 +19,7 @@ function StaffBS() {
     this.status = ''
     this.gender = ''
     this.destination = ''
-    this.positionStart = ''
+    this.plannedAssignmentStartDate = ''
     this.updated = ''
     this.updatedBy = ''
     this.railFly = false
@@ -39,7 +39,7 @@ function StaffBTT() {
     this.bookingReference = ''
     this.travelType = ''
     this.paymentMethod = ''
-    this.xbag = ''
+    this.luggage = ''
     this.costCentre = ''
     this.flights = [new Flight(true)]
     this.greenLight = null

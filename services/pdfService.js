@@ -298,7 +298,10 @@ function getDocDefinition(staff) {
                         ],
                         [
                             { text: 'Planned Assignment Start Date', bold: true, style: 'header' },
-                            { text: staff.positionStart ? moment(staff.positionStart).format('YYYY-MM-DD') : ' ', style: 'cell' },
+                            {
+                                text: staff.plannedAssignmentStartDate ? moment(staff.plannedAssignmentStartDate).format('YYYY-MM-DD') : ' ',
+                                style: 'cell'
+                            },
                             { text: ' ', colSpan: 4 }
                         ]
                     ]
@@ -335,8 +338,8 @@ function getDocDefinition(staff) {
                             { text: staff.paymentMethod ? staff.paymentMethod : ' ', style: 'cell' }
                         ],
                         [
-                            { text: 'Xbag', bold: true, style: 'header' },
-                            { text: staff.xbag ? staff.xbag : ' ', style: 'cell' },
+                            { text: 'Luggage', bold: true, style: 'header' },
+                            { text: staff.luggage ? staff.luggage : ' ', style: 'cell' },
                             { text: 'Cost Centre', bold: true, style: 'header' },
                             { text: staff.costCentre ? staff.costCentre : ' ', style: 'cell' },
                             { text: 'Currency', bold: true, style: 'header' },

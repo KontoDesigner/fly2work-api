@@ -24,9 +24,9 @@ const bttValidation = Yup.object().shape({
     travelType: Yup.string()
         .nullable(true)
         .required('Travel type is required'),
-    xbag: Yup.string()
+    luggage: Yup.string()
         .nullable(true)
-        .required('Xbag is required'),
+        .required('Luggage is required'),
     costCentre: Yup.string()
         .nullable(true)
         .required('Cost centre is required'),

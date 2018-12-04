@@ -37,7 +37,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.phone = body.phone
     model.sourceMarket = body.sourceMarket
     model.status = body.status
-    model.positionStart = body.positionStart
+    model.plannedAssignmentStartDate = body.plannedAssignmentStartDate
     model.jobTitle = body.jobTitle
     model.hotelNeededHotelStart = body.hotelNeededHotelStart
     model.hotelNeededHotelEnd = body.hotelNeededHotelEnd
@@ -62,7 +62,7 @@ const updateOrInsertStaff = async (body, ctx) => {
         //BTT
         model.bookingReference = body.bookingReference
         model.paymentMethod = body.paymentMethod
-        model.xbag = body.xbag
+        model.luggage = body.luggage
         model.costCentre = body.costCentre
         model.travelType = body.travelType
         model.currency = body.currency
@@ -295,7 +295,7 @@ const insertStaff = async (body, ctx) => {
     model.status = constants.Statuses.New
     model.gender = body.Gender ? body.Gender : ''
     model.destination = body.Destination ? body.Destination : ''
-    model.positionStart = body.PositionStart ? body.PositionStart : ''
+    model.plannedAssignmentStartDate = body.PositionStart ? body.PositionStart : ''
     model.jobTitle = body.JobTitle ? body.JobTitle : ''
     model.iataCode = body.IataCode ? body.IataCode : ''
     model.greenLight = body.GreenLight !== null && body.GreenLight !== undefined ? body.GreenLight : null

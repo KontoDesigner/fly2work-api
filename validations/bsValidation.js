@@ -12,7 +12,7 @@ Yup.addMethod(Yup.date, 'format', function(format) {
 })
 
 const bsValidation = Yup.object().shape({
-    positionStart: Yup.date()
+    plannedAssignmentStartDate: Yup.date()
         .nullable(true)
         .notRequired()
         .typeError('Planned assignment start date must be a datetime')
