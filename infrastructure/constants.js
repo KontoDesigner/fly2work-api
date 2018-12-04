@@ -85,7 +85,7 @@ const UserRoles = keyMirror({
 const Statuses = keyMirror({
     New: null,
     Submitted: null,
-    PendingBTT: null,
+    PendingDES: null,
     Confirmed: null
 })
 

@@ -234,8 +234,8 @@ const updateOrInsertStaff = async (body, ctx) => {
                 }
             }
 
-            //Add BTT to emails (PENDINGBTT => SUBMITTED)
-            else if (getStaff.status === constants.Statuses.PendingBTT && model.status === constants.Statuses.Submitted) {
+            //Add BTT to emails (PENDINGDES => SUBMITTED)
+            else if (getStaff.status === constants.Statuses.PendingDES && model.status === constants.Statuses.Submitted) {
                 //Add additional emails to email
                 if (model.emails && model.emails.length > 0) {
                     emails.to.push(model.emails)
@@ -367,8 +367,8 @@ const getStaffCount = async ctx => {
     const submitted = staffs.filter(
         staff => staff.status === constants.Statuses.Submitted && (staff.greenLight === null || staff.greenLight === true)
     )
-    const pendingBTT = staffs.filter(
-        staff => staff.status === constants.Statuses.PendingBTT && (staff.greenLight === null || staff.greenLight === true)
+    const pendingDES = staffs.filter(
+        staff => staff.status === constants.Statuses.PendingDES && (staff.greenLight === null || staff.greenLight === true)
     )
     const confirmed = staffs.filter(
         staff => staff.status === constants.Statuses.Confirmed && (staff.greenLight === null || staff.greenLight === true)
@@ -379,12 +379,12 @@ const getStaffCount = async ctx => {
         new: _new ? _new.length : 0,
         pendingHR: pendingHR ? pendingHR.length : 0,
         submitted: submitted ? submitted.length : 0,
-        pendingBTT: pendingBTT ? pendingBTT.length : 0,
+        pendingDES: pendingDES ? pendingDES.length : 0,
         confirmed: confirmed ? confirmed.length : 0,
         overview: null
     }
 
-    count.overview = count.new + count.submitted + count.pendingBTT + count.confirmed + count.pendingHR
+    count.overview = count.new + count.submitted + count.pendingDES + count.confirmed + count.pendingHR
 
     logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count })
 
