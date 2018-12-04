@@ -133,7 +133,7 @@ const updateOrInsertStaff = async (body, ctx) => {
         } else {
             model.createdBy = userName
             model.createdByEmail = userEmail
-            model.status = constants.Statuses.Submitted
+            model.status = constants.Statuses.PendingBTT
 
             let insertOne = {}
 
@@ -151,8 +151,8 @@ const updateOrInsertStaff = async (body, ctx) => {
             logger.info('Insert staff result', { url: ctx.url, model, insertOne })
 
             if (insertOne.ok) {
-                //Add createdBy and BTT to emails (NEW => SUBMITTED)
-                const statusText = `${constants.Statuses.New} => ${model.greenLight === false ? 'Pending HR' : constants.Statuses.Submitted}`
+                //Add createdBy and BTT to emails (NEW => PENDINGBTT)
+                const statusText = `${constants.Statuses.New} => ${model.greenLight === false ? 'Pending HR' : constants.Statuses.PendingBTT}`
 
                 //Get BTT to/cc based on sourceMarket
                 let emails = helpers.getBTTEmails(model.sourceMarket)
@@ -211,8 +211,8 @@ const updateOrInsertStaff = async (body, ctx) => {
             //Get BTT to/cc based on sourceMarket
             let emails = helpers.getBTTEmails(model.sourceMarket)
 
-            //Add BTT and createdBy to emails (SUBMITTED => CONFIRMED)
-            if (getStaff.status === constants.Statuses.Submitted && model.status === constants.Statuses.Confirmed) {
+            //Add BTT and createdBy to emails (PENDINGBTT => CONFIRMED)
+            if (getStaff.status === constants.Statuses.PendingBTT && model.status === constants.Statuses.Confirmed) {
                 if (model.createdByEmail) {
                     emails.to.push(model.createdByEmail)
                 }
@@ -234,8 +234,8 @@ const updateOrInsertStaff = async (body, ctx) => {
                 }
             }
 
-            //Add BTT to emails (PENDINGDES => SUBMITTED)
-            else if (getStaff.status === constants.Statuses.PendingDES && model.status === constants.Statuses.Submitted) {
+            //Add BTT to emails (PENDINGDES => PendingBTT)
+            else if (getStaff.status === constants.Statuses.PendingDES && model.status === constants.Statuses.PendingBTT) {
                 //Add additional emails to email
                 if (model.emails && model.emails.length > 0) {
                     emails.to.push(model.emails)
@@ -364,8 +364,8 @@ const getStaffCount = async ctx => {
         .toArray()
 
     const _new = staffs.filter(staff => staff.status === constants.Statuses.New)
-    const submitted = staffs.filter(
-        staff => staff.status === constants.Statuses.Submitted && (staff.greenLight === null || staff.greenLight === true)
+    const pendingBTT = staffs.filter(
+        staff => staff.status === constants.Statuses.PendingBTT && (staff.greenLight === null || staff.greenLight === true)
     )
     const pendingDES = staffs.filter(
         staff => staff.status === constants.Statuses.PendingDES && (staff.greenLight === null || staff.greenLight === true)
@@ -378,13 +378,13 @@ const getStaffCount = async ctx => {
     const count = {
         new: _new ? _new.length : 0,
         pendingHR: pendingHR ? pendingHR.length : 0,
-        submitted: submitted ? submitted.length : 0,
+        pendingBTT: pendingBTT ? pendingBTT.length : 0,
         pendingDES: pendingDES ? pendingDES.length : 0,
         confirmed: confirmed ? confirmed.length : 0,
         overview: null
     }
 
-    count.overview = count.new + count.submitted + count.pendingDES + count.confirmed + count.pendingHR
+    count.overview = count.new + count.pendingBTT + count.pendingDES + count.confirmed + count.pendingHR
 
     logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count })
 
