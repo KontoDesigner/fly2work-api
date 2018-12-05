@@ -136,8 +136,10 @@ const updateOrInsertStaff = async (body, ctx) => {
             model.createdByEmail = userEmail
             model.status = constants.Statuses.PendingBTT
 
-            const greenLightDestinations = config.greenLightDestinations.split(',')
-            model.greenLight = greenLightDestinations.includes(model.destination) ? false : null
+            if (model.typeOfFlight === 'Start of season') {
+                const greenLightDestinations = config.greenLightDestinations.split(',')
+                model.greenLight = greenLightDestinations.includes(model.destination) ? false : null
+            }
 
             let insertOne = {}
 
