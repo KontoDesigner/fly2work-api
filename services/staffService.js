@@ -54,9 +54,9 @@ const updateOrInsertStaff = async (body, ctx) => {
     var greenLightChanged = false
 
     if (userRoles.includes(constants.UserRoles.BTT)) {
+        //BTT
         model = Object.assign(model, new constants.StaffBTT())
 
-        //BTT
         model.bookingReference = body.bookingReference
         model.paymentMethod = body.paymentMethod
         model.luggage = body.luggage
@@ -100,6 +100,7 @@ const updateOrInsertStaff = async (body, ctx) => {
             return err
         })
     } else {
+        //BS
         validation = await bsValidation.validate(model, { abortEarly: false }).catch(function(err) {
             return err
         })
