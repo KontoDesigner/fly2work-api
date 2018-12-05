@@ -7,6 +7,8 @@ const config = {
     mailApi: process.env.MAIL_API,
     name: process.env.NAME,
     emailUserAddress: process.env.EMAIL_USER_ADDRESS,
+    web: process.env.WEB,
+    greenLightDestinations: process.env.GREENLIGHT_DESTINATIONS,
 
     emailBTTN: process.env.EMAIL_BTT_N,
     emailBTTNCC: process.env.EMAIL_BTT_N_CC,
@@ -23,8 +25,7 @@ const config = {
 
     authAuthority: process.env.AUTH_AUTHORITY,
     authClientId: process.env.AUTH_CLIENTID,
-    authTenantId: process.env.AUTH_TENANTID,
-    web: process.env.WEB
+    authTenantId: process.env.AUTH_TENANTID
 }
 
 module.exports = config

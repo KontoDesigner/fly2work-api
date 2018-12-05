@@ -8,6 +8,7 @@ const email = require('../infrastructure/email')
 const userService = require('./userService')
 const helpers = require('../infrastructure/helpers')
 const moment = require('moment')
+const config = require('../infrastructure/config')
 
 const updateOrInsertStaff = async (body, ctx) => {
     const user = userService.getUser(ctx)
@@ -134,6 +135,9 @@ const updateOrInsertStaff = async (body, ctx) => {
             model.createdBy = userName
             model.createdByEmail = userEmail
             model.status = constants.Statuses.PendingBTT
+
+            const greenLightDestinations = config.greenLightDestinations.split(',')
+            model.greenLight = greenLightDestinations.includes(model.destination) ? false : null
 
             let insertOne = {}
 
@@ -295,6 +299,8 @@ const insertStaff = async (body, ctx) => {
         }
     }
 
+    const greenLightDestinations = config.greenLightDestinations.split(',')
+
     model.id = body.Id
     model.firstName = body.FirstName ? body.FirstName : ''
     model.lastName2 = body.LastName2 ? body.LastName2 : ''
@@ -307,7 +313,7 @@ const insertStaff = async (body, ctx) => {
     model.plannedAssignmentStartDate = body.PositionStart ? body.PositionStart : ''
     model.jobTitle = body.JobTitle ? body.JobTitle : ''
     model.iataCode = body.IataCode ? body.IataCode : ''
-    model.greenLight = body.GreenLight !== null && body.GreenLight !== undefined ? body.GreenLight : null
+    model.greenLight = greenLightDestinations.includes(model.destination) ? false : null
 
     const validation = await newValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
