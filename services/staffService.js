@@ -117,6 +117,7 @@ const updateOrInsertStaff = async (body, ctx) => {
 
     //Should not be overwritten from request
     model.attachments = getStaff && getStaff.attachments ? getStaff.attachments : []
+    model.created = getStaff ? getStaff.created : null
     model.createdBy = getStaff ? getStaff.createdBy : null
     model.createdByEmail = getStaff ? getStaff.createdByEmail : null
     model.comments = getStaff ? getStaff.comments : []
@@ -133,6 +134,7 @@ const updateOrInsertStaff = async (body, ctx) => {
                 error: `Request with id: '${model.id}' already exists`
             }
         } else {
+            model.created = moment().format('YYYY-MM-DD HH:mm')
             model.createdBy = userName
             model.createdByEmail = userEmail
             model.status = constants.Statuses.PendingBTT

@@ -26,6 +26,7 @@ function StaffBS() {
     this.iataCode = ''
     this.typeOfFlight = ''
 
+    this.created = ''
     this.createdBy = null
     this.createdByEmail = null
     this.comments = []
