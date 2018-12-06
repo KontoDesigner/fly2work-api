@@ -109,7 +109,7 @@ function getFlights(staff) {
                   }
               ],
               [
-                  { text: 'Date Of Flight', bold: true, style: 'header' },
+                  { text: 'Confirmed Flight Date', bold: true, style: 'header' },
                   { text: flight.dateOfFlight ? flight.dateOfFlight : ' ', style: 'cell' },
                   { text: ' ', style: 'cell', colSpan: 4 }
               ]
@@ -254,7 +254,7 @@ function getDocDefinition(staff) {
                             { text: staff.dateOfBirth ? staff.dateOfBirth : ' ', style: 'cell' },
                             { text: 'Passport Number', bold: true, style: 'header' },
                             { text: staff.passportNumber ? staff.passportNumber : ' ', style: 'cell' },
-                            { text: 'Date Of Flight', bold: true, style: 'header' },
+                            { text: 'Preferred Flight Date', bold: true, style: 'header' },
                             { text: staff.dateOfFlight ? staff.dateOfFlight : ' ', style: 'cell' }
                         ],
                         [
