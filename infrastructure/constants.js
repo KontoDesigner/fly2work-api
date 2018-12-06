@@ -41,9 +41,6 @@ function StaffBTT() {
     this.paymentMethod = ''
     this.luggage = ''
     this.costCentre = ''
-    this.hotelNeededHotelName = ''
-    this.hotelNeededHotelStart = ''
-    this.hotelNeededHotelEnd = ''
     this.flights = [new Flight(true)]
     this.greenLight = null
     this.greenLightUpdated = null
@@ -66,6 +63,9 @@ function Flight() {
     this.flightCost = 0
     this.xbagCost = 0
     this.confirmedFlightDate = ''
+    this.hotelNeededHotelName = ''
+    this.hotelNeededHotelStart = ''
+    this.hotelNeededHotelEnd = ''
 }
 
 function Email() {

@@ -130,9 +130,6 @@ const updateOrInsertStaff = async (body, ctx) => {
         model.costCentre = body.costCentre
         model.travelType = body.travelType
         model.currency = body.currency
-        model.hotelNeededHotelName = body.hotelNeededHotelName
-        model.hotelNeededHotelStart = body.hotelNeededHotelStart
-        model.hotelNeededHotelEnd = body.hotelNeededHotelEnd
         model.railFlyRequestedAndBooked = body.railFlyRequestedAndBooked
 
         if (getStaff.greenLight === false && body.greenLight === true) {
@@ -158,7 +155,10 @@ const updateOrInsertStaff = async (body, ctx) => {
                 xbagCost: flight.xbagCost,
                 hotelCost: flight.hotelCost,
                 totalCost: flight.totalCost,
-                confirmedFlightDate: flight.confirmedFlightDate
+                confirmedFlightDate: flight.confirmedFlightDate,
+                hotelNeededHotelName: flight.hotelNeededHotelName,
+                hotelNeededHotelStart: flight.hotelNeededHotelStart,
+                hotelNeededHotelEnd: flight.hotelNeededHotelEnd
             })
         }
 

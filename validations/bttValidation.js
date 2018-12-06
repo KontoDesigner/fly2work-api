@@ -14,6 +14,69 @@ Yup.addMethod(Yup.date, 'format', function(format) {
     })
 })
 
+function getFlight(hotelNeeded) {
+    const flight = {
+        flightNumber: Yup.string()
+            .nullable(true)
+            .required('Flight number is required'),
+        flightDepartureTime: Yup.date()
+            .format('HH:mm')
+            .typeError('Flight departure time must be a time')
+            .nullable(true)
+            .required('Flight departure time is required'),
+        flightArrivalTime: Yup.date()
+            .format('HH:mm')
+            .typeError('Flight arrival time must be a time')
+            .nullable(true)
+            .required('Flight arrival time is required'),
+        departureAirport: Yup.string()
+            .nullable(true)
+            .required('Departure airport is required'),
+        arrivalAirport: Yup.string()
+            .nullable(true)
+            .required('Arrival airport is required'),
+        flightCost: Yup.number()
+            .typeError('Flight cost must be a number')
+            .nullable(true)
+            .required('Flight cost is required'),
+        xbagCost: Yup.number()
+            .typeError('Xbag cost must be a number')
+            .nullable(true)
+            .required('Xbag cost is required'),
+        hotelCost: Yup.number()
+            .typeError('Hotel cost must be a number')
+            .nullable(true)
+            .required('Hotel cost is required'),
+        confirmedFlightDate: Yup.date()
+            .format('YYYY-MM-DD')
+            .typeError('Confirmed flight date must be a datetime')
+            .nullable(true)
+            .required('Confirmed flight date is required')
+    }
+
+    const hotel = {
+        hotelNeededHotelName: Yup.string()
+            .nullable(true)
+            .required('(HN) Hotel name is required'),
+        hotelNeededHotelStart: Yup.date()
+            .typeError('(HN) Hotel start must be a datetime')
+            .nullable(true)
+            .required('(HN) Hotel start is required')
+            .format('YYYY-MM-DD'),
+        hotelNeededHotelEnd: Yup.date()
+            .typeError('(HN) Hotel start must be a datetime')
+            .nullable(true)
+            .required('(HN) Hotel end is required')
+            .format('YYYY-MM-DD')
+    }
+
+    if (hotelNeeded === true) {
+        return Object.assign(flight, hotel)
+    } else {
+        return flight
+    }
+}
+
 const bttValidation = Yup.object().shape({
     railFlyRequestedAndBooked: Yup.boolean()
         .nullable(true)
@@ -36,79 +99,21 @@ const bttValidation = Yup.object().shape({
     currency: Yup.string()
         .nullable(true)
         .required('Currency is required'),
-    hotelNeededHotelName: Yup.mixed()
-        .nullable(true)
-        .when('hotelNeeded', {
-            is: true,
-            then: Yup.string()
-                .nullable(true)
-                .required('(HN) Hotel name is required')
-        }),
-    hotelNeededHotelStart: Yup.mixed()
-        .nullable(true)
-        .when('hotelNeeded', {
-            is: true,
-            then: Yup.date()
-                .typeError('(HN) Hotel start must be a datetime')
-                .nullable(true)
-                .required('(HN) Hotel start is required')
-                .format('YYYY-MM-DD')
-        }),
-    hotelNeededHotelEnd: Yup.mixed()
-        .nullable(true)
-        .when('hotelNeeded', {
-            is: true,
-            then: Yup.date()
-                .typeError('(HN) Hotel start must be a datetime')
-                .nullable(true)
-                .required('(HN) Hotel end is required')
-                .format('YYYY-MM-DD')
-        }),
-    flights: Yup.array()
-        .of(
-            Yup.object().shape({
-                flightNumber: Yup.string()
-                    .nullable(true)
-                    .required('Flight number is required'),
-                flightDepartureTime: Yup.date()
-                    .format('HH:mm')
-                    .typeError('Flight departure time must be a time')
-                    .nullable(true)
-                    .required('Flight departure time is required'),
-                flightArrivalTime: Yup.date()
-                    .format('HH:mm')
-                    .typeError('Flight arrival time must be a time')
-                    .nullable(true)
-                    .required('Flight arrival time is required'),
-                departureAirport: Yup.string()
-                    .nullable(true)
-                    .required('Departure airport is required'),
-                arrivalAirport: Yup.string()
-                    .nullable(true)
-                    .required('Arrival airport is required'),
-                flightCost: Yup.number()
-                    .typeError('Flight cost must be a number')
-                    .nullable(true)
-                    .required('Flight cost is required'),
-                xbagCost: Yup.number()
-                    .typeError('Xbag cost must be a number')
-                    .nullable(true)
-                    .required('Xbag cost is required'),
-                hotelCost: Yup.number()
-                    .typeError('Hotel cost must be a number')
-                    .nullable(true)
-                    .required('Hotel cost is required'),
-                confirmedFlightDate: Yup.date()
-                    .format('YYYY-MM-DD')
-                    .typeError('Confirmed flight date must be a datetime')
-                    .nullable(true)
-                    .required('Confirmed flight date is required')
-            })
-        )
-        .min(1, 'Min 1 flight')
-        .max(3, 'Max 3 flights')
-        .required('Flight is required')
-        .nullable(true)
+    flights: Yup.array().when('hotelNeeded', {
+        is: true,
+        then: Yup.array()
+            .of(Yup.object().shape(getFlight(true)))
+            .min(1, 'Min 1 flight')
+            .max(3, 'Max 3 flights')
+            .required('Flight is required')
+            .nullable(true),
+        otherwise: Yup.array()
+            .of(Yup.object().shape(getFlight(false)))
+            .min(1, 'Min 1 flight')
+            .max(3, 'Max 3 flights')
+            .required('Flight is required')
+            .nullable(true)
+    })
 })
 
 const combined = bsValidation.concat(bttValidation)
