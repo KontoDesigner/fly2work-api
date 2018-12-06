@@ -15,6 +15,9 @@ Yup.addMethod(Yup.date, 'format', function(format) {
 })
 
 const bttValidation = Yup.object().shape({
+    railFlyRequestedAndBooked: Yup.boolean()
+        .nullable(true)
+        .required('Rail & Fly Requested And Booked is required'),
     bookingReference: Yup.string()
         .nullable(true)
         .required('Booking reference is required'),
