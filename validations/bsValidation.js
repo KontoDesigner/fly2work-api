@@ -11,12 +11,22 @@ Yup.addMethod(Yup.date, 'format', function(format) {
     })
 })
 
+Yup.addMethod(Yup.string, 'optionalDate', function(format) {
+    return this.transform((value, input) => {
+        if (input !== '') {
+            const parsed = moment(input, format, true)
+
+            return parsed.isValid() ? input : false
+        }
+    })
+})
+
 const bsValidation = Yup.object().shape({
-    plannedAssignmentStartDate: Yup.date()
+    plannedAssignmentStartDate: Yup.string()
+        .default('')
         .nullable(true)
-        .notRequired()
         .typeError('Planned assignment start date must be a datetime')
-        .format('YYYY-MM-DD'),
+        .optionalDate('YYYY-MM-DD'),
     typeOfFlight: Yup.string()
         .nullable(true)
         .required('Type of flight is required'),
