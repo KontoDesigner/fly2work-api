@@ -51,7 +51,7 @@ function generateExcel(staffs, type = 'binary') {
                 staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : '',
                 staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : '',
                 staff.railFly === true ? 'YES' : 'NO',
-                staff.bookingReference,
+                staff.bookingReference ? staff.bookingReference.toUpperCase() : '',
                 staff.paymentMethod,
                 staff.luggage,
                 staff.costCentre,
@@ -67,11 +67,11 @@ function generateExcel(staffs, type = 'binary') {
                 const flight = staff.flights[i]
 
                 if (flight) {
-                    body.push(flight.flightNumber)
+                    body.push(flight.flightNumber ? flight.flightNumber.toUpperCase() : '')
                     body.push(flight.flightDepartureTime ? moment(flight.flightDepartureTime).format('HH:mm') : '')
                     body.push(flight.flightArrivalTime ? moment(flight.flightArrivalTime).format('HH:mm') : '')
-                    body.push(flight.departureAirport)
-                    body.push(flight.arrivalAirport)
+                    body.push(flight.departureAirport ? flight.departureAirport.toUpperCase() : '')
+                    body.push(flight.arrivalAirport ? flight.arrivalAirport.toUpperCase() : '')
                     body.push(flight.dateOfFlight ? moment(flight.dateOfFlight).format('YYYY-MM-DD') : '')
                     body.push(flight.flightCost)
                     body.push(flight.xbagCost)

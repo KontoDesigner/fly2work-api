@@ -347,7 +347,7 @@ function getDocDefinition(staff) {
                     body: [
                         [
                             { text: 'Booking Reference', bold: true, style: 'header' },
-                            { text: staff.bookingReference ? staff.bookingReference : ' ', style: 'cell' },
+                            { text: staff.bookingReference ? staff.bookingReference.toUpperCase() : ' ', style: 'cell' },
                             { text: 'Travel Type', bold: true, style: 'header' },
                             { text: staff.travelType ? staff.travelType : ' ', style: 'cell' },
                             { text: 'Payment Method', bold: true, style: 'header' },
