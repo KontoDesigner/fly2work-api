@@ -8,7 +8,7 @@ function StaffBS() {
     this.passportNumber = ''
     this.dateOfBirth = ''
     this.sourceMarket = ''
-    this.dateOfFlight = ''
+    this.preferredFlightDate = ''
     this.jobTitle = ''
     this.departureAirports = ''
     this.arrivalAirports = ''
@@ -65,7 +65,7 @@ function Flight() {
     this.hotelCost = 0
     this.flightCost = 0
     this.xbagCost = 0
-    this.dateOfFlight = ''
+    this.confirmedFlightDate = ''
 }
 
 function Email() {

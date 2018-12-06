@@ -50,11 +50,11 @@ const bsValidation = Yup.object().shape({
     sourceMarket: Yup.string()
         .nullable(true)
         .required('Source market is required'),
-    dateOfFlight: Yup.date()
+    preferredFlightDate: Yup.date()
         .format('YYYY-MM-DD')
-        .typeError('Date of flight must be a datetime')
+        .typeError('Preferred flight date must be a datetime')
         .nullable(true)
-        .required('Date of flight is required'),
+        .required('Preferred flight date is required'),
     jobTitle: Yup.string()
         .nullable(true)
         .required('Job title is required'),

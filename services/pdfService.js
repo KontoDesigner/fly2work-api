@@ -110,7 +110,7 @@ function getFlights(staff) {
               ],
               [
                   { text: 'Confirmed Flight Date', bold: true, style: 'header' },
-                  { text: flight.dateOfFlight ? flight.dateOfFlight : ' ', style: 'cell' },
+                  { text: flight.confirmedFlightDate ? flight.confirmedFlightDate : ' ', style: 'cell' },
                   { text: ' ', style: 'cell', colSpan: 4 }
               ]
           ])
@@ -255,7 +255,7 @@ function getDocDefinition(staff) {
                             { text: 'Passport Number', bold: true, style: 'header' },
                             { text: staff.passportNumber ? staff.passportNumber : ' ', style: 'cell' },
                             { text: 'Preferred Flight Date', bold: true, style: 'header' },
-                            { text: staff.dateOfFlight ? staff.dateOfFlight : ' ', style: 'cell' }
+                            { text: staff.preferredFlightDate ? staff.preferredFlightDate : ' ', style: 'cell' }
                         ],
                         [
                             { text: 'Job Title', bold: true, style: 'header' },

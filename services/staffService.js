@@ -90,7 +90,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     //BS
     model.arrivalAirports = body.arrivalAirports
     model.dateOfBirth = body.dateOfBirth
-    model.dateOfFlight = body.dateOfFlight
+    model.preferredFlightDate = body.preferredFlightDate
     model.departureAirports = body.departureAirports
     model.destination = body.destination
     model.gender = body.gender
@@ -158,7 +158,7 @@ const updateOrInsertStaff = async (body, ctx) => {
                 xbagCost: flight.xbagCost,
                 hotelCost: flight.hotelCost,
                 totalCost: flight.totalCost,
-                dateOfFlight: flight.dateOfFlight
+                confirmedFlightDate: flight.confirmedFlightDate
             })
         }
 

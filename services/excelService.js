@@ -36,7 +36,7 @@ function generateExcel(staffs, type = 'binary') {
                 staff.dateOfBirth ? staff.dateOfBirth : '',
                 staff.sourceMarket,
                 staff.plannedAssignmentStartDate ? staff.plannedAssignmentStartDate : '',
-                staff.dateOfFlight ? staff.dateOfFlight : '',
+                staff.preferredFlightDate ? staff.preferredFlightDate : '',
                 staff.jobTitle,
                 staff.destination,
                 staff.phone,
@@ -73,7 +73,7 @@ function generateExcel(staffs, type = 'binary') {
                     body.push(flight.flightArrivalTime ? flight.flightArrivalTime : '')
                     body.push(flight.departureAirport ? flight.departureAirport.toUpperCase() : '')
                     body.push(flight.arrivalAirport ? flight.arrivalAirport.toUpperCase() : '')
-                    body.push(flight.dateOfFlight ? flight.dateOfFlight : '')
+                    body.push(flight.confirmedFlightDate ? flight.confirmedFlightDate : '')
                     body.push(flight.flightCost)
                     body.push(flight.xbagCost)
                     body.push(flight.hotelCost)
