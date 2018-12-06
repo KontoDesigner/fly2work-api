@@ -1,7 +1,7 @@
 const logger = require('tuin-logging')
 const xlsx = require('xlsx')
-const moment = require('moment')
 const constants = require('../infrastructure/constants')
+const moment = require('moment')
 
 function generateExcel(staffs, type = 'binary') {
     try {
@@ -21,7 +21,7 @@ function generateExcel(staffs, type = 'binary') {
                       text: c.text,
                       createdBy: c.createdBy,
                       group: c.group,
-                      created: c.created
+                      created: c.created ? moment(c.created).format('YYYY-MM-DD HH:mm') : ''
                   }))
                 : []
 
@@ -33,10 +33,10 @@ function generateExcel(staffs, type = 'binary') {
                 staff.lastName,
                 staff.lastName2,
                 staff.passportNumber,
-                staff.dateOfBirth ? moment(staff.dateOfBirth).format('DD/MM/YYYY') : '',
+                staff.dateOfBirth ? staff.dateOfBirth : '',
                 staff.sourceMarket,
-                staff.plannedAssignmentStartDate ? moment(staff.plannedAssignmentStartDate).format('YYYY-MM-DD') : '',
-                staff.dateOfFlight ? moment(staff.dateOfFlight).format('YYYY-MM-DD') : '',
+                staff.plannedAssignmentStartDate ? staff.plannedAssignmentStartDate : '',
+                staff.dateOfFlight ? staff.dateOfFlight : '',
                 staff.jobTitle,
                 staff.destination,
                 staff.phone,
@@ -47,7 +47,7 @@ function generateExcel(staffs, type = 'binary') {
                 staff.gender !== null && staff.gender !== undefined ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : '',
                 staff.hotelNeeded === true ? 'YES' : 'NO',
                 staff.bookReturnFlight === true ? 'YES' : 'NO',
-                staff.bookReturnFlightDateOfFlight ? moment(staff.bookReturnFlightDateOfFlight).format('YYYY-MM-DD') : '',
+                staff.bookReturnFlightDateOfFlight ? staff.bookReturnFlightDateOfFlight : '',
                 staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : '',
                 staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : '',
                 staff.railFly === true ? 'YES' : 'NO',
@@ -57,9 +57,10 @@ function generateExcel(staffs, type = 'binary') {
                 staff.costCentre,
                 staff.currency,
                 staff.hotelNeededHotelName,
-                staff.hotelNeededHotelStart ? moment(staff.hotelNeededHotelStart).format('YYYY-MM-DD') : '',
-                staff.hotelNeededHotelEnd ? moment(staff.hotelNeededHotelEnd).format('YYYY-MM-DD') : '',
+                staff.hotelNeededHotelStart ? staff.hotelNeededHotelStart : '',
+                staff.hotelNeededHotelEnd ? staff.hotelNeededHotelEnd : '',
                 staff.travelType,
+                staff.railFlyRequestedAndBooked === true ? 'YES' : 'NO',
                 staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : ''
             ]
 
@@ -68,11 +69,11 @@ function generateExcel(staffs, type = 'binary') {
 
                 if (flight) {
                     body.push(flight.flightNumber ? flight.flightNumber.toUpperCase() : '')
-                    body.push(flight.flightDepartureTime ? moment(flight.flightDepartureTime).format('HH:mm') : '')
-                    body.push(flight.flightArrivalTime ? moment(flight.flightArrivalTime).format('HH:mm') : '')
+                    body.push(flight.flightDepartureTime ? flight.flightDepartureTime : '')
+                    body.push(flight.flightArrivalTime ? flight.flightArrivalTime : '')
                     body.push(flight.departureAirport ? flight.departureAirport.toUpperCase() : '')
                     body.push(flight.arrivalAirport ? flight.arrivalAirport.toUpperCase() : '')
-                    body.push(flight.dateOfFlight ? moment(flight.dateOfFlight).format('YYYY-MM-DD') : '')
+                    body.push(flight.dateOfFlight ? flight.dateOfFlight : '')
                     body.push(flight.flightCost)
                     body.push(flight.xbagCost)
                     body.push(flight.hotelCost)
@@ -156,6 +157,7 @@ const HEADER = [
     'Hotel Start (HN)',
     'Hotel End (HN)',
     'Travel Type',
+    'Rail & Fly Requested And Booked',
     'Green Light',
 
     '1st Flight Number',

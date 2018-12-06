@@ -49,6 +49,7 @@ function StaffBTT() {
     this.greenLightUpdated = null
     this.greenLightUpdatedBy = null
     this.currency = null
+    this.railFlyRequestedAndBooked = false
 }
 
 function Staff() {

@@ -1,6 +1,5 @@
 const logger = require('tuin-logging')
 const pdfMakePrinter = require('pdfmake/src/printer')
-const moment = require('moment')
 const constants = require('../infrastructure/constants')
 
 function generatePdfCallback(staff, callback) {
@@ -362,12 +361,14 @@ function getDocDefinition(staff) {
                             { text: staff.currency ? staff.currency : ' ', style: 'cell' }
                         ],
                         [
+                            { text: 'Rail & Fly Requested And Booked', bold: true, style: 'header' },
+                            { text: staff.railFlyRequestedAndBooked === true ? 'YES' : 'NO', style: 'cell' },
                             { text: 'Green Light', bold: true, style: 'header' },
                             {
                                 text: staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : ' ',
                                 style: 'cell'
                             },
-                            { text: ' ', colSpan: 4 }
+                            { text: ' ', colSpan: 2 }
                         ]
                     ]
                 },

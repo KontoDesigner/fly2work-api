@@ -133,6 +133,7 @@ const updateOrInsertStaff = async (body, ctx) => {
         model.hotelNeededHotelName = body.hotelNeededHotelName
         model.hotelNeededHotelStart = body.hotelNeededHotelStart
         model.hotelNeededHotelEnd = body.hotelNeededHotelEnd
+        model.railFlyRequestedAndBooked = body.railFlyRequestedAndBooked
 
         if (getStaff.greenLight === false && body.greenLight === true) {
             greenLightChanged = true
