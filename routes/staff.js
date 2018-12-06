@@ -6,6 +6,16 @@ const uuid = require('node-uuid')
 
 const BASE = '/staff'
 
+router.post(`${BASE}/decline`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+    const body = ctx.request.body
+
+    const res = await staffService.declineStaff(body, ctx)
+
+    ctx.body = res
+
+    return await next()
+})
+
 router.post(BASE, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
     const body = ctx.request.body
 

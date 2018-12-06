@@ -4,11 +4,78 @@ const constants = require('../infrastructure/constants')
 const bsValidation = require('../validations/bsValidation')
 const bttValidation = require('../validations/bttValidation')
 const newValidation = require('../validations/newValidation')
+const declineValidation = require('../validations/declineValidation')
 const email = require('../infrastructure/email')
 const userService = require('./userService')
 const helpers = require('../infrastructure/helpers')
 const moment = require('moment')
 const config = require('../infrastructure/config')
+const uuid = require('node-uuid')
+
+const declineStaff = async (body, ctx) => {
+    const model = {
+        id: body.id,
+        text: body.text
+    }
+
+    const validation = await declineValidation.validate(model, { abortEarly: false }).catch(function(err) {
+        return err
+    })
+
+    if (validation.errors && validation.errors.length > 0) {
+        logger.warning('Decline staff validation failed, aborting', { url: ctx.url, model, validation })
+
+        return {
+            ok: false,
+            errors: validation.errors
+        }
+    }
+
+    const user = userService.getUser(ctx)
+    const userName = userService.getUserName(ctx, user)
+    const userRoles = userService.getUserRoles(ctx, user)
+
+    const comment = {
+        text: model.text,
+        id: uuid.v1(),
+        created: moment()._d,
+        createdBy: userName,
+        group: userRoles.join(', ')
+    }
+
+    const audit = {
+        updatedBy: userName,
+        // greenLightFrom: getStaff.greenLight,
+        // greenLightTo: model.greenLight,
+        statusFrom: constants.Statuses.PendingBTT,
+        statusTo: constants.Statuses.PendingDES,
+        date: new Date()
+    }
+
+    let replaceOne = {}
+
+    try {
+        replaceOne = (await mongo
+            .collection('staffs')
+            .updateOne(
+                { id: model.id, status: constants.Statuses.PendingBTT },
+                { $push: { comments: comment, audit: audit }, $set: { status: constants.Statuses.PendingDES } }
+            )).result
+    } catch (err) {
+        logger.error('Error declining staff', err, model)
+
+        return {
+            ok: false,
+            error: 'Decline request failed'
+        }
+    }
+
+    logger.info('Decline staff result', { url: ctx.url, model: model, replaceOne })
+
+    return {
+        ok: true
+    }
+}
 
 const updateOrInsertStaff = async (body, ctx) => {
     const user = userService.getUser(ctx)
@@ -133,55 +200,55 @@ const updateOrInsertStaff = async (body, ctx) => {
                 ok: false,
                 error: `Request with id: '${model.id}' already exists`
             }
-        } else {
-            model.created = moment().format('YYYY-MM-DD HH:mm')
-            model.createdBy = userName
-            model.createdByEmail = userEmail
-            model.status = constants.Statuses.PendingBTT
+        }
 
-            if (model.typeOfFlight === 'Start of season') {
-                const greenLightDestinations = config.greenLightDestinations.split(',')
-                model.greenLight = greenLightDestinations.includes(model.destination) ? false : null
+        model.created = moment().format('YYYY-MM-DD HH:mm')
+        model.createdBy = userName
+        model.createdByEmail = userEmail
+        model.status = constants.Statuses.PendingBTT
+
+        if (model.typeOfFlight === 'Start of season') {
+            const greenLightDestinations = config.greenLightDestinations.split(',')
+            model.greenLight = greenLightDestinations.includes(model.destination) ? false : null
+        }
+
+        let insertOne = {}
+
+        try {
+            insertOne = (await mongo.collection('staffs').insertOne(model)).result
+        } catch (err) {
+            logger.error('Error inserting staff', err, model)
+
+            return {
+                ok: false,
+                error: 'Add request failed'
+            }
+        }
+
+        logger.info('Insert staff result', { url: ctx.url, model, insertOne })
+
+        if (insertOne.ok) {
+            //Add createdBy and BTT to emails (NEW => PENDINGBTT)
+            const statusText = `${constants.Statuses.New} => ${model.greenLight === false ? 'Pending HR' : constants.Statuses.PendingBTT}`
+
+            //Get BTT to/cc based on sourceMarket
+            let emails = helpers.getBTTEmails(model.sourceMarket)
+
+            if (model.createdByEmail) {
+                emails.to.push(model.createdByEmail)
             }
 
-            let insertOne = {}
+            //Add additional emails to email
+            if (model.emails && model.emails.length > 0) {
+                emails.to.push(model.emails)
+            }
 
-            try {
-                insertOne = (await mongo.collection('staffs').insertOne(model)).result
-            } catch (err) {
-                logger.error('Error inserting staff', err, model)
+            const emailRes = await email.send(model, statusText, emails)
 
+            if (emailRes === false) {
                 return {
                     ok: false,
-                    error: 'Add request failed'
-                }
-            }
-
-            logger.info('Insert staff result', { url: ctx.url, model, insertOne })
-
-            if (insertOne.ok) {
-                //Add createdBy and BTT to emails (NEW => PENDINGBTT)
-                const statusText = `${constants.Statuses.New} => ${model.greenLight === false ? 'Pending HR' : constants.Statuses.PendingBTT}`
-
-                //Get BTT to/cc based on sourceMarket
-                let emails = helpers.getBTTEmails(model.sourceMarket)
-
-                if (model.createdByEmail) {
-                    emails.to.push(model.createdByEmail)
-                }
-
-                //Add additional emails to email
-                if (model.emails && model.emails.length > 0) {
-                    emails.to.push(model.emails)
-                }
-
-                const emailRes = await email.send(model, statusText, emails)
-
-                if (emailRes === false) {
-                    return {
-                        ok: false,
-                        error: 'Request added but could not send email notification'
-                    }
+                    error: 'Request added but could not send email notification'
                 }
             }
         }
@@ -242,7 +309,6 @@ const updateOrInsertStaff = async (body, ctx) => {
                     }
                 }
             }
-
             //Add BTT to emails (PENDINGDES => PendingBTT)
             else if (getStaff.status === constants.Statuses.PendingDES && model.status === constants.Statuses.PendingBTT) {
                 //Add additional emails to email
@@ -261,7 +327,6 @@ const updateOrInsertStaff = async (body, ctx) => {
                     }
                 }
             }
-
             //Add BTT and createdBy to emails (X => CONFIRMED)
             else if (model.status === constants.Statuses.Confirmed) {
                 if (model.createdByEmail) {
@@ -288,7 +353,8 @@ const updateOrInsertStaff = async (body, ctx) => {
     }
 
     return {
-        ok: true
+        ok: true,
+        greenLight: model.greenLight
     }
 }
 
@@ -476,5 +542,6 @@ module.exports = {
     getStaffById,
     getStaffByIdAndStatus,
     getStaffsByGreenLight,
-    getStaffByIdAndGreenLight
+    getStaffByIdAndGreenLight,
+    declineStaff
 }
