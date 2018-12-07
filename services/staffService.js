@@ -18,8 +18,12 @@ const confirmGreenLight = async (body, ctx) => {
     const user = userService.getUser(ctx)
     const userName = userService.getUserName(ctx, user)
 
+    const getStaff = await mongo.collection('staffs').findOne({ id: id })
+
     const audit = {
         updatedBy: userName,
+        statusFrom: getStaff ? getStaff.status : '',
+        statusTo: getStaff ? getStaff.status : '',
         greenLightFrom: false,
         greenLightTo: true,
         date: new Date()
@@ -78,10 +82,12 @@ const declineStaff = async (body, ctx) => {
         group: userRoles.join(', ')
     }
 
+    const getStaff = await mongo.collection('staffs').findOne({ id: id })
+
     const audit = {
         updatedBy: userName,
-        // greenLightFrom: getStaff.greenLight,
-        // greenLightTo: model.greenLight,
+        greenLightFrom: getStaff ? getStaff.greenLight : '',
+        greenLightTo: getStaff ? getStaff.greenLight : '',
         statusFrom: constants.Statuses.PendingBTT,
         statusTo: constants.Statuses.PendingDES,
         date: new Date()
