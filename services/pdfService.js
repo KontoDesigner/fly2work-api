@@ -109,6 +109,20 @@ function getFlights(staff) {
                   }
               ],
               [
+                  { text: 'Hotel Name (HN)', bold: true, style: 'header' },
+                  { text: flight.hotelNeededHotelName ? flight.hotelNeededHotelName : ' ', style: 'cell' },
+                  { text: 'Hotel Start (HN)', bold: true, style: 'header' },
+                  {
+                      text: flight.hotelNeededHotelStart ? flight.hotelNeededHotelStart : ' ',
+                      style: 'cell'
+                  },
+                  { text: 'Hotel End (HN)', bold: true, style: 'header' },
+                  {
+                      text: flight.hotelNeededHotelEnd ? flight.hotelNeededHotelEnd : ' ',
+                      style: 'cell'
+                  }
+              ],
+              [
                   { text: 'Confirmed Flight Date', bold: true, style: 'header' },
                   { text: flight.confirmedFlightDate ? flight.confirmedFlightDate : ' ', style: 'cell' },
                   { text: ' ', style: 'cell', colSpan: 4 }
@@ -301,20 +315,6 @@ function getDocDefinition(staff) {
                             { text: 'Planned Assignment Start Date', bold: true, style: 'header' },
                             {
                                 text: staff.plannedAssignmentStartDate ? staff.plannedAssignmentStartDate : ' ',
-                                style: 'cell'
-                            },
-                            { text: 'Hotel Name (HN)', bold: true, style: 'header' },
-                            { text: staff.hotelNeededHotelName ? staff.hotelNeededHotelName : ' ', style: 'cell' }
-                        ],
-                        [
-                            { text: 'Hotel Start (HN)', bold: true, style: 'header' },
-                            {
-                                text: staff.hotelNeededHotelStart ? staff.hotelNeededHotelStart : ' ',
-                                style: 'cell'
-                            },
-                            { text: 'Hotel End (HN)', bold: true, style: 'header' },
-                            {
-                                text: staff.hotelNeededHotelEnd ? staff.hotelNeededHotelEnd : ' ',
                                 style: 'cell'
                             },
                             { text: ' ', colSpan: 2 }

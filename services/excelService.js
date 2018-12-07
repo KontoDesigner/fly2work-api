@@ -56,9 +56,6 @@ function generateExcel(staffs, type = 'binary') {
                 staff.luggage,
                 staff.costCentre,
                 staff.currency,
-                staff.hotelNeededHotelName,
-                staff.hotelNeededHotelStart ? staff.hotelNeededHotelStart : '',
-                staff.hotelNeededHotelEnd ? staff.hotelNeededHotelEnd : '',
                 staff.travelType,
                 staff.railFlyRequestedAndBooked === true ? 'YES' : 'NO',
                 staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : ''
@@ -78,6 +75,9 @@ function generateExcel(staffs, type = 'binary') {
                     body.push(flight.xbagCost)
                     body.push(flight.hotelCost)
                     body.push(parseCost(flight.flightCost) + parseCost(staff.xbagCost) + parseCost(staff.hotelCost))
+                    body.push(flight.hotelNeededHotelName)
+                    body.push(flight.hotelNeededHotelStart)
+                    body.push(flight.hotelNeededHotelEnd)
                 } else {
                     body.push('', '', '', '', '', '', '', '', '')
                 }
@@ -153,9 +153,6 @@ const HEADER = [
     'Luggage',
     'Cost Centre',
     'Currency',
-    'Hotel Name (HN)',
-    'Hotel Start (HN)',
-    'Hotel End (HN)',
     'Travel Type',
     'Rail & Fly Requested And Booked',
     'Green Light',
@@ -170,6 +167,9 @@ const HEADER = [
     '1st Xbag Cost',
     '1st Hotel Cost',
     '1st Total Cost',
+    '1st Hotel Name (HN)',
+    '1st Hotel Start (HN)',
+    '1st Hotel End (HN)',
 
     '2nd Flight Number',
     '2nd Flight Departure Time',
@@ -181,6 +181,9 @@ const HEADER = [
     '2nd Xbag Cost',
     '2nd Hotel Cost',
     '2nd Total Cost',
+    '2st Hotel Name (HN)',
+    '2st Hotel Start (HN)',
+    '2st Hotel End (HN)',
 
     '3nd Flight Number',
     '3nd Flight Departure Time',
@@ -192,6 +195,9 @@ const HEADER = [
     '3nd Xbag Cost',
     '3nd Hotel Cost',
     '3nd Total Cost',
+    '3st Hotel Name (HN)',
+    '3st Hotel Start (HN)',
+    '3st Hotel End (HN)',
 
     'Comments'
 ]
