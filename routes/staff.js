@@ -6,10 +6,10 @@ const uuid = require('node-uuid')
 
 const BASE = '/staff'
 
-router.post(`${BASE}/confirm`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.post(`${BASE}/confirmgreenlight`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
     const body = ctx.request.body
 
-    const res = await staffService.confirmStaff(body, ctx)
+    const res = await staffService.confirmGreenLight(body, ctx)
 
     ctx.body = res
 
