@@ -12,6 +12,44 @@ const moment = require('moment')
 const config = require('../infrastructure/config')
 const uuid = require('node-uuid')
 
+const confirmStaff = async (body, ctx) => {
+    const id = body.id
+
+    const user = userService.getUser(ctx)
+    const userName = userService.getUserName(ctx, user)
+
+    const audit = {
+        updatedBy: userName,
+        // greenLightFrom: getStaff.greenLight,
+        // greenLightTo: model.greenLight,
+        statusFrom: constants.Statuses.PendingBTT,
+        statusTo: constants.Statuses.PendingDES,
+        date: new Date()
+    }
+
+    let replaceOne = {}
+
+    try {
+        replaceOne = (await mongo
+            .collection('staffs')
+            .updateOne({ id: id, status: constants.Statuses.New }, { $push: { audit: audit }, $set: { status: constants.Statuses.Confirmed } }))
+            .result
+    } catch (err) {
+        logger.error('Error confirming staff', err, id)
+
+        return {
+            ok: false,
+            error: 'Confirm request failed'
+        }
+    }
+
+    logger.info('Confirm staff result', { url: ctx.url, id, replaceOne })
+
+    return {
+        ok: true
+    }
+}
+
 const declineStaff = async (body, ctx) => {
     const model = {
         id: body.id,
@@ -544,5 +582,6 @@ module.exports = {
     getStaffByIdAndStatus,
     getStaffsByGreenLight,
     getStaffByIdAndGreenLight,
-    declineStaff
+    declineStaff,
+    confirmStaff
 }
