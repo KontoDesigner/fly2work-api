@@ -79,7 +79,7 @@ function generateExcel(staffs, type = 'binary') {
                     body.push(flight.hotelCost)
                     body.push(parseCost(flight.flightCost) + parseCost(staff.xbagCost) + parseCost(staff.hotelCost))
                 } else {
-                    body.push('', '', '', '', '', '', '', '', '')
+                    body.push('', '', '', '', '', '', '', '', '', '', '', '', '')
                 }
             }
 
