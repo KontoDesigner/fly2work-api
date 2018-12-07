@@ -94,19 +94,8 @@ function getFlights(staff) {
                   { text: flight.departureAirport ? flight.departureAirport.toUpperCase() : ' ', style: 'cell' },
                   { text: 'Arrival Airport', bold: true, style: 'header' },
                   { text: flight.arrivalAirport ? flight.arrivalAirport.toUpperCase() : ' ', style: 'cell' },
-                  { text: 'Flight Cost', bold: true, style: 'header' },
-                  { text: flight.flightCost ? flight.flightCost : ' ', style: 'cell' }
-              ],
-              [
-                  { text: 'Xbag Cost', bold: true, style: 'header' },
-                  { text: flight.xbagCost ? flight.xbagCost : ' ', style: 'cell' },
-                  { text: 'Hotel Cost', bold: true, style: 'header' },
-                  { text: flight.hotelCost ? flight.hotelCost : ' ', style: 'cell' },
-                  { text: 'Total Cost', bold: true, style: 'header' },
-                  {
-                      text: parseCost(flight.flightCost) + parseCost(flight.xbagCost) + parseCost(flight.hotelCost),
-                      style: 'cell'
-                  }
+                  { text: 'Confirmed Flight Date', bold: true, style: 'header' },
+                  { text: flight.confirmedFlightDate ? flight.confirmedFlightDate : ' ', style: 'cell' }
               ],
               [
                   { text: 'Hotel Name (HN)', bold: true, style: 'header' },
@@ -123,8 +112,19 @@ function getFlights(staff) {
                   }
               ],
               [
-                  { text: 'Confirmed Flight Date', bold: true, style: 'header' },
-                  { text: flight.confirmedFlightDate ? flight.confirmedFlightDate : ' ', style: 'cell' },
+                  { text: 'Flight Cost', bold: true, style: 'header' },
+                  { text: flight.flightCost ? flight.flightCost : ' ', style: 'cell' },
+                  { text: 'Xbag Cost', bold: true, style: 'header' },
+                  { text: flight.xbagCost ? flight.xbagCost : ' ', style: 'cell' },
+                  { text: 'Hotel Cost', bold: true, style: 'header' },
+                  { text: flight.hotelCost ? flight.hotelCost : ' ', style: 'cell' }
+              ],
+              [
+                  { text: 'Total Cost', bold: true, style: 'header' },
+                  {
+                      text: parseCost(flight.flightCost) + parseCost(flight.xbagCost) + parseCost(flight.hotelCost),
+                      style: 'cell'
+                  },
                   { text: ' ', style: 'cell', colSpan: 4 }
               ]
           ])
@@ -264,31 +264,48 @@ function getDocDefinition(staff) {
                     widths: ['*', '*', '*', '*', '*', '*'],
                     body: [
                         [
-                            { text: 'Date Of Birth', bold: true, style: 'header' },
-                            { text: staff.dateOfBirth ? staff.dateOfBirth : ' ', style: 'cell' },
-                            { text: 'Passport Number', bold: true, style: 'header' },
-                            { text: staff.passportNumber ? staff.passportNumber : ' ', style: 'cell' },
-                            { text: 'Preferred Flight Date', bold: true, style: 'header' },
-                            { text: staff.preferredFlightDate ? staff.preferredFlightDate : ' ', style: 'cell' }
-                        ],
-                        [
-                            { text: 'Job Title', bold: true, style: 'header' },
-                            { text: staff.jobTitle ? staff.jobTitle : ' ', style: 'cell' },
-                            { text: 'Phone', bold: true, style: 'header' },
-                            { text: staff.phone ? staff.phone : ' ', style: 'cell' },
-                            { text: 'Departure Airports', bold: true, style: 'header' },
-                            { text: staff.departureAirports ? staff.departureAirports : ' ', style: 'cell' }
-                        ],
-                        [
-                            { text: 'Arrival Airports', bold: true, style: 'header' },
-                            { text: staff.arrivalAirports ? staff.arrivalAirports : ' ', style: 'cell' },
-                            { text: 'Type Of Flight', bold: true, style: 'header' },
-                            { text: staff.typeOfFlight ? staff.typeOfFlight : ' ', style: 'cell' },
                             { text: 'Gender', bold: true, style: 'header' },
                             {
                                 text: staff.gender !== undefined && staff.gender !== null ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : ' ',
                                 style: 'cell'
+                            },
+                            { text: 'Date Of Birth', bold: true, style: 'header' },
+                            { text: staff.dateOfBirth ? staff.dateOfBirth : ' ', style: 'cell' },
+                            { text: 'Phone', bold: true, style: 'header' },
+                            { text: staff.phone ? staff.phone : ' ', style: 'cell' }
+                        ],
+                        [
+                            { text: 'Passport Number', bold: true, style: 'header' },
+                            { text: staff.passportNumber ? staff.passportNumber : ' ', style: 'cell' },
+                            { text: 'Job Title', bold: true, style: 'header' },
+                            { text: staff.jobTitle ? staff.jobTitle : ' ', style: 'cell' },
+                            { text: 'Planned Assignment Start Date', bold: true, style: 'header' },
+                            {
+                                text: staff.plannedAssignmentStartDate ? staff.plannedAssignmentStartDate : ' ',
+                                style: 'cell'
                             }
+                        ],
+                        [
+                            { text: 'Preferred Flight Date', bold: true, style: 'header' },
+                            { text: staff.preferredFlightDate ? staff.preferredFlightDate : ' ', style: 'cell' },
+                            { text: 'Departure Airports', bold: true, style: 'header' },
+                            {
+                                text: staff.departureAirports && staff.departureAirports.length > 0 ? staff.departureAirports.join(', ') : ' ',
+                                style: 'cell'
+                            },
+                            { text: 'Arrival Airports', bold: true, style: 'header' },
+                            {
+                                text: staff.arrivalAirports && staff.arrivalAirports.length > 0 ? staff.arrivalAirports.join(', ') : ' ',
+                                style: 'cell'
+                            }
+                        ],
+                        [
+                            { text: 'Type Of Flight', bold: true, style: 'header' },
+                            { text: staff.typeOfFlight ? staff.typeOfFlight : ' ', style: 'cell' },
+                            { text: 'Iata Code', bold: true, style: 'header' },
+                            { text: staff.iataCode ? staff.iataCode : ' ', style: 'cell' },
+                            { text: 'Additional Emails For Notification', bold: true, style: 'header' },
+                            { text: staff.emails && staff.emails.length > 0 ? staff.emails.join(', ') : ' ', style: 'cell' }
                         ],
                         [
                             { text: 'Hotel Needed', bold: true, style: 'header' },
@@ -308,16 +325,6 @@ function getDocDefinition(staff) {
                             { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : ' ', style: 'cell' },
                             { text: 'Rail & Fly (Only In Germany)', bold: true, style: 'header' },
                             { text: staff.railFly === true ? 'YES' : 'NO', style: 'cell' }
-                        ],
-                        [
-                            { text: 'Iata Code', bold: true, style: 'header' },
-                            { text: staff.iataCode ? staff.iataCode : ' ', style: 'cell' },
-                            { text: 'Planned Assignment Start Date', bold: true, style: 'header' },
-                            {
-                                text: staff.plannedAssignmentStartDate ? staff.plannedAssignmentStartDate : ' ',
-                                style: 'cell'
-                            },
-                            { text: ' ', colSpan: 2 }
                         ]
                     ]
                 },
