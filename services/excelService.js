@@ -16,15 +16,6 @@ function generateExcel(staffs, type = 'binary') {
         wb.SheetNames.push(sheetName)
 
         for (const staff of staffs) {
-            const comments = staff.comments
-                ? staff.comments.map(c => ({
-                      text: c.text,
-                      createdBy: c.createdBy,
-                      group: c.group,
-                      created: c.created ? moment(c.created).format('YYYY-MM-DD HH:mm') : ''
-                  }))
-                : []
-
             const body = [
                 staff.greenLight === false && staff.status !== constants.Statuses.New ? `Pending HR (${staff.status})` : staff.status,
                 staff.id,
@@ -83,8 +74,16 @@ function generateExcel(staffs, type = 'binary') {
                 }
             }
 
-            if (comments && comments.length > 0) {
-                body.push(JSON.stringify(comments))
+            if (staff.comments && staff.comments.length > 0) {
+                var comments = staff.comments[0].text
+
+                if (staff.comments.length > 1) {
+                    staff.comments.shift()
+
+                    comments = comments + ',' + Array.prototype.map.call(staff.comments, s => ' ' + s.text).toString()
+                }
+
+                body.push(comments)
             } else {
                 body.push(' ')
             }
