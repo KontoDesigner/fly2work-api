@@ -209,6 +209,81 @@ function getFlights(staff) {
 //     return res
 // }
 
+function getBody(staff) {
+    const body = [
+        [
+            { text: 'Gender', bold: true, style: 'header' },
+            {
+                text: staff.gender !== undefined && staff.gender !== null ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : ' ',
+                style: 'cell'
+            },
+            { text: 'Date Of Birth', bold: true, style: 'header' },
+            { text: staff.dateOfBirth ? staff.dateOfBirth : ' ', style: 'cell' },
+            { text: 'Phone', bold: true, style: 'header' },
+            { text: staff.phone ? staff.phone : ' ', style: 'cell' }
+        ],
+        [
+            { text: 'Passport Number', bold: true, style: 'header' },
+            { text: staff.passportNumber ? staff.passportNumber : ' ', style: 'cell' },
+            { text: 'Job Title', bold: true, style: 'header' },
+            { text: staff.jobTitle ? staff.jobTitle : ' ', style: 'cell' },
+            { text: 'Planned Assignment Start Date', bold: true, style: 'header' },
+            {
+                text: staff.plannedAssignmentStartDate ? staff.plannedAssignmentStartDate : ' ',
+                style: 'cell'
+            }
+        ],
+        [
+            { text: 'Preferred Flight Date', bold: true, style: 'header' },
+            { text: staff.preferredFlightDate ? staff.preferredFlightDate : ' ', style: 'cell' },
+            { text: 'Departure Airports', bold: true, style: 'header' },
+            {
+                text: staff.departureAirports && staff.departureAirports.length > 0 ? staff.departureAirports.join(', ') : ' ',
+                style: 'cell'
+            },
+            { text: 'Arrival Airports', bold: true, style: 'header' },
+            {
+                text: staff.arrivalAirports && staff.arrivalAirports.length > 0 ? staff.arrivalAirports.join(', ') : ' ',
+                style: 'cell'
+            }
+        ],
+        [
+            { text: 'Type Of Flight', bold: true, style: 'header' },
+            { text: staff.typeOfFlight ? staff.typeOfFlight : ' ', style: 'cell' },
+            { text: 'Iata Code', bold: true, style: 'header' },
+            { text: staff.iataCode ? staff.iataCode : ' ', style: 'cell' },
+            { text: 'Additional Emails For Notification', bold: true, style: 'header' },
+            { text: staff.emails && staff.emails.length > 0 ? staff.emails.join(', ') : ' ', style: 'cell' }
+        ],
+        [
+            { text: 'Hotel Needed', bold: true, style: 'header' },
+            { text: staff.hotelNeeded === true ? 'YES' : 'NO', style: 'cell' },
+            { text: 'Rail & Fly (Only In Germany)', bold: true, style: 'header' },
+            { text: staff.railFly === true ? 'YES' : 'NO', style: 'cell' },
+            { text: 'Book Return Flight', bold: true, style: 'header' },
+            { text: staff.bookReturnFlight === true ? 'YES' : 'NO', style: 'cell' }
+        ]
+    ]
+
+    if (staff.bookReturnFlight === true) {
+        const bookReturnFlight = [
+            { text: 'Date Of Flight (BRF)', bold: true, style: 'header' },
+            {
+                text: staff.bookReturnFlightDateOfFlight ? staff.bookReturnFlightDateOfFlight : ' ',
+                style: 'cell'
+            },
+            { text: 'Departure Airport (BRF)', bold: true, style: 'header' },
+            { text: staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : ' ', style: 'cell' },
+            { text: 'Arrival Airport (BRF)', bold: true, style: 'header' },
+            { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : ' ', style: 'cell' }
+        ]
+
+        body.push(bookReturnFlight)
+    }
+
+    return body
+}
+
 function getComments(staff) {
     const res = staff.comments ? staff.comments.map(comment => [{ text: comment.text ? comment.text : ' ', style: 'cell' }]) : []
 
@@ -224,11 +299,11 @@ function getDocDefinition(staff) {
         return null
     }
 
-    //Flights
     const flights = getFlights(staff)
 
-    //Comments
     const comments = getComments(staff)
+
+    const body = getBody(staff)
 
     //Render
     return {
@@ -262,71 +337,7 @@ function getDocDefinition(staff) {
                 table: {
                     headerRows: 0,
                     widths: ['*', '*', '*', '*', '*', '*'],
-                    body: [
-                        [
-                            { text: 'Gender', bold: true, style: 'header' },
-                            {
-                                text: staff.gender !== undefined && staff.gender !== null ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : ' ',
-                                style: 'cell'
-                            },
-                            { text: 'Date Of Birth', bold: true, style: 'header' },
-                            { text: staff.dateOfBirth ? staff.dateOfBirth : ' ', style: 'cell' },
-                            { text: 'Phone', bold: true, style: 'header' },
-                            { text: staff.phone ? staff.phone : ' ', style: 'cell' }
-                        ],
-                        [
-                            { text: 'Passport Number', bold: true, style: 'header' },
-                            { text: staff.passportNumber ? staff.passportNumber : ' ', style: 'cell' },
-                            { text: 'Job Title', bold: true, style: 'header' },
-                            { text: staff.jobTitle ? staff.jobTitle : ' ', style: 'cell' },
-                            { text: 'Planned Assignment Start Date', bold: true, style: 'header' },
-                            {
-                                text: staff.plannedAssignmentStartDate ? staff.plannedAssignmentStartDate : ' ',
-                                style: 'cell'
-                            }
-                        ],
-                        [
-                            { text: 'Preferred Flight Date', bold: true, style: 'header' },
-                            { text: staff.preferredFlightDate ? staff.preferredFlightDate : ' ', style: 'cell' },
-                            { text: 'Departure Airports', bold: true, style: 'header' },
-                            {
-                                text: staff.departureAirports && staff.departureAirports.length > 0 ? staff.departureAirports.join(', ') : ' ',
-                                style: 'cell'
-                            },
-                            { text: 'Arrival Airports', bold: true, style: 'header' },
-                            {
-                                text: staff.arrivalAirports && staff.arrivalAirports.length > 0 ? staff.arrivalAirports.join(', ') : ' ',
-                                style: 'cell'
-                            }
-                        ],
-                        [
-                            { text: 'Type Of Flight', bold: true, style: 'header' },
-                            { text: staff.typeOfFlight ? staff.typeOfFlight : ' ', style: 'cell' },
-                            { text: 'Iata Code', bold: true, style: 'header' },
-                            { text: staff.iataCode ? staff.iataCode : ' ', style: 'cell' },
-                            { text: 'Additional Emails For Notification', bold: true, style: 'header' },
-                            { text: staff.emails && staff.emails.length > 0 ? staff.emails.join(', ') : ' ', style: 'cell' }
-                        ],
-                        [
-                            { text: 'Hotel Needed', bold: true, style: 'header' },
-                            { text: staff.hotelNeeded === true ? 'YES' : 'NO', style: 'cell' },
-                            { text: 'Book Return Flight', bold: true, style: 'header' },
-                            { text: staff.bookReturnFlight === true ? 'YES' : 'NO', style: 'cell' },
-                            { text: 'Date Of Flight (BRF)', bold: true, style: 'header' },
-                            {
-                                text: staff.bookReturnFlightDateOfFlight ? staff.bookReturnFlightDateOfFlight : ' ',
-                                style: 'cell'
-                            }
-                        ],
-                        [
-                            { text: 'Departure Airport (BRF)', bold: true, style: 'header' },
-                            { text: staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : ' ', style: 'cell' },
-                            { text: 'Arrival Airport (BRF)', bold: true, style: 'header' },
-                            { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : ' ', style: 'cell' },
-                            { text: 'Rail & Fly (Only In Germany)', bold: true, style: 'header' },
-                            { text: staff.railFly === true ? 'YES' : 'NO', style: 'cell' }
-                        ]
-                    ]
+                    body: body
                 },
                 layout: {
                     paddingTop: function(i, node) {
