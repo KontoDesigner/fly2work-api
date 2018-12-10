@@ -27,12 +27,12 @@ function StaffBS() {
     this.typeOfFlight = ''
 
     this.created = ''
-    this.createdBy = null
-    this.createdByEmail = null
+    this.requestedBy = null
     this.comments = []
     this.attachments = []
     this.emails = []
     this.audit = []
+    this.manual = false
 }
 
 function StaffBTT() {

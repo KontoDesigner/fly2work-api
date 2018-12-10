@@ -230,10 +230,10 @@ const updateOrInsertStaff = async (body, ctx) => {
     //Should not be overwritten from request
     model.attachments = getStaff && getStaff.attachments ? getStaff.attachments : []
     model.created = getStaff ? getStaff.created : null
-    model.createdBy = getStaff ? getStaff.createdBy : null
-    model.createdByEmail = getStaff ? getStaff.createdByEmail : null
+    model.requestedBy = getStaff ? getStaff.requestedBy : null
     model.comments = getStaff ? getStaff.comments : []
     model.audit = getStaff ? getStaff.audit : []
+    model.manual = getStaff ? getStaff.manual : false
 
     if (add === true) {
         model = Object.assign(model, new constants.StaffBTT())
@@ -248,9 +248,12 @@ const updateOrInsertStaff = async (body, ctx) => {
         }
 
         model.created = moment().format('YYYY-MM-DD HH:mm')
-        model.createdBy = userName
-        model.createdByEmail = userEmail
+        model.requestedBy = {
+            name: userName,
+            email: userEmail
+        }
         model.status = constants.Statuses.PendingBTT
+        model.manual = true
 
         if (model.typeOfFlight === 'Start of season') {
             const greenLightDestinations = config.greenLightDestinations.split(',')
@@ -279,8 +282,8 @@ const updateOrInsertStaff = async (body, ctx) => {
             //Get BTT to/cc based on sourceMarket
             let emails = helpers.getBTTEmails(model.sourceMarket)
 
-            if (model.createdByEmail) {
-                emails.to.push(model.createdByEmail)
+            if (model.requestedBy && model.requestedBy.email) {
+                emails.to.push(model.requestedBy.email)
             }
 
             //Add additional emails to email
@@ -335,8 +338,8 @@ const updateOrInsertStaff = async (body, ctx) => {
 
             //Add BTT and createdBy to emails (PENDINGBTT => CONFIRMED)
             if (getStaff.status === constants.Statuses.PendingBTT && model.status === constants.Statuses.Confirmed) {
-                if (model.createdByEmail) {
-                    emails.to.push(model.createdByEmail)
+                if (model.requestedBy && model.requestedBy.email) {
+                    emails.to.push(model.requestedBy.email)
                 }
 
                 //Add additional emails to email
@@ -375,8 +378,8 @@ const updateOrInsertStaff = async (body, ctx) => {
             }
             //Add BTT and createdBy to emails (X => CONFIRMED)
             else if (model.status === constants.Statuses.Confirmed) {
-                if (model.createdByEmail) {
-                    emails.to.push(model.createdByEmail)
+                if (model.requestedBy && model.requestedBy.email) {
+                    emails.to.push(model.requestedBy.email)
                 }
 
                 //Add additional emails to email
