@@ -36,7 +36,7 @@ router.post(BASE, passport.authenticate('oauth-bearer', { session: false }), asy
     return await next()
 })
 
-router.post(`${BASE}/new`, async (ctx, next) => {
+router.post(`${BASE}/new`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
     const body = ctx.request.body
 
     const res = await staffService.insertStaff(body, ctx)

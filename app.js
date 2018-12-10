@@ -9,6 +9,8 @@ const cors = require('@koa/cors')
 const config = require('./infrastructure/config')
 const passport = require('koa-passport')
 const BearerStrategy = require('passport-azure-ad').BearerStrategy
+const userService = require('./services/userService')
+const constants = require('./infrastructure/constants')
 
 const authOptions = {
     identityMetadata: config.authAuthority + config.authTenantId + '/.well-known/openid-configuration',
@@ -72,12 +74,16 @@ async function roleCheck(ctx, next) {
         ctx.throw(401)
     }
 
-    const isUserInRole = true
+    const BTTRoutes = ['/staff/confirmgreenlight', '/staff/decline']
 
-    if (!isUserInRole) {
-        logger.warning(`NOT AUTHORIZED`, { url: ctx.url, user })
+    if (BTTRoutes.includes(ctx.request.url)) {
+        const userRoles = userService.getUserRoles(ctx, user)
 
-        ctx.throw(403)
+        if (!userRoles.includes(constants.UserRoles.BTT)) {
+            logger.warning(`NOT AUTHORIZED`, { url: ctx.url, user })
+
+            ctx.throw(403)
+        }
     }
 
     await next()
