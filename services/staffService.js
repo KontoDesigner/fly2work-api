@@ -17,6 +17,7 @@ const confirmGreenLight = async (body, ctx) => {
 
     const user = userService.getUser(ctx)
     const userName = userService.getUserName(ctx, user)
+    const userRoles = userService.getUserRoles(ctx, user)
 
     const getStaff = await mongo.collection('staffs').findOne({ id: id })
 
@@ -26,6 +27,7 @@ const confirmGreenLight = async (body, ctx) => {
         statusTo: getStaff ? getStaff.status : '',
         greenLightFrom: false,
         greenLightTo: true,
+        group: userRoles.join(', '),
         date: new Date()
     }
 
@@ -90,6 +92,7 @@ const declineStaff = async (body, ctx) => {
         greenLightTo: getStaff ? getStaff.greenLight : '',
         statusFrom: constants.Statuses.PendingBTT,
         statusTo: constants.Statuses.PendingDES,
+        group: userRoles.join(', '),
         date: new Date()
     }
 
@@ -301,6 +304,7 @@ const updateOrInsertStaff = async (body, ctx) => {
             greenLightTo: model.greenLight,
             statusFrom: getStaff.status,
             statusTo: model.status,
+            group: userRoles.join(', '),
             date: new Date()
         })
 
