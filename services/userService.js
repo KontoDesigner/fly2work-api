@@ -5,7 +5,7 @@ const getUserRoles = (ctx, user = null) => {
 
     let userRoles = []
 
-    if (u.name === 'Therese Bellhammar' || u.name === 'Filip Danielsson') {
+    if (u.name === 'Therese Bellhammar' || u.name === 'Filip Danielsson' || u.name === 'Daniela Luer' || u.name === 'Pamela Martin') {
         //|| u.name === 'Filip Danielsson'
         userRoles.push(constants.UserRoles.BS)
 
