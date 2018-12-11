@@ -26,13 +26,13 @@ function StaffBS() {
     this.iataCode = ''
     this.typeOfFlight = ''
 
+    this.positionAssignId = null
     this.created = ''
     this.requestedBy = null
     this.comments = []
     this.attachments = []
     this.emails = []
     this.audit = []
-    this.manual = false
 }
 
 function StaffBTT() {

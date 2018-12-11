@@ -101,7 +101,7 @@ async function send(staff, statusText, emails) {
             return true
         }
     } catch (err) {
-        logger.error('Error sending email', staff, email, mailApi, statusText, emails)
+        logger.error('Error sending email', err, { staff, email, mailApi, statusText, emails })
     }
 
     return false

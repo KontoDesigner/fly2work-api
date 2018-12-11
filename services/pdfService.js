@@ -125,7 +125,7 @@ function getFlights(staff) {
                       text: parseCost(flight.flightCost) + parseCost(flight.xbagCost) + parseCost(flight.hotelCost),
                       style: 'cell'
                   },
-                  { text: ' ', style: 'cell', colSpan: 4 }
+                  { text: ' ', colSpan: 4 }
               ]
           ])
         : []
@@ -280,6 +280,12 @@ function getBody(staff) {
 
         body.push(bookReturnFlight)
     }
+
+    body.push([
+        { text: 'Confirmed Status', bold: true, style: 'header' },
+        { text: staff.confirmedStatus ? staff.confirmedStatus : ' ', style: 'cell' },
+        { text: ' ', colSpan: 4 }
+    ])
 
     return body
 }

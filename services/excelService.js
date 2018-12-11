@@ -17,8 +17,9 @@ function generateExcel(staffs, type = 'binary') {
 
         for (const staff of staffs) {
             const body = [
-                staff.greenLight === false && staff.status !== constants.Statuses.New ? `Pending HR (${staff.status})` : staff.status,
                 staff.id,
+                staff.greenLight === false && staff.status !== constants.Statuses.New ? `Pending HR (${staff.status})` : staff.status,
+                staff.confirmedStatus ? staff.confirmedStatus : '',
                 staff.gender !== null && staff.gender !== undefined ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : '',
                 staff.firstName,
                 staff.lastName,
@@ -123,8 +124,9 @@ module.exports = {
 }
 
 const HEADER = [
-    'Status',
     'Id',
+    'Status',
+    'Confirmed Status',
     'Gender',
     'First Name',
     'Surname',

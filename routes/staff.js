@@ -39,7 +39,7 @@ router.post(BASE, passport.authenticate('oauth-bearer', { session: false }), asy
 router.post(`${BASE}/new`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
     const body = ctx.request.body
 
-    const res = await staffService.insertStaff(body, ctx)
+    const res = await staffService.insertStaffFromGpx(body, ctx)
 
     ctx.body = res
 
