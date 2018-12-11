@@ -344,7 +344,9 @@ const updateOrInsertStaff = async (body, ctx) => {
 
     var greenLightChanged = false
 
-    if (userRoles.includes(constants.UserRoles.BTT)) {
+    const btt = userRoles.includes(constants.UserRoles.BTT)
+
+    if (btt) {
         //BTT
         model = Object.assign(model, new constants.StaffBTT())
 
@@ -356,13 +358,15 @@ const updateOrInsertStaff = async (body, ctx) => {
         model.currency = body.currency
         model.railFlyRequestedAndBooked = body.railFlyRequestedAndBooked
 
-        if (getStaff.greenLight === false && body.greenLight === true) {
-            greenLightChanged = true
-            model.greenLight = body.greenLight
-            model.greenLightUpdated = new Date()
-            model.greenLightUpdatedBy = userName
-        } else {
-            model.greenLight = getStaff.greenLight
+        if (add !== true) {
+            if (getStaff.greenLight === false && body.greenLight === true) {
+                greenLightChanged = true
+                model.greenLight = body.greenLight
+                model.greenLightUpdated = new Date()
+                model.greenLightUpdatedBy = userName
+            } else {
+                model.greenLight = getStaff.greenLight
+            }
         }
 
         //Flights
@@ -419,14 +423,16 @@ const updateOrInsertStaff = async (body, ctx) => {
     }
 
     if (add === true) {
-        return await insertStaff(ctx, model, getStaff, userName, userEmail)
+        return await insertStaff(ctx, model, getStaff, userName, userEmail, btt)
     } else {
         return await updateStaff(ctx, model, getStaff, userName, userRoles, greenLightChanged)
     }
 }
 
-async function insertStaff(ctx, model, getStaff, userName, userEmail) {
-    model = Object.assign(model, new constants.StaffBTT())
+async function insertStaff(ctx, model, getStaff, userName, userEmail, btt) {
+    if (btt === false) {
+        model = Object.assign(model, new constants.StaffBTT())
+    }
 
     if (getStaff) {
         logger.warning(`Staff with id: '${model.id}' already exists`, { url: ctx.url, model })

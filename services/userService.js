@@ -5,9 +5,16 @@ const getUserRoles = (ctx, user = null) => {
 
     let userRoles = []
 
-    if (u.name === 'Therese Bellhammar' || u.name === 'Filip Danielsson' || u.name === 'Daniela Luer' || u.name === 'Pamela Martin') {
+    if (u.name === 'Therese Bellhammar' || u.name === 'Daniela Luer' || u.name === 'Pamela Martin') {
         //|| u.name === 'Filip Danielsson'
         userRoles.push(constants.UserRoles.BS)
+
+        return userRoles
+    }
+
+    if (u.name === 'Filip Danielsson' || u.name === 'Paulina Przytocka') {
+        userRoles.push(constants.UserRoles.BS)
+        userRoles.push(constants.UserRoles.BTT)
 
         return userRoles
     }
