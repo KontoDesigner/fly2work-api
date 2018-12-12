@@ -520,6 +520,8 @@ async function sendInsertEmails(model) {
         }
     }
 
+    logger.info('Insert staff successfull', { url: ctx.url, model })
+
     return {
         ok: true,
         greenLight: model.greenLight
@@ -663,6 +665,8 @@ async function sendUpdateEmailsAndConfirm(model, getStaff, greenLightChanged) {
             }
         }
     }
+
+    logger.info('Update staff successfull', { url: ctx.url, model })
 
     return {
         ok: true,
