@@ -334,6 +334,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.iataCode = body.iataCode
     model.typeOfFlight = body.typeOfFlight
     model.emails = body.emails
+    model.comment = body.comment
     if (model.status === constants.Statuses.Confirmed) {
         model.confirmedStatus = body.confirmedStatus
     }
@@ -415,7 +416,12 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.attachments = getStaff && getStaff.attachments ? getStaff.attachments : []
     model.created = getStaff ? getStaff.created : null
     model.requestedBy = getStaff ? getStaff.requestedBy : null
-    model.comments = getStaff ? getStaff.comments : []
+    if (add === true) {
+        model.comments = model.comment && model.comment !== '' ? [model.comment] : []
+    } else {
+        model.comments = getStaff ? getStaff.comments : []
+    }
+    delete model.comment
     model.audit = getStaff ? getStaff.audit : []
     model.positionAssignId = getStaff ? getStaff.positionAssignId : null
     if (model.status !== constants.Statuses.Confirmed) {

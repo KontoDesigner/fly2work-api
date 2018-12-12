@@ -29,6 +29,9 @@ function StaffBS() {
     this.positionAssignId = null
     this.created = ''
     this.requestedBy = null
+    //Insert
+    this.comment = ''
+    //Update
     this.comments = []
     this.attachments = []
     this.emails = []

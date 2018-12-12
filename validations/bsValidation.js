@@ -22,6 +22,10 @@ Yup.addMethod(Yup.string, 'optionalDate', function(format) {
 })
 
 const bsValidation = Yup.object().shape({
+    comment: Yup.string()
+        .nullable(true)
+        .notRequired()
+        .max(200, 'Field must contain a total 200 characters'),
     plannedAssignmentStartDate: Yup.string()
         .default('')
         .nullable(true)
