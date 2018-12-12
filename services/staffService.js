@@ -416,8 +416,16 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.attachments = getStaff && getStaff.attachments ? getStaff.attachments : []
     model.created = getStaff ? getStaff.created : null
     model.requestedBy = getStaff ? getStaff.requestedBy : null
-    if (add === true) {
-        model.comments = model.comment && model.comment !== '' ? [model.comment] : []
+    if (add === true && model.comment && model.comment !== '') {
+        const comment = {
+            text: model.comment,
+            id: uuid.v1(),
+            created: moment()._d,
+            createdBy: userName,
+            group: userRoles.join(', ')
+        }
+
+        model.comments = [comment]
     } else {
         model.comments = getStaff ? getStaff.comments : []
     }
