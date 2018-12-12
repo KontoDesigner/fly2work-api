@@ -491,10 +491,10 @@ async function insertStaff(ctx, model, getStaff, userName, userEmail, btt) {
         }
     }
 
-    return await sendInsertEmails(model)
+    return await sendInsertEmails(ctx, model)
 }
 
-async function sendInsertEmails(model) {
+async function sendInsertEmails(ctx, model) {
     //Add createdBy and BTT to emails (NEW => PENDINGBTT)
     const statusText = `${constants.Statuses.New} => ${model.greenLight === false ? 'Pending HR' : constants.Statuses.PendingBTT}`
 
@@ -561,10 +561,10 @@ async function updateStaff(ctx, model, getStaff, userName, userRoles, greenLight
         }
     }
 
-    return await sendUpdateEmailsAndConfirm(model, getStaff, greenLightChanged)
+    return await sendUpdateEmailsAndConfirm(ctx, model, getStaff, greenLightChanged)
 }
 
-async function sendUpdateEmailsAndConfirm(model, getStaff, greenLightChanged) {
+async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, greenLightChanged) {
     const statusText =
         greenLightChanged === false
             ? `${getStaff.greenLight === false ? 'Pending HR' : getStaff.status} => ${getStaff.greenLight === false ? 'Pending HR' : model.status}`
