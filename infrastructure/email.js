@@ -10,7 +10,7 @@ async function send(staff, statusText, emails) {
     logger.info('Started send email', { staff })
 
     if (!emails || !emails.to || !emails.cc || emails.to.length === 0) {
-        logger.info('No emails specified in request, aborting send', { staff })
+        logger.info('No emails specified in request, aborting send', { staff, emails })
 
         return false
     }
@@ -87,7 +87,7 @@ async function send(staff, statusText, emails) {
         email.attachments.push({ data: attachmentData, name: attachment.name })
     }
 
-    logger.info('Sending email', { staff, email })
+    logger.info('Sending email', { staff, emails })
 
     //Send email
     let res = {}
@@ -95,7 +95,7 @@ async function send(staff, statusText, emails) {
     try {
         res = await restClient.post(mailApi, email)
 
-        logger.info('Mail api result', { res, staff, email, mailApi, statusText, emails })
+        logger.info('Mail api result', { res, staff, mailApi, statusText, emails })
 
         if (res.ok === true) {
             return true

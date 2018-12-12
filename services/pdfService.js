@@ -24,7 +24,7 @@ function generatePdfCallback(staff, callback) {
         doc.on('end', () => {
             const result = Buffer.concat(chunks)
 
-            logger.info('Pdf export successfull', { staff, pdf: result })
+            logger.info('Pdf export successfull', { staff })
 
             callback('data:application/pdf;base64,' + result.toString('base64'))
         })
@@ -58,7 +58,7 @@ function generatePdfPromise(staff) {
             doc.on('end', () => {
                 const result = Buffer.concat(chunks)
 
-                logger.info('Pdf export successfull', { staff, pdf: result })
+                logger.info('Pdf export successfull', { staff })
 
                 resolve(result)
             })

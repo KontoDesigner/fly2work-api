@@ -487,11 +487,12 @@ async function sendInsertEmails(model) {
     //Get BTT to/cc based on sourceMarket
     let emails = helpers.getBTTEmails(model.sourceMarket)
 
+    //Add BS
     if (model.requestedBy && model.requestedBy.email) {
         emails.to.push(model.requestedBy.email)
     }
 
-    //Add additional emails to email
+    //Add additional emails
     if (model.emails && model.emails.length > 0) {
         emails.to.push(model.emails)
     }
@@ -556,13 +557,28 @@ async function sendUpdateEmailsAndConfirm(model, getStaff, greenLightChanged) {
     //Get BTT to/cc based on sourceMarket
     let emails = helpers.getBTTEmails(model.sourceMarket)
 
-    //Add BTT and createdBy to emails (PENDINGBTT => CONFIRMED)
+    //Add BTT and createdBy to emails (PENDINGBTT => CONFIRMED) and send confirm date to gpx
     if (getStaff.status === constants.Statuses.PendingBTT && model.status === constants.Statuses.Confirmed) {
+        //Send confirm date to GPX
+        if (model.positionAssignId) {
+            const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
+
+            const confirmRes = await gpxService.confirm(model.positionAssignId, confirmedDate)
+
+            if (confirmRes !== true) {
+                return {
+                    ok: false,
+                    error: 'Request updated but could not send confirm to GPX or send email notifications'
+                }
+            }
+        }
+
+        //Add BS
         if (model.requestedBy && model.requestedBy.email) {
             emails.to.push(model.requestedBy.email)
         }
 
-        //Add additional emails to email
+        //Add additional emails
         if (model.emails && model.emails.length > 0) {
             emails.to.push(model.emails)
         }
@@ -580,7 +596,7 @@ async function sendUpdateEmailsAndConfirm(model, getStaff, greenLightChanged) {
     }
     //Add BTT to emails (PENDINGDES => PendingBTT)
     else if (getStaff.status === constants.Statuses.PendingDES && model.status === constants.Statuses.PendingBTT) {
-        //Add additional emails to email
+        //Add additional emails
         if (model.emails && model.emails.length > 0) {
             emails.to.push(model.emails)
         }
@@ -596,26 +612,28 @@ async function sendUpdateEmailsAndConfirm(model, getStaff, greenLightChanged) {
             }
         }
     }
-    //Add BTT and createdBy to emails (X => CONFIRMED) and end confirm date to gpx
+    //Add BTT and createdBy to emails (X => CONFIRMED) and send confirm date to gpx
     else if (model.status === constants.Statuses.Confirmed) {
-        // if (model.positionAssignId) {
-        //     const date = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
+        //Send confirm date to GPX
+        if (model.positionAssignId) {
+            const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
 
-        //     const confirmRes = await gpxService.confirm(model.positionAssignId, date)
+            const confirmRes = await gpxService.confirm(model.positionAssignId, confirmedDate)
 
-        //     if (confirmRes !== true) {
-        //         return {
-        //             ok: false,
-        //             error: 'Request updated but could not send confirm to GPX or send email notifications'
-        //         }
-        //     }
-        // }
+            if (confirmRes !== true) {
+                return {
+                    ok: false,
+                    error: 'Request updated but could not send confirm to GPX or send email notifications'
+                }
+            }
+        }
 
+        //Add BS
         if (model.requestedBy && model.requestedBy.email) {
             emails.to.push(model.requestedBy.email)
         }
 
-        //Add additional emails to email
+        //Add additional emails
         if (model.emails && model.emails.length > 0) {
             emails.to.push(model.emails)
         }

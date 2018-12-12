@@ -91,8 +91,14 @@ const Statuses = keyMirror({
     Confirmed: null
 })
 
+const ConfirmedStatuses = keyMirror({
+    Cancelled: null,
+    Modified: null
+})
+
 module.exports = {
     Statuses,
+    ConfirmedStatuses,
     Staff,
     StaffBS,
     StaffBTT,

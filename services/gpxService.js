@@ -2,26 +2,26 @@ const logger = require('tuin-logging')
 const restClient = require('../infrastructure/restClient')
 const config = require('../infrastructure/config')
 
-async function confirm(positionAssignId, date) {
-    logger.info('Sending GPX confirm request', { positionAssignId, date })
+async function confirm(positionAssignId, confirmedDate) {
+    logger.info('Sending GPX confirm request', { positionAssignId, confirmedDate })
 
     const req = {
-        positionAssignId: positionAssignId,
-        date: date
+        PositionAssignId: positionAssignId,
+        ConfirmedDate: confirmedDate
     }
 
     let res = {}
 
     try {
-        res = await restClient.post(`${config.gpxApi}/positionassign/confirm`, req)
+        res = await restClient.post(`${config.gpxApi}/ctx/confirm`, req)
 
-        logger.info('GPX confirm result', { positionAssignId, date })
+        logger.info('GPX confirm result', { req })
 
         if (res.ok === true) {
             return true
         }
     } catch (err) {
-        logger.error('Error GPX confirm', err, { positionAssignId, date })
+        logger.error('Error GPX confirm', err, { req })
     }
 
     return false

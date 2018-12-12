@@ -7,7 +7,7 @@ function generateExcel(staffs, type = 'binary') {
     try {
         var wb = xlsx.utils.book_new()
 
-        logger.info(`Started excel export with ${staffs.length} staff(s)`, { staffs })
+        logger.info('Started excel export', { staffs })
 
         var ws_data = [HEADER]
 
@@ -91,7 +91,7 @@ function generateExcel(staffs, type = 'binary') {
 
             ws_data.push(body)
 
-            logger.info(`Pushed ${staffs.length} staff(s) to sheet`, { staffs })
+            // logger.info(`Pushed ${staffs.length} staff(s) to sheet`, { staffs })
         }
 
         var ws = xlsx.utils.aoa_to_sheet(ws_data)
@@ -99,7 +99,7 @@ function generateExcel(staffs, type = 'binary') {
 
         var wbout = xlsx.write(wb, { bookType: 'xlsx', type: type })
 
-        logger.info('Excel export successfull', { staffs, xlsx: wbout })
+        logger.info('Excel export successfull', { staffs })
 
         return Buffer.from(wbout, type)
     } catch (err) {
