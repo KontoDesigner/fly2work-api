@@ -7,7 +7,7 @@ function generateExcel(staffs, type = 'binary') {
     try {
         var wb = xlsx.utils.book_new()
 
-        logger.info('Started excel export', { staffs })
+        logger.info('Started excel export', { count: staffs.length })
 
         var ws_data = [HEADER]
 
@@ -99,11 +99,11 @@ function generateExcel(staffs, type = 'binary') {
 
         var wbout = xlsx.write(wb, { bookType: 'xlsx', type: type })
 
-        logger.info('Excel export successfull', { staffs })
+        logger.info('Excel export successfull', { count: staffs.length })
 
         return Buffer.from(wbout, type)
     } catch (err) {
-        logger.error('Error generating excel', err, { staffs })
+        logger.error('Error generating excel', err, { count: staffs.length })
 
         throw err
     }

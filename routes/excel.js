@@ -14,7 +14,7 @@ router.post(BASE, passport.authenticate('oauth-bearer', { session: false }), asy
 
     const response = await excelService.generateExcel(staffs)
 
-    logger.info('Excel generation result', { staffs, excelBytes: response.length })
+    logger.info('Excel generation result', { staffs, bytes: response.length })
 
     ctx.body = response
 
