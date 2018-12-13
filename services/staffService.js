@@ -439,7 +439,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     if (add === true) {
         return await insertStaff(ctx, model, getStaff, userName, userEmail, btt)
     } else {
-        return await updateStaff(ctx, model, getStaff, userName, userRoles, greenLightChanged)
+        return await updateStaff(ctx, model, getStaff, userName, userRoles, greenLightChanged, btt)
     }
 }
 
@@ -528,7 +528,16 @@ async function sendInsertEmails(ctx, model) {
     }
 }
 
-async function updateStaff(ctx, model, getStaff, userName, userRoles, greenLightChanged) {
+async function updateStaff(ctx, model, getStaff, userName, userRoles, greenLightChanged, btt) {
+    if (btt === false && getStaff.status !== constants.Statuses.Confirmed && model.status === constants.Statuses.Confirmed) {
+        logger.error('BS is trying to set request status to confirm', { url: ctx.url, getStaff, model })
+
+        return {
+            ok: false,
+            error: 'Not allowed to set request status to confirm'
+        }
+    }
+
     model.audit.push({
         updatedBy: userName,
         greenLightFrom: getStaff.greenLight,

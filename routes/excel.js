@@ -1,6 +1,5 @@
 const router = require('koa-better-router')().loadMethods()
 const excelService = require('../services/excelService')
-const logger = require('tuin-logging')
 const mongo = require('../infrastructure/mongo')
 const passport = require('koa-passport')
 
