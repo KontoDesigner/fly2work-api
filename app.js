@@ -74,16 +74,35 @@ async function roleCheck(ctx, next) {
         ctx.throw(401)
     }
 
-    const BTTRoutes = ['/staff/confirmgreenlight', '/staff/decline']
+    const userRoles = userService.getUserRoles(ctx, user)
+
+    //BTT routes
+    const BTTRoutes = ['/staff/decline']
 
     if (BTTRoutes.includes(ctx.request.url)) {
-        const userRoles = userService.getUserRoles(ctx, user)
-
         if (!userRoles.includes(constants.UserRoles.BTT)) {
-            logger.warning(`NOT AUTHORIZED`, { url: ctx.url, user })
+            logger.warning(`NOT AUTHORIZED (BTT ROUTE)`, { url: ctx.url, user })
 
             ctx.throw(403)
         }
+    }
+
+    //HR routes
+    const HRRoutes = ['/staff/confirmgreenlight']
+
+    if (HRRoutes.includes(ctx.request.url)) {
+        if (!userRoles.includes(constants.UserRoles.HR)) {
+            logger.warning(`NOT AUTHORIZED (HR ROUTE)`, { url: ctx.url, user })
+
+            ctx.throw(403)
+        }
+    }
+
+    //BS && BTT routes
+    if (userRoles.includes(constants.UserRoles.HR) && ctx.request.method === 'POST' && ctx.request.url === '/staff') {
+        logger.warning(`NOT AUTHORIZED (BS/BTT ROUTE)`, { url: ctx.url, user })
+
+        ctx.throw(403)
     }
 
     await next()

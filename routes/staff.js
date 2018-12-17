@@ -6,6 +6,7 @@ const uuid = require('node-uuid')
 
 const BASE = '/staff'
 
+//HR
 router.post(`${BASE}/confirmgreenlight`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
     const body = ctx.request.body
 
@@ -16,6 +17,7 @@ router.post(`${BASE}/confirmgreenlight`, passport.authenticate('oauth-bearer', {
     return await next()
 })
 
+//BTT
 router.post(`${BASE}/decline`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
     const body = ctx.request.body
 
@@ -26,6 +28,7 @@ router.post(`${BASE}/decline`, passport.authenticate('oauth-bearer', { session: 
     return await next()
 })
 
+//BS && BTT
 router.post(BASE, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
     const body = ctx.request.body
 

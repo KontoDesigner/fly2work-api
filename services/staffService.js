@@ -343,8 +343,6 @@ const updateOrInsertStaff = async (body, ctx) => {
 
     const getStaff = await mongo.collection('staffs').findOne({ id: model.id })
 
-    var greenLightChanged = false
-
     const btt = userRoles.includes(constants.UserRoles.BTT)
 
     if (btt) {
@@ -358,17 +356,6 @@ const updateOrInsertStaff = async (body, ctx) => {
         model.travelType = body.travelType
         model.currency = body.currency
         model.railFlyRequestedAndBooked = body.railFlyRequestedAndBooked
-
-        if (add !== true) {
-            if (getStaff.greenLight === false && body.greenLight === true) {
-                greenLightChanged = true
-                model.greenLight = body.greenLight
-                model.greenLightUpdated = new Date()
-                model.greenLightUpdatedBy = userName
-            } else {
-                model.greenLight = getStaff.greenLight
-            }
-        }
 
         //Flights
         const flights = []
@@ -435,11 +422,12 @@ const updateOrInsertStaff = async (body, ctx) => {
     if (model.status !== constants.Statuses.Confirmed) {
         model.confirmedStatus = getStaff ? getStaff.confirmedStatus : null
     }
+    model.greenLight = getStaff ? getStaff.greenLight : null
 
     if (add === true) {
         return await insertStaff(ctx, model, getStaff, userName, userEmail, btt)
     } else {
-        return await updateStaff(ctx, model, getStaff, userName, userRoles, greenLightChanged, btt)
+        return await updateStaff(ctx, model, getStaff, userName, userRoles, btt)
     }
 }
 
@@ -528,7 +516,7 @@ async function sendInsertEmails(ctx, model) {
     }
 }
 
-async function updateStaff(ctx, model, getStaff, userName, userRoles, greenLightChanged, btt) {
+async function updateStaff(ctx, model, getStaff, userName, userRoles, btt) {
     if (btt === false && getStaff.status !== constants.Statuses.Confirmed && model.status === constants.Statuses.Confirmed) {
         logger.error('BS is trying to set request status to confirm', { url: ctx.url, getStaff, model })
 
@@ -541,7 +529,7 @@ async function updateStaff(ctx, model, getStaff, userName, userRoles, greenLight
     model.audit.push({
         updatedBy: userName,
         greenLightFrom: getStaff.greenLight,
-        greenLightTo: model.greenLight,
+        greenLightTo: getStaff.greenLight,
         statusFrom: getStaff.status,
         statusTo: model.status,
         group: userRoles.join(', '),
@@ -570,14 +558,13 @@ async function updateStaff(ctx, model, getStaff, userName, userRoles, greenLight
         }
     }
 
-    return await sendUpdateEmailsAndConfirm(ctx, model, getStaff, greenLightChanged)
+    return await sendUpdateEmailsAndConfirm(ctx, model, getStaff)
 }
 
-async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, greenLightChanged) {
-    const statusText =
-        greenLightChanged === false
-            ? `${getStaff.greenLight === false ? 'Pending HR' : getStaff.status} => ${getStaff.greenLight === false ? 'Pending HR' : model.status}`
-            : `Pending HR => ${model.status}`
+async function sendUpdateEmailsAndConfirm(ctx, model, getStaff) {
+    const statusText = `${getStaff.greenLight === false ? 'Pending HR' : getStaff.status} => ${
+        getStaff.greenLight === false ? 'Pending HR' : model.status
+    }`
 
     //Get BTT to/cc based on sourceMarket
     let emails = helpers.getBTTEmails(model.sourceMarket)
@@ -679,7 +666,7 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, greenLightChange
 
     return {
         ok: true,
-        greenLight: model.greenLight
+        greenLight: getStaff.greenLight
     }
 }
 

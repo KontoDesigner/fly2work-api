@@ -84,7 +84,8 @@ function Email() {
 
 const UserRoles = keyMirror({
     BS: null,
-    BTT: null
+    BTT: null,
+    HR: null
 })
 
 const Statuses = keyMirror({
