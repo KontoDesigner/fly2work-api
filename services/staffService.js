@@ -338,15 +338,16 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.typeOfFlight = body.typeOfFlight
     model.emails = body.emails
     model.comment = body.comment
-    if (model.status === constants.Statuses.Confirmed) {
+
+    const btt = userRoles.includes(constants.UserRoles.BTT)
+
+    if (btt === true && model.status === constants.Statuses.Confirmed) {
         model.confirmedStatus = body.confirmedStatus
     }
 
     let validation = null
 
     const getStaff = await mongo.collection('staffs').findOne({ id: model.id })
-
-    const btt = userRoles.includes(constants.UserRoles.BTT)
 
     if (btt) {
         //BTT
@@ -422,7 +423,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     delete model.comment
     model.audit = getStaff ? getStaff.audit : []
     model.positionAssignId = getStaff ? getStaff.positionAssignId : null
-    if (model.status !== constants.Statuses.Confirmed) {
+    if (model.status !== constants.Statuses.Confirmed || btt === false) {
         model.confirmedStatus = getStaff ? getStaff.confirmedStatus : null
     }
     model.greenLight = getStaff ? getStaff.greenLight : null
