@@ -92,8 +92,8 @@ const declineStaff = async (body, ctx) => {
 
     const audit = {
         updatedBy: userName,
-        greenLightFrom: getStaff ? getStaff.greenLight : '',
-        greenLightTo: getStaff ? getStaff.greenLight : '',
+        greenLightFrom: getStaff ? getStaff.greenLight : null,
+        greenLightTo: getStaff ? getStaff.greenLight : null,
         statusFrom: constants.Statuses.PendingBTT,
         statusTo: constants.Statuses.PendingDES,
         group: userRoles.join(', '),
