@@ -6,9 +6,9 @@ const fs = require('fs')
 const userService = require('./userService')
 
 const upload = async (staffId, file, ctx) => {
-    const user = userService.getUser(ctx)
-    const userName = userService.getUserName(ctx, user)
-    const userRoles = userService.getUserRoles(ctx, user)
+    const user = await userService.getUser(ctx)
+    const userName = await userService.getUserName(ctx, user)
+    const userRoles = await userService.getUserRoles(ctx, user)
 
     try {
         const size = fs.statSync(file.path).size

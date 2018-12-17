@@ -16,9 +16,9 @@ const gpxService = require('./gpxService')
 const confirmGreenLight = async (body, ctx) => {
     const id = body.id
 
-    const user = userService.getUser(ctx)
-    const userName = userService.getUserName(ctx, user)
-    const userRoles = userService.getUserRoles(ctx, user)
+    const user = await userService.getUser(ctx)
+    const userName = await userService.getUserName(ctx, user)
+    const userRoles = await userService.getUserRoles(ctx, user)
 
     const getStaff = await mongo.collection('staffs').findOne({ id: id })
 
@@ -76,9 +76,9 @@ const declineStaff = async (body, ctx) => {
         }
     }
 
-    const user = userService.getUser(ctx)
-    const userName = userService.getUserName(ctx, user)
-    const userRoles = userService.getUserRoles(ctx, user)
+    const user = await userService.getUser(ctx)
+    const userName = await userService.getUserName(ctx, user)
+    const userRoles = await userService.getUserRoles(ctx, user)
 
     const comment = {
         text: model.text,
@@ -302,10 +302,10 @@ const getStaffByIdAndStatus = async (id, status, ctx) => {
 }
 
 const updateOrInsertStaff = async (body, ctx) => {
-    const user = userService.getUser(ctx)
-    const userName = userService.getUserName(ctx, user)
-    const userRoles = userService.getUserRoles(ctx, user)
-    const userEmail = userService.getUserEmail(ctx, user)
+    const user = await userService.getUser(ctx)
+    const userName = await userService.getUserName(ctx, user)
+    const userRoles = await userService.getUserRoles(ctx, user)
+    const userEmail = await userService.getUserEmail(ctx, user)
 
     let model = new constants.StaffBS()
 

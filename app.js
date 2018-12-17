@@ -9,8 +9,6 @@ const cors = require('@koa/cors')
 const config = require('./infrastructure/config')
 const passport = require('koa-passport')
 const BearerStrategy = require('passport-azure-ad').BearerStrategy
-const userService = require('./services/userService')
-const constants = require('./infrastructure/constants')
 
 const authOptions = {
     identityMetadata: config.authAuthority + config.authTenantId + '/.well-known/openid-configuration',
@@ -59,55 +57,6 @@ async function logIncomingRequest(ctx, next) {
     })
 }
 
-async function roleCheck(ctx, next) {
-    if (ctx.method === 'OPTIONS' || ctx.path.startsWith('/health') || ctx.path.startsWith('/staff/new')) {
-        await next()
-
-        return
-    }
-
-    const user = ctx.state.user
-
-    if (!user) {
-        logger.warning(`NOT AUTHENTICATED`, { url: ctx.url })
-
-        ctx.throw(401)
-    }
-
-    const userRoles = userService.getUserRoles(ctx, user)
-
-    //BTT routes
-    const BTTRoutes = ['/staff/decline']
-
-    if (BTTRoutes.includes(ctx.request.url)) {
-        if (!userRoles.includes(constants.UserRoles.BTT)) {
-            logger.warning(`NOT AUTHORIZED (BTT ROUTE)`, { url: ctx.url, user })
-
-            ctx.throw(403)
-        }
-    }
-
-    //HR routes
-    const HRRoutes = ['/staff/confirmgreenlight']
-
-    if (HRRoutes.includes(ctx.request.url)) {
-        if (!userRoles.includes(constants.UserRoles.HR)) {
-            logger.warning(`NOT AUTHORIZED (HR ROUTE)`, { url: ctx.url, user })
-
-            ctx.throw(403)
-        }
-    }
-
-    //BS && BTT routes
-    if (userRoles.includes(constants.UserRoles.HR) && ctx.request.method === 'POST' && ctx.request.url === '/staff') {
-        logger.warning(`NOT AUTHORIZED (BS/BTT ROUTE)`, { url: ctx.url, user })
-
-        ctx.throw(403)
-    }
-
-    await next()
-}
-
 async function main() {
     mongo.connect()
 
@@ -133,7 +82,6 @@ async function main() {
     app.use(logIncomingRequest)
     app.use(camelCase)
     app.use(routes)
-    app.use(roleCheck)
 
     module.exports = app
 }

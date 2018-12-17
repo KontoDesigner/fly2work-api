@@ -1,11 +1,11 @@
 const router = require('koa-better-router')().loadMethods()
 const pdfService = require('../services/pdfService')
 const staffService = require('../services/staffService')
-const passport = require('koa-passport')
+const auth = require('../infrastructure/auth')
 
 const BASE = '/pdf'
 
-router.post(`${BASE}/:id`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.post(`${BASE}/:id`, auth, async (ctx, next) => {
     const id = ctx.params.id
 
     const staff = await staffService.getStaffById(id, ctx)

@@ -1,13 +1,15 @@
 const constants = require('../infrastructure/constants')
+const passport = require('koa-passport')
 
-const getUserRoles = (ctx, user = null) => {
-    const u = user ? user : getUser(ctx)
+const getUserRoles = async (ctx, user = null) => {
+    const u = user ? user : await getUser(ctx)
 
     let userRoles = []
 
     //HR
     if (u.name === 'Filip Danielsson') {
-        userRoles.push(constants.UserRoles.HR)
+        userRoles.push(constants.UserRoles.BTT)
+        userRoles.push(constants.UserRoles.BS)
 
         return userRoles
     }
@@ -45,18 +47,28 @@ const getUserRoles = (ctx, user = null) => {
     return userRoles
 }
 
-const getUserName = (ctx, user = null) => {
-    const u = user ? user : getUser(ctx)
+const getUserName = async (ctx, user = null) => {
+    const u = user ? user : await getUser(ctx)
 
     return u.name
 }
 
-const getUser = ctx => {
-    return ctx.state.user
+const getUser = async ctx => {
+    return new Promise((resolve, reject) => {
+        passport.authenticate('oauth-bearer', { session: false }, async function(err, user) {
+            if (!user || err) {
+                logger.warning(`NOT AUTHENTICATED`, { url: ctx.url })
+
+                ctx.throw(401)
+            }
+
+            resolve(user)
+        })(ctx)
+    })
 }
 
-const getUserEmail = (ctx, user = null) => {
-    const u = user ? user : getUser(ctx)
+const getUserEmail = async (ctx, user = null) => {
+    const u = user ? user : await getUser(ctx)
 
     return u.upn
 }

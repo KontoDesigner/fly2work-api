@@ -19,9 +19,9 @@ const insertComment = async (staffId, comment, ctx) => {
         }
     }
 
-    const user = userService.getUser(ctx)
-    const userName = userService.getUserName(ctx, user)
-    const userRoles = userService.getUserRoles(ctx, user)
+    const user = await userService.getUser(ctx)
+    const userName = await userService.getUserName(ctx, user)
+    const userRoles = await userService.getUserRoles(ctx, user)
 
     comment.id = uuid.v1()
     comment.created = moment()._d

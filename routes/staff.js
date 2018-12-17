@@ -1,45 +1,57 @@
 const router = require('koa-better-router')().loadMethods()
 const staffService = require('../services/staffService')
-const passport = require('koa-passport')
+const auth = require('../infrastructure/auth')
 const constants = require('../infrastructure/constants')
 const uuid = require('node-uuid')
 
 const BASE = '/staff'
 
 //HR
-router.post(`${BASE}/confirmgreenlight`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
-    const body = ctx.request.body
+router.post(
+    `${BASE}/confirmgreenlight`,
+    (ctx, next) => auth(ctx, next, [constants.UserRoles.HR]),
+    async (ctx, next) => {
+        const body = ctx.request.body
 
-    const res = await staffService.confirmGreenLight(body, ctx)
+        const res = await staffService.confirmGreenLight(body, ctx)
 
-    ctx.body = res
+        ctx.body = res
 
-    return await next()
-})
+        return await next()
+    }
+)
 
 //BTT
-router.post(`${BASE}/decline`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
-    const body = ctx.request.body
+router.post(
+    `${BASE}/decline`,
+    (ctx, next) => auth(ctx, next, [constants.UserRoles.BTT]),
+    async (ctx, next) => {
+        const body = ctx.request.body
 
-    const res = await staffService.declineStaff(body, ctx)
+        const res = await staffService.declineStaff(body, ctx)
 
-    ctx.body = res
+        ctx.body = res
 
-    return await next()
-})
+        return await next()
+    }
+)
 
 //BS && BTT
-router.post(BASE, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
-    const body = ctx.request.body
+router.post(
+    BASE,
+    (ctx, next) => auth(ctx, next, [constants.UserRoles.BS, constants.UserRoles.BTT]),
+    async (ctx, next) => {
+        const body = ctx.request.body
 
-    const res = await staffService.updateOrInsertStaff(body, ctx)
+        const res = await staffService.updateOrInsertStaff(body, ctx)
 
-    ctx.body = res
+        ctx.body = res
 
-    return await next()
-})
+        return await next()
+    }
+)
 
-router.post(`${BASE}/new`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.post(`${BASE}/new`, auth, async (ctx, next) => {
     const body = ctx.request.body
 
     const res = await staffService.insertStaffFromGpx(body, ctx)
@@ -49,7 +61,7 @@ router.post(`${BASE}/new`, passport.authenticate('oauth-bearer', { session: fals
     return await next()
 })
 
-router.get(BASE, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.get(BASE, auth, async (ctx, next) => {
     const res = await staffService.getStaffs(ctx)
 
     ctx.body = res
@@ -57,7 +69,7 @@ router.get(BASE, passport.authenticate('oauth-bearer', { session: false }), asyn
     await next()
 })
 
-router.get(`${BASE}/count`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.get(`${BASE}/count`, auth, async (ctx, next) => {
     const res = await staffService.getStaffCount(ctx)
 
     ctx.body = res
@@ -65,7 +77,7 @@ router.get(`${BASE}/count`, passport.authenticate('oauth-bearer', { session: fal
     await next()
 })
 
-router.get(`${BASE}/getbystatus/:status`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.get(`${BASE}/getbystatus/:status`, auth, async (ctx, next) => {
     const status = ctx.params.status
 
     const res = await staffService.getStaffsByStatus(status, ctx)
@@ -75,7 +87,7 @@ router.get(`${BASE}/getbystatus/:status`, passport.authenticate('oauth-bearer', 
     await next()
 })
 
-router.get(`${BASE}/getbygreenlight/:greenlight`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.get(`${BASE}/getbygreenlight/:greenlight`, auth, async (ctx, next) => {
     const greenLight = ctx.params.greenlight
 
     const res = await staffService.getStaffsByGreenLight(greenLight, ctx)
@@ -85,7 +97,7 @@ router.get(`${BASE}/getbygreenlight/:greenlight`, passport.authenticate('oauth-b
     await next()
 })
 
-router.get(`${BASE}/getbyidandgreenlight/:id/:greenlight`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.get(`${BASE}/getbyidandgreenlight/:id/:greenlight`, auth, async (ctx, next) => {
     const id = ctx.params.id
     const greenLight = ctx.params.greenlight
 
@@ -96,7 +108,7 @@ router.get(`${BASE}/getbyidandgreenlight/:id/:greenlight`, passport.authenticate
     await next()
 })
 
-router.get(`${BASE}/getbyid/:id`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.get(`${BASE}/getbyid/:id`, auth, async (ctx, next) => {
     const id = ctx.params.id
 
     const res = await staffService.getStaffById(id, ctx)
@@ -106,7 +118,7 @@ router.get(`${BASE}/getbyid/:id`, passport.authenticate('oauth-bearer', { sessio
     await next()
 })
 
-router.get(`${BASE}/:status/:id`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.get(`${BASE}/:status/:id`, auth, async (ctx, next) => {
     const id = ctx.params.id
     const status = ctx.params.status
 
@@ -117,7 +129,7 @@ router.get(`${BASE}/:status/:id`, passport.authenticate('oauth-bearer', { sessio
     await next()
 })
 
-router.get(`${BASE}/model`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.get(`${BASE}/model`, auth, async (ctx, next) => {
     const res = new constants.Staff()
 
     res.id = uuid.v1()

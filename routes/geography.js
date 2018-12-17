@@ -1,10 +1,10 @@
 const router = require('koa-better-router')().loadMethods()
 const geographyService = require('../services/geographyService')
-const passport = require('koa-passport')
+const auth = require('../infrastructure/auth')
 
 const BASE = '/geography'
 
-router.get(`${BASE}/sourceMarkets`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.get(`${BASE}/sourceMarkets`, auth, async (ctx, next) => {
     const res = await geographyService.getSourceMarkets(ctx)
 
     ctx.body = res
@@ -12,7 +12,7 @@ router.get(`${BASE}/sourceMarkets`, passport.authenticate('oauth-bearer', { sess
     await next()
 })
 
-router.get(`${BASE}/roles`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.get(`${BASE}/roles`, auth, async (ctx, next) => {
     const res = await geographyService.getRoles(ctx)
 
     ctx.body = res
@@ -20,7 +20,7 @@ router.get(`${BASE}/roles`, passport.authenticate('oauth-bearer', { session: fal
     await next()
 })
 
-router.get(`${BASE}/destinations`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.get(`${BASE}/destinations`, auth, async (ctx, next) => {
     const res = await geographyService.getDestinations(ctx)
 
     ctx.body = res
@@ -28,7 +28,7 @@ router.get(`${BASE}/destinations`, passport.authenticate('oauth-bearer', { sessi
     await next()
 })
 
-router.get(`${BASE}/iatacodes`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.get(`${BASE}/iatacodes`, auth, async (ctx, next) => {
     const res = await geographyService.getIataCodes(ctx)
 
     ctx.body = res

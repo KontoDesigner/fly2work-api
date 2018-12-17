@@ -1,10 +1,10 @@
 const router = require('koa-better-router')().loadMethods()
 const commentService = require('../services/commentService')
-const passport = require('koa-passport')
+const auth = require('../infrastructure/auth')
 
 const BASE = '/comment'
 
-router.post(`${BASE}/insert`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
+router.post(`${BASE}/insert`, auth, async (ctx, next) => {
     const staffId = ctx.request.body.staffId
     const comment = ctx.request.body.comment
 
@@ -14,16 +14,5 @@ router.post(`${BASE}/insert`, passport.authenticate('oauth-bearer', { session: f
 
     await next()
 })
-
-// router.post(`${BASE}/delete`, passport.authenticate('oauth-bearer', { session: false }), async (ctx, next) => {
-//     const staffId = ctx.request.body.staffId
-//     const commentId = ctx.request.body.commentId
-
-//     const res = await commentService.deleteComment(staffId, commentId, ctx)
-
-//     ctx.body = res
-
-//     await next()
-// })
 
 module.exports = router
