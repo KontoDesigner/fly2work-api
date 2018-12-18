@@ -19,7 +19,7 @@ router.get(`${BASE}/getuser`, auth, async (ctx, next) => {
 
     ctx.body = res
 
-    logger.info(`OUTGOING USER`, { url: ctx.url, res })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
 
     return await next()
 })
