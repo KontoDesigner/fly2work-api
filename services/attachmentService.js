@@ -68,7 +68,7 @@ const download = async (staffId, attachmentId, ctx) => {
     )
 
     if (staff) {
-        logger.info('Found attachment, downloading..', { staffId, attachmentId, url: ctx.url })
+        logger.info('Downloading attachment', { staffId, attachmentId, url: ctx.url })
 
         return staff.attachments[0].data.buffer
     } else {

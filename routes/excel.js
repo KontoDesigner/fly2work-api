@@ -1,15 +1,12 @@
 const router = require('koa-better-router')().loadMethods()
 const excelService = require('../services/excelService')
-const mongo = require('../infrastructure/mongo')
 const auth = require('../infrastructure/auth')
+const staffService = require('../services/staffService')
 
 const BASE = '/excel'
 
 router.post(BASE, auth, async (ctx, next) => {
-    const staffs = await mongo
-        .collection('staffs')
-        .find()
-        .toArray()
+    const staffs = await staffService.getStaffs(ctx)
 
     const response = await excelService.generateExcel(staffs)
 
