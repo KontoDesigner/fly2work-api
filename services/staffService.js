@@ -205,7 +205,7 @@ const getStaffs = async ctx => {
 const getStaffCount = async ctx => {
     const staffs = await mongo
         .collection('staffs')
-        .find({}, { fields: { status: 1, greenLight: 1, _id: 0 } })
+        .find({}, { projection: { status: 1, greenLight: 1, _id: 0 } })
         .toArray()
 
     const _new = staffs.filter(staff => staff.status === constants.Statuses.New)

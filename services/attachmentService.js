@@ -64,7 +64,7 @@ const download = async (staffId, attachmentId, ctx) => {
             id: staffId,
             'attachments.id': attachmentId
         },
-        { fields: { 'attachments.$': 1, _id: 0 } }
+        { collection: { 'attachments.$': 1, _id: 0 } }
     )
 
     if (staff) {
