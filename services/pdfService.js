@@ -87,31 +87,29 @@ function getFlights(staff) {
                   {
                       text: flight.flightArrivalTime ? flight.flightArrivalTime : ' ',
                       style: 'cell'
-                  }
+                  },
+                  { text: 'Departure Airport', bold: true, style: 'header' },
+                  { text: flight.departureAirport ? flight.departureAirport.toUpperCase() : ' ', style: 'cell' }
               ],
               [
-                  { text: 'Departure Airport', bold: true, style: 'header' },
-                  { text: flight.departureAirport ? flight.departureAirport.toUpperCase() : ' ', style: 'cell' },
                   { text: 'Arrival Airport', bold: true, style: 'header' },
                   { text: flight.arrivalAirport ? flight.arrivalAirport.toUpperCase() : ' ', style: 'cell' },
                   { text: 'Confirmed Flight Date', bold: true, style: 'header' },
-                  { text: flight.confirmedFlightDate ? flight.confirmedFlightDate : ' ', style: 'cell' }
-              ],
-              [
+                  { text: flight.confirmedFlightDate ? flight.confirmedFlightDate : ' ', style: 'cell' },
                   { text: 'Hotel Name (HN)', bold: true, style: 'header' },
                   { text: flight.hotelNeededHotelName ? flight.hotelNeededHotelName : ' ', style: 'cell' },
                   { text: 'Hotel Start (HN)', bold: true, style: 'header' },
                   {
                       text: flight.hotelNeededHotelStart ? flight.hotelNeededHotelStart : ' ',
                       style: 'cell'
-                  },
+                  }
+              ],
+              [
                   { text: 'Hotel End (HN)', bold: true, style: 'header' },
                   {
                       text: flight.hotelNeededHotelEnd ? flight.hotelNeededHotelEnd : ' ',
                       style: 'cell'
-                  }
-              ],
-              [
+                  },
                   { text: 'Flight Cost', bold: true, style: 'header' },
                   { text: flight.flightCost ? flight.flightCost : ' ', style: 'cell' },
                   { text: 'Xbag Cost', bold: true, style: 'header' },
@@ -125,7 +123,7 @@ function getFlights(staff) {
                       text: parseCost(flight.flightCost) + parseCost(flight.xbagCost) + parseCost(flight.hotelCost),
                       style: 'cell'
                   },
-                  { text: ' ', colSpan: 4 }
+                  { text: ' ', colSpan: 6 }
               ]
           ])
         : []
@@ -150,7 +148,7 @@ function getFlights(staff) {
                 fontSize: 9,
                 table: {
                     headerRows: 0,
-                    widths: ['*', '*', '*', '*', '*', '*'],
+                    widths: ['*', '*', '*', '*', '*', '*', '*', '*'],
                     body: flightBodies[i]
                 },
 
@@ -220,34 +218,32 @@ function getBody(staff) {
             { text: 'Date Of Birth', bold: true, style: 'header' },
             { text: staff.dateOfBirth ? staff.dateOfBirth : ' ', style: 'cell' },
             { text: 'Phone', bold: true, style: 'header' },
-            { text: staff.phone ? staff.phone : ' ', style: 'cell' }
+            { text: staff.phone ? staff.phone : ' ', style: 'cell' },
+            { text: 'Passport Number', bold: true, style: 'header' },
+            { text: staff.passportNumber ? staff.passportNumber : ' ', style: 'cell' }
         ],
         [
-            { text: 'Passport Number', bold: true, style: 'header' },
-            { text: staff.passportNumber ? staff.passportNumber : ' ', style: 'cell' },
             { text: 'Job Title', bold: true, style: 'header' },
             { text: staff.jobTitle ? staff.jobTitle : ' ', style: 'cell' },
             { text: 'Planned Assignment Start Date', bold: true, style: 'header' },
             {
                 text: staff.plannedAssignmentStartDate ? staff.plannedAssignmentStartDate : ' ',
                 style: 'cell'
-            }
-        ],
-        [
+            },
             { text: 'Preferred Flight Date', bold: true, style: 'header' },
             { text: staff.preferredFlightDate ? staff.preferredFlightDate : ' ', style: 'cell' },
             { text: 'Departure Airports', bold: true, style: 'header' },
             {
                 text: staff.departureAirports && staff.departureAirports.length > 0 ? staff.departureAirports.join(', ') : ' ',
                 style: 'cell'
-            },
+            }
+        ],
+        [
             { text: 'Arrival Airports', bold: true, style: 'header' },
             {
                 text: staff.arrivalAirports && staff.arrivalAirports.length > 0 ? staff.arrivalAirports.join(', ') : ' ',
                 style: 'cell'
-            }
-        ],
-        [
+            },
             { text: 'Type Of Flight', bold: true, style: 'header' },
             { text: staff.typeOfFlight ? staff.typeOfFlight : ' ', style: 'cell' },
             { text: 'Iata Code', bold: true, style: 'header' },
@@ -260,6 +256,8 @@ function getBody(staff) {
             { text: staff.hotelNeeded === true ? 'YES' : 'NO', style: 'cell' },
             { text: 'Rail & Fly (Only In Germany)', bold: true, style: 'header' },
             { text: staff.railFly === true ? 'YES' : 'NO', style: 'cell' },
+            { text: 'Confirmed Status', bold: true, style: 'header' },
+            { text: staff.confirmedStatus ? staff.confirmedStatus : ' ', style: 'cell' },
             { text: 'Book Return Flight', bold: true, style: 'header' },
             { text: staff.bookReturnFlight === true ? 'YES' : 'NO', style: 'cell' }
         ]
@@ -275,17 +273,12 @@ function getBody(staff) {
             { text: 'Departure Airport (BRF)', bold: true, style: 'header' },
             { text: staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : ' ', style: 'cell' },
             { text: 'Arrival Airport (BRF)', bold: true, style: 'header' },
-            { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : ' ', style: 'cell' }
+            { text: staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : ' ', style: 'cell' },
+            { text: ' ', style: ' ', colSpan: 2 }
         ]
 
         body.push(bookReturnFlight)
     }
-
-    body.push([
-        { text: 'Confirmed Status', bold: true, style: 'header' },
-        { text: staff.confirmedStatus ? staff.confirmedStatus : ' ', style: 'cell' },
-        { text: ' ', colSpan: 4 }
-    ])
 
     return body
 }
@@ -318,6 +311,7 @@ function getDocDefinition(staff) {
             header: { fillColor: '#ccc' }
         },
         pageMargins: 15,
+        pageOrientation: 'landscape',
         content: [
             {
                 text: `${staff.firstName} ${staff.lastName} ${staff.lastName2 ? staff.lastName2 + ' ' : ''}- ${
@@ -342,7 +336,7 @@ function getDocDefinition(staff) {
                 fontSize: 9,
                 table: {
                     headerRows: 0,
-                    widths: ['*', '*', '*', '*', '*', '*'],
+                    widths: ['*', '*', '*', '*', '*', '*', '*', '*'],
                     body: body
                 },
                 layout: {
@@ -366,7 +360,7 @@ function getDocDefinition(staff) {
                 fontSize: 9,
                 table: {
                     headerRows: 0,
-                    widths: ['*', '*', '*', '*', '*', '*'],
+                    widths: ['*', '*', '*', '*', '*', '*', '*', '*'],
                     body: [
                         [
                             { text: 'Booking Reference', bold: true, style: 'header' },
@@ -374,25 +368,22 @@ function getDocDefinition(staff) {
                             { text: 'Travel Type', bold: true, style: 'header' },
                             { text: staff.travelType ? staff.travelType : ' ', style: 'cell' },
                             { text: 'Payment Method', bold: true, style: 'header' },
-                            { text: staff.paymentMethod ? staff.paymentMethod : ' ', style: 'cell' }
+                            { text: staff.paymentMethod ? staff.paymentMethod : ' ', style: 'cell' },
+                            { text: 'Luggage', bold: true, style: 'header' },
+                            { text: staff.luggage ? staff.luggage : ' ', style: 'cell' }
                         ],
                         [
-                            { text: 'Luggage', bold: true, style: 'header' },
-                            { text: staff.luggage ? staff.luggage : ' ', style: 'cell' },
                             { text: 'Cost Centre', bold: true, style: 'header' },
                             { text: staff.costCentre ? staff.costCentre : ' ', style: 'cell' },
                             { text: 'Currency', bold: true, style: 'header' },
-                            { text: staff.currency ? staff.currency : ' ', style: 'cell' }
-                        ],
-                        [
+                            { text: staff.currency ? staff.currency : ' ', style: 'cell' },
                             { text: 'Rail & Fly Requested And Booked', bold: true, style: 'header' },
                             { text: staff.railFlyRequestedAndBooked === true ? 'YES' : 'NO', style: 'cell' },
                             { text: 'Green Light', bold: true, style: 'header' },
                             {
                                 text: staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : ' ',
                                 style: 'cell'
-                            },
-                            { text: ' ', colSpan: 2 }
+                            }
                         ]
                     ]
                 },
