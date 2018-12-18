@@ -7,7 +7,7 @@ const getSourceMarkets = async () => {
     return sourceMarkets
 }
 
-const getRoles = async () => {
+const getJobTitles = async () => {
     const roles = await restClient.get(`${config.gpxApi}/position/getjobtitles`)
 
     return roles
@@ -27,7 +27,7 @@ const getIataCodes = async () => {
 
 module.exports = {
     getSourceMarkets,
-    getRoles,
+    getJobTitles,
     getDestinations,
     getIataCodes
 }

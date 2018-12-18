@@ -15,8 +15,8 @@ router.get(`${BASE}/sourceMarkets`, auth, async (ctx, next) => {
     await next()
 })
 
-router.get(`${BASE}/roles`, auth, async (ctx, next) => {
-    const res = await geographyService.getRoles(ctx)
+router.get(`${BASE}/jobtitles`, auth, async (ctx, next) => {
+    const res = await geographyService.getJobTitles(ctx)
 
     ctx.body = res
 

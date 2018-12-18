@@ -18,7 +18,7 @@ router.post(
 
         ctx.body = res
 
-        logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
+        logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, body })
 
         return await next()
     }
@@ -35,7 +35,7 @@ router.post(
 
         ctx.body = res
 
-        logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
+        logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, body })
 
         return await next()
     }
@@ -52,7 +52,7 @@ router.post(
 
         ctx.body = res
 
-        logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
+        logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, body })
 
         return await next()
     }
@@ -65,7 +65,7 @@ router.post(`${BASE}/new`, auth, async (ctx, next) => {
 
     ctx.body = res
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, body })
 
     return await next()
 })
@@ -97,7 +97,7 @@ router.get(`${BASE}/getbystatus/:status`, auth, async (ctx, next) => {
 
     ctx.body = res
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: res.length })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: res.length, status })
 
     await next()
 })
@@ -109,7 +109,7 @@ router.get(`${BASE}/getbygreenlight/:greenlight`, auth, async (ctx, next) => {
 
     ctx.body = res
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: res.length })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: res.length, greenLight })
 
     await next()
 })
@@ -122,7 +122,7 @@ router.get(`${BASE}/getbyidandgreenlight/:id/:greenlight`, auth, async (ctx, nex
 
     ctx.body = res
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, id, greenLight })
 
     await next()
 })
@@ -134,7 +134,7 @@ router.get(`${BASE}/getbyid/:id`, auth, async (ctx, next) => {
 
     ctx.body = res
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, id })
 
     await next()
 })
@@ -147,7 +147,7 @@ router.get(`${BASE}/:status/:id`, auth, async (ctx, next) => {
 
     ctx.body = res
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, id, status })
 
     await next()
 })

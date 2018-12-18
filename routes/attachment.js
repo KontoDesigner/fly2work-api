@@ -2,6 +2,7 @@ const router = require('koa-better-router')().loadMethods()
 const attachmentService = require('../services/attachmentService')
 const asyncBusboy = require('async-busboy')
 const auth = require('../infrastructure/auth')
+const logger = require('tuin-logging')
 
 const BASE = '/attachment'
 
@@ -36,6 +37,8 @@ router.post(`${BASE}/delete`, auth, async (ctx, next) => {
     const res = await attachmentService.delete(staffId, attachmentId, ctx)
 
     ctx.body = res
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, staffId, attachmentId })
 
     await next()
 })
