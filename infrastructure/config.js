@@ -9,6 +9,7 @@ const config = {
     emailUserAddress: process.env.EMAIL_USER_ADDRESS,
     web: process.env.WEB,
     greenLightDestinations: process.env.GREENLIGHT_DESTINATIONS,
+    maintenance: process.env.MAINTENANCE,
 
     emailBTTN: process.env.EMAIL_BTT_N,
     emailBTTNCC: process.env.EMAIL_BTT_N_CC,
