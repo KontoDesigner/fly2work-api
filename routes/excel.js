@@ -6,7 +6,7 @@ const staffService = require('../services/staffService')
 const BASE = '/excel'
 
 router.post(BASE, auth, async (ctx, next) => {
-    const staffs = await staffService.getStaffs(ctx)
+    const staffs = await staffService.getStaffs()
 
     const response = await excelService.generateExcel(staffs)
 

@@ -3,6 +3,7 @@ const staffService = require('../services/staffService')
 const auth = require('../infrastructure/auth')
 const constants = require('../infrastructure/constants')
 const uuid = require('node-uuid')
+const logger = require('tuin-logging')
 
 const BASE = '/staff'
 
@@ -16,6 +17,8 @@ router.post(
         const res = await staffService.confirmGreenLight(body, ctx)
 
         ctx.body = res
+
+        logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
 
         return await next()
     }
@@ -32,6 +35,8 @@ router.post(
 
         ctx.body = res
 
+        logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
+
         return await next()
     }
 )
@@ -47,6 +52,8 @@ router.post(
 
         ctx.body = res
 
+        logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
+
         return await next()
     }
 )
@@ -58,21 +65,27 @@ router.post(`${BASE}/new`, auth, async (ctx, next) => {
 
     ctx.body = res
 
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
+
     return await next()
 })
 
 router.get(BASE, auth, async (ctx, next) => {
-    const res = await staffService.getStaffs(ctx)
+    const res = await staffService.getStaffs()
 
     ctx.body = res
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: res.length })
 
     await next()
 })
 
 router.get(`${BASE}/count`, auth, async (ctx, next) => {
-    const res = await staffService.getStaffCount(ctx)
+    const res = await staffService.getStaffCount()
 
     ctx.body = res
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
 
     await next()
 })
@@ -80,9 +93,11 @@ router.get(`${BASE}/count`, auth, async (ctx, next) => {
 router.get(`${BASE}/getbystatus/:status`, auth, async (ctx, next) => {
     const status = ctx.params.status
 
-    const res = await staffService.getStaffsByStatus(status, ctx)
+    const res = await staffService.getStaffsByStatus(status)
 
     ctx.body = res
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: res.length })
 
     await next()
 })
@@ -90,9 +105,11 @@ router.get(`${BASE}/getbystatus/:status`, auth, async (ctx, next) => {
 router.get(`${BASE}/getbygreenlight/:greenlight`, auth, async (ctx, next) => {
     const greenLight = ctx.params.greenlight
 
-    const res = await staffService.getStaffsByGreenLight(greenLight, ctx)
+    const res = await staffService.getStaffsByGreenLight(greenLight)
 
     ctx.body = res
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: res.length })
 
     await next()
 })
@@ -101,9 +118,11 @@ router.get(`${BASE}/getbyidandgreenlight/:id/:greenlight`, auth, async (ctx, nex
     const id = ctx.params.id
     const greenLight = ctx.params.greenlight
 
-    const res = await staffService.getStaffByIdAndGreenLight(id, greenLight, ctx)
+    const res = await staffService.getStaffByIdAndGreenLight(id, greenLight)
 
     ctx.body = res
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
 
     await next()
 })
@@ -111,9 +130,11 @@ router.get(`${BASE}/getbyidandgreenlight/:id/:greenlight`, auth, async (ctx, nex
 router.get(`${BASE}/getbyid/:id`, auth, async (ctx, next) => {
     const id = ctx.params.id
 
-    const res = await staffService.getStaffById(id, ctx)
+    const res = await staffService.getStaffById(id)
 
     ctx.body = res
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
 
     await next()
 })
@@ -122,9 +143,11 @@ router.get(`${BASE}/:status/:id`, auth, async (ctx, next) => {
     const id = ctx.params.id
     const status = ctx.params.status
 
-    const res = await staffService.getStaffByIdAndStatus(id, status, ctx)
+    const res = await staffService.getStaffByIdAndStatus(id, status)
 
     ctx.body = res
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
 
     await next()
 })
@@ -135,6 +158,8 @@ router.get(`${BASE}/model`, auth, async (ctx, next) => {
     res.id = uuid.v1()
 
     ctx.body = res
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
 
     await next()
 })

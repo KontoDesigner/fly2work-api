@@ -42,7 +42,7 @@ const confirmGreenLight = async (body, ctx) => {
                 { $push: { audit: audit }, $set: { greenLight: true, greenLightUpdated: new Date(), greenLightUpdatedBy: userName } }
             )).result
     } catch (err) {
-        logger.error('Error confirming green light', err, id)
+        logger.error('Error confirming green light', err, { url: ctx.url, id })
 
         return {
             ok: false,
@@ -110,7 +110,7 @@ const declineStaff = async (body, ctx) => {
                 { $push: { comments: comment, audit: audit }, $set: { status: constants.Statuses.PendingDES } }
             )).result
     } catch (err) {
-        logger.error('Error declining staff', err, model)
+        logger.error('Error declining staff', err, { url: ctx.url, model })
 
         return {
             ok: false,
@@ -182,7 +182,7 @@ const insertStaffFromGpx = async (body, ctx) => {
             }
         }
     } catch (err) {
-        logger.error('Error inserting staff from gpx', err, model)
+        logger.error('Error inserting staff from gpx', err, { model, url: ctx.url })
     }
 
     return {
@@ -191,18 +191,16 @@ const insertStaffFromGpx = async (body, ctx) => {
     }
 }
 
-const getStaffs = async ctx => {
+const getStaffs = async () => {
     const staffs = await mongo
         .collection('staffs')
         .find()
         .toArray()
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staffs.length })
-
     return staffs
 }
 
-const getStaffCount = async ctx => {
+const getStaffCount = async () => {
     const staffs = await mongo
         .collection('staffs')
         .find({}, { projection: { status: 1, greenLight: 1, _id: 0 } })
@@ -231,12 +229,10 @@ const getStaffCount = async ctx => {
 
     count.overview = count.new + count.pendingBTT + count.pendingDES + count.confirmed + count.pendingHR
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count })
-
     return count
 }
 
-const getStaffsByGreenLight = async (greenLight, ctx) => {
+const getStaffsByGreenLight = async greenLight => {
     const parseGreenLight = greenLight === 'true'
 
     const staffs = await mongo
@@ -244,22 +240,18 @@ const getStaffsByGreenLight = async (greenLight, ctx) => {
         .find({ greenLight: parseGreenLight, status: { $ne: constants.Statuses.New } })
         .toArray()
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staffs.length })
-
     return staffs
 }
 
-const getStaffByIdAndGreenLight = async (id, greenLight, ctx) => {
+const getStaffByIdAndGreenLight = async (id, greenLight) => {
     const parseGreenLight = greenLight === 'true'
 
     const staff = await mongo.collection('staffs').findOne({ id: id, greenLight: parseGreenLight })
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staff ? 1 : 0 })
-
     return staff
 }
 
-const getStaffsByStatus = async (status, ctx) => {
+const getStaffsByStatus = async status => {
     let staffs = []
 
     if (status === constants.Statuses.New) {
@@ -274,20 +266,16 @@ const getStaffsByStatus = async (status, ctx) => {
             .toArray()
     }
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staffs.length })
-
     return staffs
 }
 
-const getStaffById = async (id, ctx) => {
+const getStaffById = async id => {
     const staff = await mongo.collection('staffs').findOne({ id: id })
-
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staff ? 1 : 0 })
 
     return staff
 }
 
-const getStaffByIdAndStatus = async (id, status, ctx) => {
+const getStaffByIdAndStatus = async (id, status) => {
     let staff = null
 
     if (status === constants.Statuses.New) {
@@ -295,8 +283,6 @@ const getStaffByIdAndStatus = async (id, status, ctx) => {
     } else {
         staff = await mongo.collection('staffs').findOne({ id: id, status: status, greenLight: { $ne: false } })
     }
-
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, count: staff ? 1 : 0 })
 
     return staff
 }
@@ -466,7 +452,7 @@ async function insertStaff(ctx, model, getStaff, userName, userEmail, btt) {
     try {
         insertOne = (await mongo.collection('staffs').insertOne(model)).result
     } catch (err) {
-        logger.error('Error inserting staff', err, model)
+        logger.error('Error inserting staff', err, { model, url: ctx.url })
 
         return {
             ok: false,
@@ -545,7 +531,7 @@ async function updateStaff(ctx, model, getStaff, userName, userRoles, btt) {
     try {
         replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, { $set: model })).result
     } catch (err) {
-        logger.error('Error updating staff', err, model)
+        logger.error('Error updating staff', err, { model, url: ctx.url })
 
         return {
             ok: false,

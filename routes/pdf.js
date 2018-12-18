@@ -8,7 +8,7 @@ const BASE = '/pdf'
 router.post(`${BASE}/:id`, auth, async (ctx, next) => {
     const id = ctx.params.id
 
-    const staff = await staffService.getStaffById(id, ctx)
+    const staff = await staffService.getStaffById(id)
 
     const res = await pdfService.generatePdfPromise(staff)
 

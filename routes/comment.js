@@ -1,6 +1,7 @@
 const router = require('koa-better-router')().loadMethods()
 const commentService = require('../services/commentService')
 const auth = require('../infrastructure/auth')
+const logger = require('tuin-logging')
 
 const BASE = '/comment'
 
@@ -11,6 +12,8 @@ router.post(`${BASE}/insert`, auth, async (ctx, next) => {
     const res = await commentService.insertComment(staffId, comment, ctx)
 
     ctx.body = res
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res })
 
     await next()
 })
