@@ -1,6 +1,7 @@
 const passport = require('koa-passport')
 const userService = require('../services/userService')
 const logger = require('tuin-logging')
+const config = require('./config')
 
 async function auth(ctx, next, roles = []) {
     if (ctx.method === 'OPTIONS' || ctx.path.startsWith('/health')) {
@@ -23,6 +24,10 @@ async function auth(ctx, next, roles = []) {
 
                 ctx.throw(403)
             }
+        }
+
+        if (config.maintenance === true) {
+            ctx.throw(503)
         }
 
         await next()
