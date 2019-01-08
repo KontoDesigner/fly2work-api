@@ -14,7 +14,7 @@ router.get('/maint', async (ctx, next) => {
 })
 
 router.get('/maintenance/maintenance', async (ctx, next) => {
-    ctx.body = config.main
+    ctx.body = false
 
     await next()
 })

@@ -2,6 +2,7 @@ const router = require('koa-better-router')().loadMethods()
 
 router.extend(require('./health'))
 router.extend(require('./maintenance'))
+router.extend(require('./test'))
 router.extend(require('./geography'))
 router.extend(require('./staff'))
 router.extend(require('./pdf'))
