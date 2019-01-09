@@ -131,7 +131,7 @@ const insertStaffFromGpx = async (body, ctx) => {
     const getStaff = await getStaffById(body.Id)
 
     if (getStaff && getStaff.status !== constants.Statuses.Confirmed) {
-        const txt = `Request sent from GPX already exists, updating values and reverting status to: ${constants.Statuses.New}`
+        const txt = `Request from GPX already exists, updating values and reverting status to: ${constants.Statuses.New}`
 
         logger.info(txt, {
             url: ctx.url,
@@ -194,14 +194,14 @@ const insertStaffFromGpx = async (body, ctx) => {
     }
 
     if (getStaff && getStaff.status === constants.Statuses.Confirmed) {
-        logger.info(`Request sent from GPX already exists with status: ${constants.Statuses.Confirmed}, allocating new request`, {
+        logger.info(`Request from GPX already exists with status: ${constants.Statuses.Confirmed}, allocating new request`, {
             url: ctx.url,
             body,
             getStaff
         })
 
         const comment = {
-            text: `Request sent from GPX with id: ${model.id} already exists with status: ${constants.Statuses.Confirmed}, allocating new request.`,
+            text: `Request from GPX with id: ${model.id} already exists with status: ${constants.Statuses.Confirmed}, allocating new request.`,
             id: uuid.v1(),
             created: moment()._d,
             createdBy: 'SYSTEM',
