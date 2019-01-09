@@ -147,7 +147,7 @@ const insertStaffFromGpx = async (body, ctx) => {
                 id: uuid.v1(),
                 created: moment()._d,
                 createdBy: 'SYSTEM',
-                group: null
+                group: ''
             }
 
             model.comments.push(comment)
@@ -205,7 +205,7 @@ const insertStaffFromGpx = async (body, ctx) => {
             id: uuid.v1(),
             created: moment()._d,
             createdBy: 'SYSTEM',
-            group: null
+            group: ''
         }
 
         model.comments.push(comment)
