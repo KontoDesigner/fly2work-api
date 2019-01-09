@@ -4,45 +4,21 @@ const passport = require('koa-passport')
 const getUserRoles = async (ctx, user = null) => {
     const u = user ? user : await getUser(ctx)
 
-    let userRoles = []
+    const uR = u.roles ? u.roles : []
 
-    //HR
-    if (u.name === 'Filip Danielsson') {
+    const userRoles = []
+
+    if (uR.includes('DS_F2W_HR_Team')) {
+        userRoles.push(constants.UserRoles.HR)
+    }
+
+    if (uR.includes('DS_F2W_Edit')) {
+        userRoles.push(constants.UserRoles.BS)
+    }
+
+    if (uR.includes('DS_F2W_Business_Travel_Team')) {
         userRoles.push(constants.UserRoles.BTT)
-        userRoles.push(constants.UserRoles.BS)
-
-        return userRoles
     }
-
-    //BS
-    if (u.name === 'Therese Bellhammar') {
-        //|| u.name === 'Filip Danielsson'
-        userRoles.push(constants.UserRoles.BS)
-
-        return userRoles
-    }
-
-    if (u.upn === 'daniela.luer@tui.com' || u.upn === 'pamela.martin@tui.com') {
-        userRoles.push(constants.UserRoles.BS)
-
-        return userRoles
-    }
-
-    //BS & BTT
-    if (u.name === 'Filip Danielsson' || u.name === 'Paulina Przytocka') {
-        userRoles.push(constants.UserRoles.BS)
-        userRoles.push(constants.UserRoles.BTT)
-
-        return userRoles
-    }
-
-    userRoles.push(constants.UserRoles.BTT)
-
-    // if (u.roles.contains('BTT')) {
-    //     userRoles.push(constants.UserRoles.BTT)
-    // } else if (u.roles.contains('BS'))ks {
-    //     userRoles.push(constants.UserRoles.BS)
-    // }
 
     return userRoles
 }
