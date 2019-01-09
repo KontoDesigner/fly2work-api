@@ -35,12 +35,13 @@ const confirmGreenLight = async (body, ctx) => {
     let replaceOne = {}
 
     try {
-        replaceOne = (await mongo
-            .collection('staffs')
-            .updateOne(
-                { id: id, greenLight: false },
-                { $push: { audit: audit }, $set: { greenLight: true, greenLightUpdated: new Date(), greenLightUpdatedBy: userName } }
-            )).result
+        replaceOne = (await mongo.collection('staffs').updateOne(
+            { id: id, greenLight: false },
+            {
+                $push: { audit: audit },
+                $set: { greenLight: true, greenLightUpdated: moment().format('YYYY-MM-DD HH:mm'), greenLightUpdatedBy: userName }
+            }
+        )).result
     } catch (err) {
         logger.error('Error confirming green light', err, { url: ctx.url, id })
 

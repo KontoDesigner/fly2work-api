@@ -19,6 +19,7 @@ function generateExcel(staffs, type = 'binary') {
             const body = [
                 staff.id,
                 staff.greenLight === false && staff.status !== constants.Statuses.New ? `Pending HR (${staff.status})` : staff.status,
+                staff.created,
                 staff.confirmedStatus ? staff.confirmedStatus : '',
                 staff.gender !== null && staff.gender !== undefined ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : '',
                 staff.firstName,
@@ -50,7 +51,8 @@ function generateExcel(staffs, type = 'binary') {
                 staff.costCentre,
                 staff.currency,
                 staff.railFlyRequestedAndBooked === true ? 'YES' : 'NO',
-                staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : ''
+                staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : '',
+                staff.greenLightUpdated
             ]
 
             for (var i = 0; i < 3; i++) {
@@ -126,6 +128,7 @@ module.exports = {
 const HEADER = [
     'Id',
     'Status',
+    'Created',
     'Confirmed Status',
     'Gender',
     'First Name',
@@ -158,6 +161,7 @@ const HEADER = [
     'Currency',
     'Rail & Fly Requested And Booked',
     'Green Light',
+    'Green Light Updated',
 
     '1st Flight Number',
     '1st Flight Departure Time',
