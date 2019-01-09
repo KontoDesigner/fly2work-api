@@ -126,7 +126,33 @@ const declineStaff = async (body, ctx) => {
 }
 
 const insertStaffFromGpx = async (body, ctx) => {
-    const model = new constants.Staff()
+    let model = new constants.Staff()
+
+    const getStaff = await getStaffById(body.Id)
+
+    if (getStaff && getStaff.status !== constants.Statuses.Confirmed) {
+        const txt = `Request sent from GPX already exists, updating values and reverting status to: ${constants.Statuses.New}`
+
+        logger.info(txt, {
+            url: ctx.url,
+            body,
+            getStaff
+        })
+
+        model = getStaff
+
+        if (getStaff.status !== constants.Statuses.New) {
+            const comment = {
+                text: txt,
+                id: uuid.v1(),
+                created: moment()._d,
+                createdBy: 'SYSTEM',
+                group: null
+            }
+
+            model.comments.push(comment)
+        }
+    }
 
     if (body.DateOfBirth) {
         const dateOfBirth = moment(body.DateOfBirth)
@@ -165,6 +191,25 @@ const insertStaffFromGpx = async (body, ctx) => {
             ok: false,
             errors: validation.errors
         }
+    }
+
+    if (getStaff && getStaff.status === constants.Statuses.Confirmed) {
+        logger.info(`Request sent from GPX already exists with status: ${constants.Statuses.Confirmed}, allocating new request`, {
+            url: ctx.url,
+            body,
+            getStaff
+        })
+
+        const comment = {
+            text: `Request sent from GPX with id: ${model.id} already exists with status: ${constants.Statuses.Confirmed}, allocating new request.`,
+            id: uuid.v1(),
+            created: moment()._d,
+            createdBy: 'SYSTEM',
+            group: null
+        }
+
+        model.comments.push(comment)
+        model.id = uuid.v1()
     }
 
     try {

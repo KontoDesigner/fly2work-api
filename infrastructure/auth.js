@@ -10,7 +10,7 @@ async function auth(ctx, next, roles = []) {
 
     return passport.authenticate('oauth-bearer', { session: false }, async function(err, user) {
         if (!user || err) {
-            logger.warning(`NOT AUTHENTICATED`, { url: ctx.url })
+            logger.warning(`NOT AUTHENTICATED`, { url: ctx.url, user, err })
 
             ctx.throw(401)
         }
@@ -20,7 +20,7 @@ async function auth(ctx, next, roles = []) {
 
             //BTT routes
             if (!userRoles.some(ur => roles.includes(ur))) {
-                logger.warning(`NOT AUTHORIZED (BTT ROUTE)`, { url: ctx.url, user })
+                logger.warning(`NOT AUTHORIZED (MISSING ROLE)`, { url: ctx.url, user, requiredRoles: roles, userRoles })
 
                 ctx.throw(403)
             }
