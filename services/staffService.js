@@ -484,6 +484,11 @@ async function sendInsertEmails(ctx, model) {
         emails.to.push(model.requestedBy.email)
     }
 
+    //Add HR
+    if (model.greenLight === false) {
+        emails.to.push(config.emailHR)
+    }
+
     //Add additional emails
     if (model.emails && model.emails.length > 0) {
         emails.to.push(model.emails)
@@ -558,6 +563,11 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff) {
 
     //Get BTT to/cc based on sourceMarket
     let emails = helpers.getBTTEmails(model.sourceMarket)
+
+    //Add HR
+    if (getStaff.status === constants.Statuses.New && model.status !== constants.Statuses.New && model.greenLight === false) {
+        emails.to.push(config.emailHR)
+    }
 
     //Add BTT and createdBy to emails (PENDINGBTT => CONFIRMED) and send confirm date to gpx
     if (getStaff.status === constants.Statuses.PendingBTT && model.status === constants.Statuses.Confirmed) {

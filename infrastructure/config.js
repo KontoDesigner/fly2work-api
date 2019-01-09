@@ -24,6 +24,8 @@ const config = {
     emailWSourceMarkets: process.env.EMAIL_W_SOURCEMARKETS,
     emailESourceMarkets: process.env.EMAIL_E_SOURCEMARKETS,
 
+    emailHR: process.env.EMAIL_HR,
+
     authAuthority: process.env.AUTH_AUTHORITY,
     authClientId: process.env.AUTH_CLIENTID,
     authTenantId: process.env.AUTH_TENANTID
