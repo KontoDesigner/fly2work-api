@@ -52,7 +52,8 @@ function generateExcel(staffs, type = 'binary') {
                 staff.currency,
                 staff.railFlyRequestedAndBooked === true ? 'YES' : 'NO',
                 staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : '',
-                staff.greenLightUpdated
+                staff.greenLightUpdated,
+                staff.dateOfConfirmation
             ]
 
             for (var i = 0; i < 3; i++) {
@@ -162,6 +163,7 @@ const HEADER = [
     'Rail & Fly Requested And Booked',
     'Green Light',
     'Green Light Updated',
+    'Date Of Confirmation',
 
     '1st Flight Number',
     '1st Flight Departure Time',

@@ -29,6 +29,8 @@ function StaffBS() {
     this.positionAssignId = null
     this.created = ''
     this.requestedBy = {}
+    this.confirmedStatus = null
+    this.dateOfConfirmation = null
     //Insert
     this.comment = ''
     //Update

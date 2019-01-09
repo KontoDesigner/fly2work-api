@@ -377,6 +377,7 @@ const updateOrInsertStaff = async (body, ctx) => {
 
     if (btt === true && model.status === constants.Statuses.Confirmed) {
         model.confirmedStatus = body.confirmedStatus
+        model.dateOfConfirmation = moment().format('YYYY-MM-DD HH:mm')
     }
 
     let validation = null
@@ -459,6 +460,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.positionAssignId = getStaff ? getStaff.positionAssignId : null
     if (model.status !== constants.Statuses.Confirmed || btt === false) {
         model.confirmedStatus = getStaff ? getStaff.confirmedStatus : null
+        model.dateOfConfirmation = getStaff ? getStaff.dateOfConfirmation : null
     }
     model.greenLight = getStaff ? getStaff.greenLight : null
 
