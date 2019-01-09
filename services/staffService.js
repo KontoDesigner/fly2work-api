@@ -152,6 +152,8 @@ const insertStaffFromGpx = async (body, ctx) => {
 
             model.comments.push(comment)
         }
+    } else {
+        model.created = moment().format('YYYY-MM-DD HH:mm')
     }
 
     if (body.DateOfBirth) {

@@ -28,7 +28,7 @@ function StaffBS() {
 
     this.positionAssignId = null
     this.created = ''
-    this.requestedBy = null
+    this.requestedBy = {}
     //Insert
     this.comment = ''
     //Update
