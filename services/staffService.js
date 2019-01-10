@@ -24,7 +24,7 @@ const confirmGreenLight = async (body, ctx) => {
 
     const audit = {
         updatedBy: userName,
-        statusFrom: getStaff ? getStaff.status : '',
+        statusFrom: 'Pending HR',
         statusTo: getStaff ? getStaff.status : '',
         greenLightFrom: false,
         greenLightTo: true,
