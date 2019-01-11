@@ -166,6 +166,15 @@ const insertStaffFromGpx = async (body, ctx) => {
         }
     }
 
+    if (body.PositionStart) {
+        const positionStart = moment(body.PositionStart)
+        const positionStartValid = positionStart.isValid()
+
+        if (positionStartValid === true) {
+            model.plannedAssignmentStartDate = moment(body.PositionStart).format('DD/MM/YYYY')
+        }
+    }
+
     const greenLightDestinations = config.greenLightDestinations.split(',')
 
     model.id = body.Id
@@ -177,7 +186,6 @@ const insertStaffFromGpx = async (body, ctx) => {
     model.status = constants.Statuses.New
     model.gender = body.Gender ? body.Gender : ''
     model.destination = body.Destination ? body.Destination : ''
-    model.plannedAssignmentStartDate = body.PositionStart ? body.PositionStart : ''
     model.jobTitle = body.JobTitle ? body.JobTitle : ''
     model.iataCode = body.IataCode ? body.IataCode : ''
     model.greenLight = greenLightDestinations.includes(model.destination) ? false : null
