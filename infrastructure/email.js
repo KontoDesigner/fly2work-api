@@ -30,7 +30,7 @@ async function send(staff, statusText, emails) {
                 <td>${comment.text}</td>
                 <td>${comment.createdBy}</td>
                 <td>${comment.group}</td>
-                <td>${moment(comment.created).format('YYYY-MM-DD HH:mm')}</td>
+                <td>${moment(comment.created).format('DD/MM/YYYY HH:mm')}</td>
             </tr>
             `
         )
@@ -76,9 +76,9 @@ async function send(staff, statusText, emails) {
 
     email.attachments = [
         //pdf
-        { data: pdfDataString, name: `${staff.firstName} ${staff.lastName} - ${moment().format('YYYY-MM-DD HH:mm')}.pdf` }
+        { data: pdfDataString, name: `${staff.firstName} ${staff.lastName} - ${moment().format('DD/MM/YYYY HH:mm')}.pdf` }
         // //excel
-        // { data: excelDataString, name: `${staff.name} - ${moment().format('YYYY-MM-DD HH:mm')}.xlsx` }
+        // { data: excelDataString, name: `${staff.name} - ${moment().format('DD/MM/YYYY HH:mm')}.xlsx` }
     ]
 
     for (var attachment of staff.attachments) {

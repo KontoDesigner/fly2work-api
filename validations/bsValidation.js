@@ -30,7 +30,7 @@ const bsValidation = Yup.object().shape({
         .default('')
         .nullable(true)
         .typeError('Planned assignment start date must be a datetime')
-        .optionalDate('YYYY-MM-DD'),
+        .optionalDate('DD/MM/YYYY'),
     typeOfFlight: Yup.string()
         .nullable(true)
         .required('Type of flight is required'),
@@ -55,7 +55,7 @@ const bsValidation = Yup.object().shape({
         .nullable(true)
         .required('Source market is required'),
     preferredFlightDate: Yup.date()
-        .format('YYYY-MM-DD')
+        .format('DD/MM/YYYY')
         .typeError('Preferred flight date must be a datetime')
         .nullable(true)
         .required('Preferred flight date is required'),
@@ -114,7 +114,7 @@ const bsValidation = Yup.object().shape({
         .when('bookReturnFlight', {
             is: true,
             then: Yup.date()
-                .format('YYYY-MM-DD')
+                .format('DD/MM/YYYY')
                 .typeError('(BRF) Date Of Flight must be a datetime')
                 .nullable(true)
                 .required('(BRF) Date Of Flight is required')

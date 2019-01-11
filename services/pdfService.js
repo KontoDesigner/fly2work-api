@@ -178,7 +178,7 @@ function getFlights(staff) {
 //                   { text: 'Group', bold: true, style: 'header' },
 //                   { text: comment.group ? comment.group : ' ', style: 'cell' },
 //                   { text: 'Created', bold: true, style: 'header' },
-//                   { text: comment.created ? moment(comment.created).format('YYYY-MM-DD') : ' ', style: 'cell' }
+//                   { text: comment.created ? moment(comment.created).format('DD/MM/YYYY') : ' ', style: 'cell' }
 //               ],
 //               [{ text: 'Comment', bold: true, style: 'header' }, { text: comment.text ? comment.text : ' ', style: 'cell', colSpan: 5 }]
 //           ])

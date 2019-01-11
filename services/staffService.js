@@ -39,7 +39,7 @@ const confirmGreenLight = async (body, ctx) => {
             { id: id, greenLight: false },
             {
                 $push: { audit: audit },
-                $set: { greenLight: true, greenLightUpdated: moment().format('YYYY-MM-DD HH:mm'), greenLightUpdatedBy: userName }
+                $set: { greenLight: true, greenLightUpdated: moment().format('DD/MM/YYYY HH:mm'), greenLightUpdatedBy: userName }
             }
         )).result
     } catch (err) {
@@ -154,7 +154,7 @@ const insertStaffFromGpx = async (body, ctx) => {
             model.comments.push(comment)
         }
     } else {
-        model.created = moment().format('YYYY-MM-DD HH:mm')
+        model.created = moment().format('DD/MM/YYYY HH:mm')
     }
 
     if (body.DateOfBirth) {
@@ -377,7 +377,7 @@ const updateOrInsertStaff = async (body, ctx) => {
 
     if (btt === true && model.status === constants.Statuses.Confirmed) {
         model.confirmedStatus = body.confirmedStatus
-        model.dateOfConfirmation = moment().format('YYYY-MM-DD HH:mm')
+        model.dateOfConfirmation = moment().format('DD/MM/YYYY HH:mm')
     }
 
     let validation = null
@@ -485,7 +485,7 @@ async function insertStaff(ctx, model, getStaff, userName, userEmail, btt) {
         }
     }
 
-    model.created = moment().format('YYYY-MM-DD HH:mm')
+    model.created = moment().format('DD/MM/YYYY HH:mm')
     model.requestedBy = {
         name: userName,
         email: userEmail

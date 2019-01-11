@@ -47,7 +47,7 @@ function getFlight(hotelNeeded) {
             .nullable(true)
             .required('Hotel cost is required'),
         confirmedFlightDate: Yup.date()
-            .format('YYYY-MM-DD')
+            .format('DD/MM/YYYY')
             .typeError('Confirmed flight date must be a datetime')
             .nullable(true)
             .required('Confirmed flight date is required')
@@ -61,12 +61,12 @@ function getFlight(hotelNeeded) {
             .typeError('(HN) Hotel start must be a datetime')
             .nullable(true)
             .required('(HN) Hotel start is required')
-            .format('YYYY-MM-DD'),
+            .format('DD/MM/YYYY'),
         hotelNeededHotelEnd: Yup.date()
             .typeError('(HN) Hotel start must be a datetime')
             .nullable(true)
             .required('(HN) Hotel end is required')
-            .format('YYYY-MM-DD')
+            .format('DD/MM/YYYY')
     }
 
     if (hotelNeeded === true) {
