@@ -27,8 +27,7 @@ function getFlight(hotelNeeded) {
         flightArrivalTime: Yup.date()
             .format('HH:mm')
             .typeError('Flight arrival time must be a time')
-            .nullable(true)
-            .required('Flight arrival time is required'),
+            .nullable(true),
         departureAirport: Yup.string()
             .nullable(true)
             .required('Departure airport is required'),
