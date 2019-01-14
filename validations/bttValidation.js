@@ -21,12 +21,12 @@ function getFlight(hotelNeeded) {
             .required('Flight number is required'),
         flightDepartureTime: Yup.date()
             .format('HH:mm')
-            .typeError('Flight departure time must be a time')
+            .typeError('Incorrect format (HH:mm)')
             .nullable(true)
             .required('Flight departure time is required'),
         flightArrivalTime: Yup.date()
             .format('HH:mm')
-            .typeError('Flight arrival time must be a time')
+            .typeError('Incorrect format (HH:mm)')
             .nullable(true),
         departureAirport: Yup.string()
             .nullable(true)
@@ -48,7 +48,7 @@ function getFlight(hotelNeeded) {
             .required('Hotel cost is required'),
         confirmedFlightDate: Yup.date()
             .format('DD/MM/YYYY')
-            .typeError('Confirmed flight date must be a datetime')
+            .typeError('Incorrect format (DD/MM/YYYY)')
             .nullable(true)
             .required('Confirmed flight date is required'),
         railFlyRequestedAndBooked: Yup.boolean()
@@ -76,12 +76,12 @@ function getFlight(hotelNeeded) {
             .nullable(true)
             .required('(HN) Hotel name is required'),
         hotelNeededHotelStart: Yup.date()
-            .typeError('(HN) Hotel start must be a datetime')
+            .typeError('Incorrect format (DD/MM/YYYY)')
             .nullable(true)
             .required('(HN) Hotel start is required')
             .format('DD/MM/YYYY'),
         hotelNeededHotelEnd: Yup.date()
-            .typeError('(HN) Hotel start must be a datetime')
+            .typeError('Incorrect format (DD/MM/YYYY)')
             .nullable(true)
             .required('(HN) Hotel end is required')
             .format('DD/MM/YYYY')
