@@ -29,7 +29,7 @@ const bsValidation = Yup.object().shape({
     plannedAssignmentStartDate: Yup.string()
         .default('')
         .nullable(true)
-        .typeError('Planned assignment start date must be a datetime')
+        .typeError('Incorrect format (DD/MM/YYYY)')
         .optionalDate('DD/MM/YYYY'),
     typeOfFlight: Yup.string()
         .nullable(true)
@@ -48,7 +48,7 @@ const bsValidation = Yup.object().shape({
         .required('Sur name is required'),
     dateOfBirth: Yup.date()
         .format('DD/MM/YYYY')
-        .typeError('Date of birth must be a datetime')
+        .typeError('Incorrect format (DD/MM/YYYY)')
         .nullable(true)
         .required('Date of birth is required'),
     sourceMarket: Yup.string()
@@ -56,7 +56,7 @@ const bsValidation = Yup.object().shape({
         .required('Source market is required'),
     preferredFlightDate: Yup.date()
         .format('DD/MM/YYYY')
-        .typeError('Preferred flight date must be a datetime')
+        .typeError('Incorrect format (DD/MM/YYYY)')
         .nullable(true)
         .required('Preferred flight date is required'),
     jobTitle: Yup.string()
@@ -115,7 +115,7 @@ const bsValidation = Yup.object().shape({
             is: true,
             then: Yup.date()
                 .format('DD/MM/YYYY')
-                .typeError('(BRF) Date Of Flight must be a datetime')
+                .typeError('Incorrect format (DD/MM/YYYY)')
                 .nullable(true)
                 .required('(BRF) Date Of Flight is required')
         }),

@@ -1,7 +1,7 @@
 const logger = require('tuin-logging')
 const xlsx = require('xlsx')
 const constants = require('../infrastructure/constants')
-const moment = require('moment')
+const helpers = require('../infrastructure/helpers')
 
 function generateExcel(staffs, type = 'binary') {
     try {
@@ -24,7 +24,7 @@ function generateExcel(staffs, type = 'binary') {
                 staff.dateOfConfirmation,
                 staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : '',
                 staff.greenLightUpdated,
-                staff.gender !== null && staff.gender !== undefined ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : '',
+                staff.gender,
                 staff.firstName,
                 staff.lastName,
                 staff.lastName2,
@@ -47,34 +47,35 @@ function generateExcel(staffs, type = 'binary') {
                 staff.bookReturnFlightDepartureAirport ? staff.bookReturnFlightDepartureAirport : '',
                 staff.bookReturnFlightArrivalAirport ? staff.bookReturnFlightArrivalAirport : '',
                 staff.railFly === true ? 'YES' : 'NO',
-                staff.bookingReference ? staff.bookingReference.toUpperCase() : '',
-                staff.travelType,
-                staff.paymentMethod,
-                staff.luggage,
-                staff.costCentre,
                 staff.currency,
-                staff.railFlyRequestedAndBooked === true ? 'YES' : 'NO'
+                helpers.getTotalCost(staff.flights)
             ]
 
             for (var i = 0; i < 3; i++) {
                 const flight = staff.flights[i]
 
                 if (flight) {
+                    body.push(flight.confirmedFlightDate ? flight.confirmedFlightDate : '')
+                    body.push(flight.bookingReference ? flight.bookingReference.toUpperCase() : '')
                     body.push(flight.flightNumber ? flight.flightNumber.toUpperCase() : '')
                     body.push(flight.flightDepartureTime ? flight.flightDepartureTime : '')
                     body.push(flight.flightArrivalTime ? flight.flightArrivalTime : '')
                     body.push(flight.departureAirport ? flight.departureAirport.toUpperCase() : '')
                     body.push(flight.arrivalAirport ? flight.arrivalAirport.toUpperCase() : '')
-                    body.push(flight.confirmedFlightDate ? flight.confirmedFlightDate : '')
+                    body.push(flight.luggage)
+                    body.push(flight.travelType)
+                    body.push(flight.paymentMethod)
+                    body.push(flight.xbagCost)
+                    body.push(flight.flightCost)
+                    body.push(flight.hotelCost)
+                    body.push(parseCost(flight.flightCost) + parseCost(flight.xbagCost) + parseCost(flight.hotelCost))
+                    body.push(flight.costCentre)
+                    body.push(flight.railFlyRequestedAndBooked === true ? 'YES' : 'NO')
                     body.push(flight.hotelNeededHotelName)
                     body.push(flight.hotelNeededHotelStart)
                     body.push(flight.hotelNeededHotelEnd)
-                    body.push(flight.flightCost)
-                    body.push(flight.xbagCost)
-                    body.push(flight.hotelCost)
-                    body.push(parseCost(flight.flightCost) + parseCost(staff.xbagCost) + parseCost(staff.hotelCost))
                 } else {
-                    body.push('', '', '', '', '', '', '', '', '', '', '', '', '')
+                    body.push('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '')
                 }
             }
 
@@ -157,55 +158,68 @@ const HEADER = [
     'Departure Airport (BRF)',
     'Arrival Airport (BRF)',
     'Rail & Fly (Only In Germany)',
-    'Booking Reference',
-    'Travel Type',
-    'Payment Method',
-    'Luggage',
-    'Cost Centre',
     'Currency',
-    'Rail & Fly Requested And Booked',
+    'Total Cost',
 
+    '1st Confirmed Flight Date',
+    '1st Booking Reference',
     '1st Flight Number',
     '1st Flight Departure Time',
     '1st Flight Arrival Time',
     '1st Departure Airport',
     '1st Arrival Airport',
-    '1st Confirmed Flight Date',
+    '1st Luggage',
+    '1st Travel Type',
+    '1st Payment Method',
+    '1st Xbag Cost',
+    '1st Flight Cost',
+    '1st Hotel Cost',
+    '1st Total Cost',
+    '1st Cost Centre',
+    '1st Rail & Fly Requested And Booked',
     '1st Hotel Name (HN)',
     '1st Hotel Start (HN)',
     '1st Hotel End (HN)',
-    '1st Flight Cost',
-    '1st Xbag Cost',
-    '1st Hotel Cost',
-    '1st Total Cost',
 
+    '2nd Confirmed Flight Date',
+    '2nd Booking Reference',
     '2nd Flight Number',
     '2nd Flight Departure Time',
     '2nd Flight Arrival Time',
     '2nd Departure Airport',
     '2nd Arrival Airport',
-    '2st Confirmed Flight Date',
-    '2st Hotel Name (HN)',
-    '2st Hotel Start (HN)',
-    '2st Hotel End (HN)',
-    '2nd Flight Cost',
+    '2nd Luggage',
+    '2nd Travel Type',
+    '2nd Payment Method',
     '2nd Xbag Cost',
+    '2nd Flight Cost',
     '2nd Hotel Cost',
     '2nd Total Cost',
+    '2nd Cost Centre',
+    '2nd Rail & Fly Requested And Booked',
+    '2nd Hotel Name (HN)',
+    '2nd Hotel Start (HN)',
+    '2nd Hotel End (HN)',
 
+    '3nd Confirmed Flight Date',
+    '3nd Booking Reference',
     '3nd Flight Number',
     '3nd Flight Departure Time',
     '3nd Flight Arrival Time',
     '3nd Departure Airport',
     '3nd Arrival Airport',
-    '3st Confirmed Flight Date',
-    '3st Hotel Name (HN)',
-    '3st Hotel Start (HN)',
-    '3st Hotel End (HN)',
-    '3nd Flight Cost',
+    '3nd Luggage',
+    '3nd Travel Type',
+    '3nd Payment Method',
     '3nd Xbag Cost',
+    '3nd Flight Cost',
     '3nd Hotel Cost',
     '3nd Total Cost',
+    '3nd Cost Centre',
+    '3nd Rail & Fly Requested And Booked',
+    '3nd Hotel Name (HN)',
+    '3nd Hotel Start (HN)',
+    '3nd Hotel End (HN)',
 
     'Comments'
 ]

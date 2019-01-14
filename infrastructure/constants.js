@@ -41,17 +41,11 @@ function StaffBS() {
 }
 
 function StaffBTT() {
-    this.bookingReference = ''
-    this.travelType = ''
-    this.paymentMethod = ''
-    this.luggage = ''
-    this.costCentre = ''
     this.flights = [new Flight(true)]
     this.greenLight = null
     this.greenLightUpdated = null
     this.greenLightUpdatedBy = null
     this.currency = null
-    this.railFlyRequestedAndBooked = false
 }
 
 function Staff() {
@@ -71,6 +65,12 @@ function Flight() {
     this.hotelNeededHotelName = ''
     this.hotelNeededHotelStart = ''
     this.hotelNeededHotelEnd = ''
+    this.bookingReference = ''
+    this.travelType = ''
+    this.paymentMethod = ''
+    this.luggage = ''
+    this.costCentre = ''
+    this.railFlyRequestedAndBooked = false
 }
 
 function Email() {

@@ -1,6 +1,7 @@
 const logger = require('tuin-logging')
 const pdfMakePrinter = require('pdfmake/src/printer')
 const constants = require('../infrastructure/constants')
+const helpers = require('../infrastructure/helpers')
 
 function generatePdfCallback(staff, callback) {
     logger.info('Started pdf export', { staff })
@@ -76,54 +77,68 @@ function getFlights(staff) {
     const flightBodies = staff.flights
         ? staff.flights.map(flight => [
               [
+                  { text: 'Confirmed Flight Date', bold: true, style: 'header' },
+                  { text: flight.confirmedFlightDate ? flight.confirmedFlightDate : ' ', style: 'cell' },
+                  { text: 'Booking Reference', bold: true, style: 'header' },
+                  { text: flight.bookingReference ? flight.bookingReference.toUpperCase() : ' ', style: 'cell' },
                   { text: 'Flight Number', bold: true, style: 'header' },
                   { text: flight.flightNumber ? flight.flightNumber.toUpperCase() : ' ', style: 'cell' },
                   { text: 'Flight Departure Time', bold: true, style: 'header' },
                   {
                       text: flight.flightDepartureTime ? flight.flightDepartureTime : ' ',
                       style: 'cell'
-                  },
+                  }
+              ],
+              [
                   { text: 'Flight Arrival Time', bold: true, style: 'header' },
                   {
                       text: flight.flightArrivalTime ? flight.flightArrivalTime : ' ',
                       style: 'cell'
                   },
                   { text: 'Departure Airport', bold: true, style: 'header' },
-                  { text: flight.departureAirport ? flight.departureAirport.toUpperCase() : ' ', style: 'cell' }
-              ],
-              [
+                  { text: flight.departureAirport ? flight.departureAirport.toUpperCase() : ' ', style: 'cell' },
                   { text: 'Arrival Airport', bold: true, style: 'header' },
                   { text: flight.arrivalAirport ? flight.arrivalAirport.toUpperCase() : ' ', style: 'cell' },
-                  { text: 'Confirmed Flight Date', bold: true, style: 'header' },
-                  { text: flight.confirmedFlightDate ? flight.confirmedFlightDate : ' ', style: 'cell' },
+                  { text: 'Luggage', bold: true, style: 'header' },
+                  { text: flight.luggage ? flight.luggage : ' ', style: 'cell' }
+              ],
+              [
+                  { text: 'Travel Type', bold: true, style: 'header' },
+                  { text: flight.travelType ? flight.travelType : ' ', style: 'cell' },
+                  { text: 'Payment Method', bold: true, style: 'header' },
+                  { text: flight.paymentMethod ? flight.paymentMethod : ' ', style: 'cell' },
+                  { text: 'Xbag Cost', bold: true, style: 'header' },
+                  { text: flight.xbagCost ? flight.xbagCost : ' ', style: 'cell' },
+                  { text: 'Flight Cost', bold: true, style: 'header' },
+                  { text: flight.flightCost ? flight.flightCost : ' ', style: 'cell' }
+              ],
+              [
+                  { text: 'Hotel Cost', bold: true, style: 'header' },
+                  { text: flight.hotelCost ? flight.hotelCost : ' ', style: 'cell' },
+                  { text: 'Total Cost', bold: true, style: 'header' },
+                  {
+                      text: helpers.parseCost(flight.flightCost) + helpers.parseCost(flight.xbagCost) + helpers.parseCost(flight.hotelCost),
+                      style: 'cell'
+                  },
+                  { text: 'Cost Centre', bold: true, style: 'header' },
+                  { text: flight.costCentre ? flight.costCentre : ' ', style: 'cell' },
+                  { text: 'Rail & Fly Requested And Booked', bold: true, style: 'header' },
+                  { text: flight.railFlyRequestedAndBooked === true ? 'YES' : 'NO', style: 'cell' }
+              ],
+              [
                   { text: 'Hotel Name (HN)', bold: true, style: 'header' },
                   { text: flight.hotelNeededHotelName ? flight.hotelNeededHotelName : ' ', style: 'cell' },
                   { text: 'Hotel Start (HN)', bold: true, style: 'header' },
                   {
                       text: flight.hotelNeededHotelStart ? flight.hotelNeededHotelStart : ' ',
                       style: 'cell'
-                  }
-              ],
-              [
+                  },
                   { text: 'Hotel End (HN)', bold: true, style: 'header' },
                   {
                       text: flight.hotelNeededHotelEnd ? flight.hotelNeededHotelEnd : ' ',
                       style: 'cell'
                   },
-                  { text: 'Flight Cost', bold: true, style: 'header' },
-                  { text: flight.flightCost ? flight.flightCost : ' ', style: 'cell' },
-                  { text: 'Xbag Cost', bold: true, style: 'header' },
-                  { text: flight.xbagCost ? flight.xbagCost : ' ', style: 'cell' },
-                  { text: 'Hotel Cost', bold: true, style: 'header' },
-                  { text: flight.hotelCost ? flight.hotelCost : ' ', style: 'cell' }
-              ],
-              [
-                  { text: 'Total Cost', bold: true, style: 'header' },
-                  {
-                      text: parseCost(flight.flightCost) + parseCost(flight.xbagCost) + parseCost(flight.hotelCost),
-                      style: 'cell'
-                  },
-                  { text: ' ', colSpan: 6 }
+                  { text: ' ', colSpan: 2 }
               ]
           ])
         : []
@@ -212,7 +227,7 @@ function getBody(staff) {
         [
             { text: 'Gender', bold: true, style: 'header' },
             {
-                text: staff.gender !== undefined && staff.gender !== null ? (staff.gender === 'M' ? 'MALE' : 'FEMALE') : ' ',
+                text: staff.gender ? staff.gender : ' ',
                 style: 'cell'
             },
             { text: 'Date Of Birth', bold: true, style: 'header' },
@@ -332,6 +347,14 @@ function getDocDefinition(staff) {
                 margin: [0, 0, 0, 8]
             },
             {
+                text: 'BS',
+                style: 'header',
+                alignment: 'center',
+                bold: true,
+                fontSize: 12,
+                margin: [0, 0, 0, 5]
+            },
+            {
                 margin: [0, 0, 0, 5],
                 fontSize: 9,
                 table: {
@@ -363,27 +386,16 @@ function getDocDefinition(staff) {
                     widths: ['*', '*', '*', '*', '*', '*', '*', '*'],
                     body: [
                         [
-                            { text: 'Booking Reference', bold: true, style: 'header' },
-                            { text: staff.bookingReference ? staff.bookingReference.toUpperCase() : ' ', style: 'cell' },
-                            { text: 'Travel Type', bold: true, style: 'header' },
-                            { text: staff.travelType ? staff.travelType : ' ', style: 'cell' },
-                            { text: 'Payment Method', bold: true, style: 'header' },
-                            { text: staff.paymentMethod ? staff.paymentMethod : ' ', style: 'cell' },
-                            { text: 'Luggage', bold: true, style: 'header' },
-                            { text: staff.luggage ? staff.luggage : ' ', style: 'cell' }
-                        ],
-                        [
-                            { text: 'Cost Centre', bold: true, style: 'header' },
-                            { text: staff.costCentre ? staff.costCentre : ' ', style: 'cell' },
                             { text: 'Currency', bold: true, style: 'header' },
                             { text: staff.currency ? staff.currency : ' ', style: 'cell' },
-                            { text: 'Rail & Fly Requested And Booked', bold: true, style: 'header' },
-                            { text: staff.railFlyRequestedAndBooked === true ? 'YES' : 'NO', style: 'cell' },
                             { text: 'Green Light', bold: true, style: 'header' },
                             {
                                 text: staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : ' ',
                                 style: 'cell'
-                            }
+                            },
+                            { text: 'Total Cost', bold: true, style: 'header' },
+                            { text: helpers.getTotalCost(staff.flights), style: 'cell' },
+                            { text: ' ', colSpan: 2 }
                         ]
                     ]
                 },
@@ -425,16 +437,6 @@ function getDocDefinition(staff) {
             }
         ]
     }
-}
-
-function parseCost(val) {
-    var parsed = parseInt(val)
-
-    if (isNaN(parsed)) {
-        return 0
-    }
-
-    return parsed
 }
 
 module.exports = {

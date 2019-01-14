@@ -50,7 +50,25 @@ function getFlight(hotelNeeded) {
             .format('DD/MM/YYYY')
             .typeError('Confirmed flight date must be a datetime')
             .nullable(true)
-            .required('Confirmed flight date is required')
+            .required('Confirmed flight date is required'),
+        railFlyRequestedAndBooked: Yup.boolean()
+            .nullable(true)
+            .required('Rail & Fly Requested And Booked is required'),
+        bookingReference: Yup.string()
+            .nullable(true)
+            .required('Booking reference is required'),
+        paymentMethod: Yup.string()
+            .nullable(true)
+            .required('Payment method is required'),
+        travelType: Yup.string()
+            .nullable(true)
+            .required('Travel type is required'),
+        luggage: Yup.string()
+            .nullable(true)
+            .required('Luggage is required'),
+        costCentre: Yup.string()
+            .nullable(true)
+            .required('Cost centre is required')
     }
 
     const hotel = {
@@ -77,24 +95,6 @@ function getFlight(hotelNeeded) {
 }
 
 const bttValidation = Yup.object().shape({
-    railFlyRequestedAndBooked: Yup.boolean()
-        .nullable(true)
-        .required('Rail & Fly Requested And Booked is required'),
-    bookingReference: Yup.string()
-        .nullable(true)
-        .required('Booking reference is required'),
-    paymentMethod: Yup.string()
-        .nullable(true)
-        .required('Payment method is required'),
-    travelType: Yup.string()
-        .nullable(true)
-        .required('Travel type is required'),
-    luggage: Yup.string()
-        .nullable(true)
-        .required('Luggage is required'),
-    costCentre: Yup.string()
-        .nullable(true)
-        .required('Cost centre is required'),
     currency: Yup.string()
         .nullable(true)
         .required('Currency is required'),

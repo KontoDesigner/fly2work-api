@@ -395,14 +395,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     if (btt) {
         //BTT
         model = Object.assign(model, new constants.StaffBTT())
-
-        model.bookingReference = body.bookingReference
-        model.paymentMethod = body.paymentMethod
-        model.luggage = body.luggage
-        model.costCentre = body.costCentre
-        model.travelType = body.travelType
         model.currency = body.currency
-        model.railFlyRequestedAndBooked = body.railFlyRequestedAndBooked
 
         //Flights
         const flights = []
@@ -417,11 +410,16 @@ const updateOrInsertStaff = async (body, ctx) => {
                 flightCost: flight.flightCost,
                 xbagCost: flight.xbagCost,
                 hotelCost: flight.hotelCost,
-                totalCost: flight.totalCost,
                 confirmedFlightDate: flight.confirmedFlightDate,
                 hotelNeededHotelName: flight.hotelNeededHotelName,
                 hotelNeededHotelStart: flight.hotelNeededHotelStart,
-                hotelNeededHotelEnd: flight.hotelNeededHotelEnd
+                hotelNeededHotelEnd: flight.hotelNeededHotelEnd,
+                bookingReference: flight.bookingReference,
+                paymentMethod: flight.paymentMethod,
+                luggage: flight.luggage,
+                costCentre: flight.costCentre,
+                travelType: flight.travelType,
+                railFlyRequestedAndBooked: flight.railFlyRequestedAndBooked
             })
         }
 

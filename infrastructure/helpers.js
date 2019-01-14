@@ -21,6 +21,28 @@ function getBTTEmails(sourceMarket) {
     return res
 }
 
+function parseCost(val) {
+    var parsed = parseInt(val)
+
+    if (isNaN(parsed)) {
+        return 0
+    }
+
+    return parsed
+}
+
+function getTotalCost(flights) {
+    let totalCost = 0
+
+    for (const flight of flights) {
+        totalCost = totalCost + (parseCost(flight.flightCost) + parseCost(flight.xbagCost) + parseCost(flight.hotelCost))
+    }
+
+    return totalCost
+}
+
 module.exports = {
-    getBTTEmails
+    parseCost,
+    getBTTEmails,
+    getTotalCost
 }
