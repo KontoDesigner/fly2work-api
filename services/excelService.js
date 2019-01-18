@@ -18,7 +18,7 @@ function generateExcel(staffs, type = 'binary') {
         for (const staff of staffs) {
             const body = [
                 staff.id,
-                staff.greenLight === false && staff.status !== constants.Statuses.New ? `Pending HR (${staff.status})` : staff.status,
+                staff.greenLight === false && staff.status !== constants.Statuses.New ? `PendingHR (${staff.status})` : staff.status,
                 staff.created,
                 staff.confirmedStatus ? staff.confirmedStatus : '',
                 staff.dateOfConfirmation,

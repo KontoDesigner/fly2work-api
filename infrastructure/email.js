@@ -16,8 +16,8 @@ async function send(staff, statusText, emails) {
     }
 
     const comments = staff.comments
-        ? staff.comments.sort(function(a, c) {
-              return new Date(c.created) - new Date(c.created)
+        ? staff.comments.sort(function(a, b) {
+              return new Date(b.created) - new Date(a.created)
           })
         : []
 
@@ -25,19 +25,16 @@ async function send(staff, statusText, emails) {
 
     for (var comment of comments) {
         trs.push(
-            `
-            <tr>
+            `<tr>
                 <td>${comment.text}</td>
                 <td>${comment.createdBy}</td>
                 <td>${comment.group}</td>
                 <td>${moment(comment.created).format('DD/MM/YYYY HH:mm')}</td>
-            </tr>
-            `
+            </tr>`
         )
     }
 
-    const table = `
-        <table width="600" style="border:1px solid #333">
+    const table = `<table width="600" style="border:1px solid #333">
             <tr>
                 <th align="left">Comment</th>
                 <th align="left">Created By</th>
@@ -46,8 +43,7 @@ async function send(staff, statusText, emails) {
             </tr>
             
             ${trs.toString()}
-        </table>
-    `
+        </table>`
 
     const status = staff.status !== constants.Statuses.New && staff.greenLight === false ? 'pendinghr' : staff.status
 

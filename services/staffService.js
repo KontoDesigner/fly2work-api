@@ -24,7 +24,7 @@ const confirmGreenLight = async (body, ctx) => {
 
     const audit = {
         updatedBy: userName,
-        statusFrom: 'Pending HR',
+        statusFrom: 'PendingHR',
         statusTo: getStaff ? getStaff.status : '',
         greenLightFrom: false,
         greenLightTo: true,
@@ -52,6 +52,30 @@ const confirmGreenLight = async (body, ctx) => {
     }
 
     logger.info('Confirm green light result', { url: ctx.url, id, replaceOne })
+
+    if (getStaff.status === constants.Statuses.PendingBTT) {
+        let emails = {
+            to: [],
+            cc: []
+        }
+
+        if (getStaff.requestedBy && getStaff.requestedBy.email) {
+            emails.to.push(getStaff.requestedBy.email)
+
+            const statusText = `PendingHR => ${getStaff.status}`
+
+            getStaff.greenLight = true
+
+            const emailRes = await email.send(getStaff, statusText, emails)
+
+            if (emailRes === false) {
+                return {
+                    ok: false,
+                    error: 'Confirmed green light but could not send email notification'
+                }
+            }
+        }
+    }
 
     return {
         ok: true
@@ -530,7 +554,7 @@ async function insertStaff(ctx, model, getStaff, userName, userEmail, btt) {
 
 async function sendInsertEmails(ctx, model) {
     //Add createdBy and BTT to emails (NEW => PENDINGBTT)
-    const statusText = `${constants.Statuses.New} => ${model.greenLight === false ? 'Pending HR' : constants.Statuses.PendingBTT}`
+    const statusText = `${constants.Statuses.New} => ${model.greenLight === false ? 'PendingHR' : constants.Statuses.PendingBTT}`
 
     //Get BTT to/cc based on sourceMarket
     let emails = helpers.getBTTEmails(model.sourceMarket)
@@ -613,8 +637,8 @@ async function updateStaff(ctx, model, getStaff, userName, userRoles, btt) {
 }
 
 async function sendUpdateEmailsAndConfirm(ctx, model, getStaff) {
-    const statusText = `${getStaff.greenLight === false ? 'Pending HR' : getStaff.status} => ${
-        getStaff.greenLight === false ? 'Pending HR' : model.status
+    const statusText = `${getStaff.greenLight === false ? 'PendingHR' : getStaff.status} => ${
+        getStaff.greenLight === false ? 'PendingHR' : model.status
     }`
 
     //Get BTT to/cc based on sourceMarket
