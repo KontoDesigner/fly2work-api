@@ -460,7 +460,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     }
 
     if (validation.errors && validation.errors.length > 0) {
-        logger.warning('Staff model validation failed, aborting', { url: ctx.url, model, validation })
+        logger.warning('Staff model validation failed, aborting', { url: ctx.url, model, validation, user })
 
         return {
             ok: false,
@@ -495,19 +495,19 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.greenLight = getStaff ? getStaff.greenLight : null
 
     if (add === true) {
-        return await insertStaff(ctx, model, getStaff, userName, userEmail, btt)
+        return await insertStaff(ctx, model, getStaff, userName, userEmail, btt, user)
     } else {
-        return await updateStaff(ctx, model, getStaff, userName, userRoles, btt)
+        return await updateStaff(ctx, model, getStaff, userName, userRoles, btt, user)
     }
 }
 
-async function insertStaff(ctx, model, getStaff, userName, userEmail, btt) {
+async function insertStaff(ctx, model, getStaff, userName, userEmail, btt, user) {
     if (btt === false) {
         model = Object.assign(model, new constants.StaffBTT())
     }
 
     if (getStaff) {
-        logger.warning(`Staff with id: '${model.id}' already exists`, { url: ctx.url, model })
+        logger.warning(`Staff with id: '${model.id}' already exists`, { url: ctx.url, model, user })
 
         return {
             ok: false,
@@ -532,7 +532,7 @@ async function insertStaff(ctx, model, getStaff, userName, userEmail, btt) {
     try {
         insertOne = (await mongo.collection('staffs').insertOne(model)).result
     } catch (err) {
-        logger.error('Error inserting staff', err, { model, url: ctx.url })
+        logger.error('Error inserting staff', err, { model, url: ctx.url, user })
 
         return {
             ok: false,
@@ -540,7 +540,7 @@ async function insertStaff(ctx, model, getStaff, userName, userEmail, btt) {
         }
     }
 
-    logger.info('Insert staff result', { url: ctx.url, model, insertOne })
+    logger.info('Insert staff result', { url: ctx.url, model, insertOne, user })
 
     if (insertOne.ok === false) {
         return {
@@ -549,10 +549,10 @@ async function insertStaff(ctx, model, getStaff, userName, userEmail, btt) {
         }
     }
 
-    return await sendInsertEmails(ctx, model)
+    return await sendInsertEmails(ctx, model, user)
 }
 
-async function sendInsertEmails(ctx, model) {
+async function sendInsertEmails(ctx, model, user) {
     //Add createdBy and BTT to emails (NEW => PENDINGBTT)
     const statusText = `${constants.Statuses.New} => ${model.greenLight === false ? 'PendingHR' : constants.Statuses.PendingBTT}`
 
@@ -583,7 +583,7 @@ async function sendInsertEmails(ctx, model) {
         }
     }
 
-    logger.info('Insert staff successfull', { url: ctx.url, model })
+    logger.info('Insert staff successfull', { url: ctx.url, model, user })
 
     return {
         ok: true,
@@ -591,9 +591,9 @@ async function sendInsertEmails(ctx, model) {
     }
 }
 
-async function updateStaff(ctx, model, getStaff, userName, userRoles, btt) {
+async function updateStaff(ctx, model, getStaff, userName, userRoles, btt, user) {
     if (btt === false && getStaff.status !== constants.Statuses.Confirmed && model.status === constants.Statuses.Confirmed) {
-        logger.error('BS is trying to set request status to confirm', { url: ctx.url, getStaff, model })
+        logger.error('BS is trying to set request status to confirm', { url: ctx.url, getStaff, model, user })
 
         return {
             ok: false,
@@ -616,7 +616,7 @@ async function updateStaff(ctx, model, getStaff, userName, userRoles, btt) {
     try {
         replaceOne = (await mongo.collection('staffs').replaceOne({ id: model.id }, { $set: model })).result
     } catch (err) {
-        logger.error('Error updating staff', err, { model, url: ctx.url })
+        logger.error('Error updating staff', err, { model, url: ctx.url, user })
 
         return {
             ok: false,
@@ -624,7 +624,7 @@ async function updateStaff(ctx, model, getStaff, userName, userRoles, btt) {
         }
     }
 
-    logger.info('Update staff result', { url: ctx.url, model, replaceOne })
+    logger.info('Update staff result', { url: ctx.url, model, replaceOne, user })
 
     if (replaceOne.ok === false) {
         return {
@@ -633,10 +633,10 @@ async function updateStaff(ctx, model, getStaff, userName, userRoles, btt) {
         }
     }
 
-    return await sendUpdateEmailsAndConfirm(ctx, model, getStaff)
+    return await sendUpdateEmailsAndConfirm(ctx, model, getStaff, user)
 }
 
-async function sendUpdateEmailsAndConfirm(ctx, model, getStaff) {
+async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
     const statusText = `${getStaff.greenLight === false ? 'PendingHR' : getStaff.status} => ${
         getStaff.greenLight === false ? 'PendingHR' : model.status
     }`
@@ -742,7 +742,7 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff) {
         }
     }
 
-    logger.info('Update staff successfull', { url: ctx.url, model })
+    logger.info('Update staff successfull', { url: ctx.url, model, user })
 
     return {
         ok: true,
