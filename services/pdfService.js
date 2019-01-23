@@ -163,7 +163,7 @@ function getFlights(staff) {
                 fontSize: 9,
                 table: {
                     headerRows: 0,
-                    widths: ['*', '*', '*', '*', '*', '*', '*', '*'],
+                    widths: ['*', '*', '*', '*', '*', '*', '*', 'auto'],
                     body: flightBodies[i]
                 },
 
@@ -205,7 +205,7 @@ function getFlights(staff) {
 //             fontSize: 9,
 //             table: {
 //                 headerRows: 0,
-//                 widths: ['*', '*', '*', '*', '*', '*'],
+//                 widths: ['*', '*', '*', '*', '*', 'auto'],
 //                 body: commentBodies[i]
 //             },
 //             layout: {
@@ -359,7 +359,7 @@ function getDocDefinition(staff) {
                 fontSize: 9,
                 table: {
                     headerRows: 0,
-                    widths: ['*', '*', '*', '*', '*', '*', '*', '*'],
+                    widths: ['*', '*', '*', '*', '*', '*', '*', 'auto'],
                     body: body
                 },
                 layout: {
@@ -383,7 +383,7 @@ function getDocDefinition(staff) {
                 fontSize: 9,
                 table: {
                     headerRows: 0,
-                    widths: ['*', '*', '*', '*', '*', '*', '*', '*'],
+                    widths: ['*', '*', '*', '*', '*', '*'],
                     body: [
                         [
                             { text: 'Currency', bold: true, style: 'header' },
@@ -394,8 +394,7 @@ function getDocDefinition(staff) {
                                 style: 'cell'
                             },
                             { text: 'Total Cost', bold: true, style: 'header' },
-                            { text: helpers.getTotalCost(staff.flights), style: 'cell' },
-                            { text: ' ', colSpan: 2 }
+                            { text: helpers.getTotalCost(staff.flights), style: 'cell' }
                         ]
                     ]
                 },
