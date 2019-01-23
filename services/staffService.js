@@ -574,7 +574,7 @@ async function sendInsertEmails(ctx, model) {
         emails.to.push(model.emails)
     }
 
-    const emailRes = await email.send(model, statusText, emails)
+    const emailRes = await email.send(model, statusText, emails, false)
 
     if (emailRes === false) {
         return {

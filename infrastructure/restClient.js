@@ -24,23 +24,25 @@ async function get(url) {
     }
 }
 
-async function post(url, data, ctx) {
+async function post(url, data, ctx, requestContext = true) {
     let config = []
 
     try {
-        if (ctx) {
-            const jwt = ctx.request.headers['authorization']
-            config = {
-                headers: {
-                    Authorization: jwt
+        if (requestContext === true) {
+            if (ctx) {
+                const jwt = ctx.request.headers['authorization']
+                config = {
+                    headers: {
+                        Authorization: jwt
+                    }
                 }
-            }
-        } else {
-            const { request } = requestContext
-            const jwt = request.headers['authorization']
-            config = {
-                headers: {
-                    Authorization: jwt
+            } else {
+                const { request } = requestContext
+                const jwt = request.headers['authorization']
+                config = {
+                    headers: {
+                        Authorization: jwt
+                    }
                 }
             }
         }
