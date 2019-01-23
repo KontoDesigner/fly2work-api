@@ -1,3 +1,4 @@
+require('zone.js')
 const Koa = require('koa')
 const logger = require('tuin-logging')
 const camelcaseKeys = require('camelcase-keys')
@@ -9,6 +10,7 @@ const cors = require('@koa/cors')
 const config = require('./infrastructure/config')
 const passport = require('koa-passport')
 const BearerStrategy = require('passport-azure-ad').BearerStrategy
+const koaContext = require('global-request-context/lib/koa-middleware')
 
 const authOptions = {
     identityMetadata: config.authAuthority + config.authTenantId + '/.well-known/openid-configuration',
@@ -64,6 +66,7 @@ async function main() {
     app.use(bodyParser())
     app.use(requestId())
     app.use(cors())
+    app.use(koaContext)
 
     app.use(passport.initialize())
     app.use(passport.session())
