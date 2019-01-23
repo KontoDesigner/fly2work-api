@@ -89,7 +89,7 @@ async function send(staff, statusText, emails) {
     let res = {}
 
     try {
-        res = await restClient.post(mailApi, email)
+        res = await restClient.post(mailApi, email, null, false)
 
         logger.info('Mail api result', { res, staff, mailApi, statusText, emails })
 
