@@ -1,26 +1,26 @@
 const restClient = require('../infrastructure/restClient')
 const config = require('../infrastructure/config')
 
-const getSourceMarkets = async () => {
-    const sourceMarkets = await restClient.get(`${config.gpxApi}/geography/sourcemarket`)
+const getSourceMarkets = async ctx => {
+    const sourceMarkets = await restClient.get(`${config.gpxApi}/geography/sourcemarket`, ctx)
 
     return sourceMarkets
 }
 
-const getJobTitles = async () => {
-    const roles = await restClient.get(`${config.gpxApi}/position/getjobtitles`)
+const getJobTitles = async ctx => {
+    const roles = await restClient.get(`${config.gpxApi}/position/getjobtitles`, ctx)
 
     return roles
 }
 
-const getDestinations = async () => {
-    const destinations = await restClient.get(`${config.gpxApi}/report/getalldestsingle`)
+const getDestinations = async ctx => {
+    const destinations = await restClient.get(`${config.gpxApi}/report/getalldestsingle`, ctx)
 
     return destinations
 }
 
-const getIataCodes = async () => {
-    const iataCodes = await restClient.get(`${config.gpxApi}/position/getiatacodes`)
+const getIataCodes = async ctx => {
+    const iataCodes = await restClient.get(`${config.gpxApi}/position/getiatacodes`, ctx)
 
     return iataCodes
 }

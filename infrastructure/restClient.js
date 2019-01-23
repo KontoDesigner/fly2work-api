@@ -1,14 +1,17 @@
 const axios = require('axios')
 const logger = require('tuin-logging')
-const requestContext = require('global-request-context')
 
-async function get(url) {
+async function get(url, ctx) {
+    let config = {}
+
     try {
-        const { request } = requestContext
-        const jwt = request.headers['authorization']
-        const config = {
-            headers: {
-                Authorization: jwt
+        if (ctx) {
+            const jwt = ctx.request.headers['authorization']
+
+            config = {
+                headers: {
+                    Authorization: jwt
+                }
             }
         }
 
@@ -24,25 +27,16 @@ async function get(url) {
     }
 }
 
-async function post(url, data, ctx, requestContext = true) {
-    let config = []
+async function post(url, data, ctx) {
+    let config = {}
 
     try {
-        if (requestContext === true) {
-            if (ctx) {
-                const jwt = ctx.request.headers['authorization']
-                config = {
-                    headers: {
-                        Authorization: jwt
-                    }
-                }
-            } else {
-                const { request } = requestContext
-                const jwt = request.headers['authorization']
-                config = {
-                    headers: {
-                        Authorization: jwt
-                    }
+        if (ctx) {
+            const jwt = ctx.request.headers['authorization']
+
+            config = {
+                headers: {
+                    Authorization: jwt
                 }
             }
         }
