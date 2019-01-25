@@ -180,6 +180,7 @@ const insertStaffFromGpx = async (body, ctx) => {
             model.comments.push(comment)
         }
     } else {
+        model.id = uuid.v1()
         model.created = moment()._d
     }
 
@@ -203,7 +204,6 @@ const insertStaffFromGpx = async (body, ctx) => {
 
     const greenLightDestinations = config.greenLightDestinations.split(',')
 
-    model.id = uuid.v1()
     model.originalStaffId = body.Id
     model.direction = body.Direction
     model.firstName = body.FirstName ? body.FirstName : ''
