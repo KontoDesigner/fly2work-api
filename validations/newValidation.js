@@ -6,7 +6,14 @@ const newValidation = Yup.object().shape({
         .required('Id is required'),
     destination: Yup.string()
         .nullable(true)
-        .required('Destination is required')
+        .required('Destination is required'),
+    direction: Yup.string()
+        .nullable(true)
+        .required('Direction is required'),
+    plannedAssignmentStartDate: Yup.date()
+        .typeError('Planned assignment start date must be a datetime')
+        .nullable(true)
+        .required('Planned assignment start date is required')
 })
 
 module.exports = newValidation

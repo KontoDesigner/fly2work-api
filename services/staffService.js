@@ -151,11 +151,13 @@ const declineStaff = async (body, ctx) => {
 }
 
 const insertStaffFromGpx = async (body, ctx) => {
+    logger.info('New request from gpx received', { body })
+
     let model = new constants.Staff()
 
-    const getStaff = await getStaffById(body.Id)
+    const getStaff = await getNewOrPendingStaffByOriginalStaffId(body.Id, body.Direction)
 
-    if (getStaff && getStaff.status !== constants.Statuses.Confirmed) {
+    if (getStaff) {
         const txt = `Request from GPX already exists, updating values and reverting status to: ${constants.Statuses.New}`
 
         logger.info(txt, {
@@ -178,7 +180,7 @@ const insertStaffFromGpx = async (body, ctx) => {
             model.comments.push(comment)
         }
     } else {
-        model.created = moment().format('DD/MM/YYYY HH:mm')
+        model.created = moment()._d
     }
 
     if (body.DateOfBirth) {
@@ -201,7 +203,9 @@ const insertStaffFromGpx = async (body, ctx) => {
 
     const greenLightDestinations = config.greenLightDestinations.split(',')
 
-    model.id = body.Id
+    model.id = uuid.v1()
+    model.originalStaffId = body.Id
+    model.direction = body.Direction
     model.firstName = body.FirstName ? body.FirstName : ''
     model.lastName2 = body.LastName2 ? body.LastName2 : ''
     model.lastName = body.LastName ? body.LastName : ''
@@ -244,7 +248,6 @@ const insertStaffFromGpx = async (body, ctx) => {
         }
 
         model.comments.push(comment)
-        model.id = uuid.v1()
     }
 
     try {
@@ -351,6 +354,12 @@ const getStaffsByStatus = async status => {
 
 const getStaffById = async id => {
     const staff = await mongo.collection('staffs').findOne({ id: id })
+
+    return staff
+}
+
+const getNewOrPendingStaffByOriginalStaffId = async (originalStaffId, direction) => {
+    const staff = await mongo.collection('staffs').findOne({ originalStaffId, direction, status: { $ne: constants.Statuses.Confirmed } })
 
     return staff
 }
@@ -515,7 +524,7 @@ async function insertStaff(ctx, model, getStaff, userName, userEmail, btt, user)
         }
     }
 
-    model.created = moment().format('DD/MM/YYYY HH:mm')
+    model.created = moment()._d
     model.requestedBy = {
         name: userName,
         email: userEmail
@@ -651,19 +660,19 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
 
     //Add BTT and createdBy to emails (PENDINGBTT => CONFIRMED) and send confirm date to gpx
     if (getStaff.status === constants.Statuses.PendingBTT && model.status === constants.Statuses.Confirmed) {
-        //Send confirm date to GPX
-        if (model.positionAssignId) {
-            const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
+        // //Send confirm date to GPX
+        // if (model.originalStaffId && model.positionAssignId) {
+        //     const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
 
-            const confirmRes = await gpxService.confirm(ctx, model.positionAssignId, confirmedDate, model.destination, model.id)
+        //     const confirmRes = await gpxService.confirm(ctx, model.positionAssignId, confirmedDate, model.destination, model.originalStaffId)
 
-            if (confirmRes !== true) {
-                return {
-                    ok: false,
-                    error: 'Request updated but could not send confirm to GPX or send email notifications'
-                }
-            }
-        }
+        //     if (confirmRes !== true) {
+        //         return {
+        //             ok: false,
+        //             error: 'Request updated but could not send confirm to GPX or send email notifications'
+        //         }
+        //     }
+        // }
 
         //Add BS
         if (model.requestedBy && model.requestedBy.email) {
@@ -706,19 +715,19 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
     }
     //Add BTT and createdBy to emails (X => CONFIRMED) and send confirm date to gpx
     else if (model.status === constants.Statuses.Confirmed) {
-        //Send confirm date to GPX
-        if (model.positionAssignId) {
-            const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
+        // //Send confirm date to GPX
+        // if (model.originalStaffId && model.positionAssignId) {
+        //     const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
 
-            const confirmRes = await gpxService.confirm(ctx, model.positionAssignId, confirmedDate, model.destination, model.id)
+        //     const confirmRes = await gpxService.confirm(ctx, model.positionAssignId, confirmedDate, model.destination, model.originalStaffId)
 
-            if (confirmRes !== true) {
-                return {
-                    ok: false,
-                    error: 'Request updated but could not send confirm to GPX or send email notifications'
-                }
-            }
-        }
+        //     if (confirmRes !== true) {
+        //         return {
+        //             ok: false,
+        //             error: 'Request updated but could not send confirm to GPX or send email notifications'
+        //         }
+        //     }
+        // }
 
         //Add BS
         if (model.requestedBy && model.requestedBy.email) {
@@ -761,5 +770,6 @@ module.exports = {
     getStaffsByGreenLight,
     getStaffByIdAndGreenLight,
     declineStaff,
-    confirmGreenLight
+    confirmGreenLight,
+    getNewOrPendingStaffByOriginalStaffId
 }

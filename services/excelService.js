@@ -2,6 +2,8 @@ const logger = require('tuin-logging')
 const xlsx = require('xlsx')
 const constants = require('../infrastructure/constants')
 const helpers = require('../infrastructure/helpers')
+const moment = require('moment-timezone')
+const config = require('../infrastructure/config')
 
 function generateExcel(staffs, type = 'binary') {
     try {
@@ -19,7 +21,7 @@ function generateExcel(staffs, type = 'binary') {
             const body = [
                 staff.id,
                 staff.greenLight === false && staff.status !== constants.Statuses.New ? `PendingHR (${staff.status})` : staff.status,
-                staff.created,
+                staff.created ? moment(staff.created, config.timezone).format('DD/MM/YYYY HH:mm') : '',
                 staff.confirmedStatus ? staff.confirmedStatus : '',
                 staff.dateOfConfirmation,
                 staff.greenLight !== undefined && staff.greenLight !== null ? (staff.greenLight == true ? 'YES' : 'NO') : '',

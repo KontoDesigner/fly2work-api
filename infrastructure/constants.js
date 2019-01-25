@@ -2,6 +2,8 @@ const keyMirror = require('keymirror')
 
 function StaffBS() {
     this.id = ''
+    this.originalStaffId = null
+    this.direction = null
     this.firstName = ''
     this.lastName = ''
     this.lastName2 = ''
