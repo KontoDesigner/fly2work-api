@@ -157,7 +157,7 @@ const insertStaffFromGpx = async (body, ctx) => {
 
     const getStaff = await getNewOrPendingStaffByOriginalStaffId(body.Id, body.Direction)
 
-    if (getStaff) {
+    if (getStaff && getStaff.status !== constants.Statuses.Confirmed) {
         const txt = `Request from GPX already exists, updating values and reverting status to: ${constants.Statuses.New}`
 
         logger.info(txt, {
@@ -359,7 +359,7 @@ const getStaffById = async id => {
 }
 
 const getNewOrPendingStaffByOriginalStaffId = async (originalStaffId, direction) => {
-    const staff = await mongo.collection('staffs').findOne({ originalStaffId, direction, status: { $ne: constants.Statuses.Confirmed } })
+    const staff = await mongo.collection('staffs').findOne({ originalStaffId, direction })
 
     return staff
 }
