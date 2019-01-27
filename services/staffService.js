@@ -240,7 +240,9 @@ const insertStaffFromGpx = async (body, ctx) => {
         })
 
         const comment = {
-            text: `Request from GPX with id: ${model.id} already exists with status: ${constants.Statuses.Confirmed}, allocating new request.`,
+            text: `Request sent from GPX with id: ${model.originalStaffId} already exists with status: ${
+                constants.Statuses.Confirmed
+            }, allocating new request.`,
             id: uuid.v1(),
             created: moment()._d,
             createdBy: 'SYSTEM',
