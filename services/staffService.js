@@ -155,22 +155,25 @@ const insertStaffFromGpx = async (body, ctx) => {
 
     let model = new constants.Staff()
 
-    const getStaff = await getNewOrPendingStaffByOriginalStaffId(body.Id, body.Direction)
+    const getStaff = await getNewOrPendingStaffByOriginalStaffIdAndDirection(body.Id, body.Direction)
 
-    if (getStaff && getStaff.status !== constants.Statuses.Confirmed) {
-        const txt = `Request from GPX already exists, updating values and reverting status to: ${constants.Statuses.New}`
-
-        logger.info(txt, {
-            url: ctx.url,
-            body,
-            getStaff
-        })
+    if (getStaff) {
+        logger.info(
+            `Request from GPX with status new or pending already exists, updating values and reverting status to: ${constants.Statuses.New}`,
+            {
+                url: ctx.url,
+                body,
+                getStaff
+            }
+        )
 
         model = getStaff
 
         if (getStaff.status !== constants.Statuses.New) {
             const comment = {
-                text: txt,
+                text: `Request from GPX with status new or pending and direction: ${
+                    body.Direction
+                } already exists, updating values and reverting status to: ${constants.Statuses.New}`,
                 id: uuid.v1(),
                 created: moment()._d,
                 createdBy: 'SYSTEM',
@@ -232,24 +235,28 @@ const insertStaffFromGpx = async (body, ctx) => {
         }
     }
 
-    if (getStaff && getStaff.status === constants.Statuses.Confirmed) {
-        logger.info(`Request from GPX already exists with status: ${constants.Statuses.Confirmed}, allocating new request`, {
-            url: ctx.url,
-            body,
-            getStaff
-        })
+    if (!getStaff) {
+        const confirmedExists = await getConfirmedStaffByOriginalStaffIdAndDirection(body.Id, body.Direction)
 
-        const comment = {
-            text: `Request sent from GPX with id: ${model.originalStaffId} already exists with status: ${
-                constants.Statuses.Confirmed
-            }, allocating new request.`,
-            id: uuid.v1(),
-            created: moment()._d,
-            createdBy: 'SYSTEM',
-            group: ''
+        if (confirmedExists) {
+            logger.info(`Request sent from GPX already exists with status: ${constants.Statuses.Confirmed}, allocating new request`, {
+                url: ctx.url,
+                body,
+                getStaff
+            })
+
+            const comment = {
+                text: `Request sent from GPX with id: ${model.originalStaffId} and direction: ${body.Direction} already exists with status: ${
+                    constants.Statuses.Confirmed
+                }, allocating new request.`,
+                id: uuid.v1(),
+                created: moment()._d,
+                createdBy: 'SYSTEM',
+                group: ''
+            }
+
+            model.comments.push(comment)
         }
-
-        model.comments.push(comment)
     }
 
     try {
@@ -360,8 +367,14 @@ const getStaffById = async id => {
     return staff
 }
 
-const getNewOrPendingStaffByOriginalStaffId = async (originalStaffId, direction) => {
-    const staff = await mongo.collection('staffs').findOne({ originalStaffId, direction })
+const getNewOrPendingStaffByOriginalStaffIdAndDirection = async (originalStaffId, direction) => {
+    const staff = await mongo.collection('staffs').findOne({ originalStaffId, direction, status: { $ne: constants.Statuses.Confirmed } })
+
+    return staff
+}
+
+const getConfirmedStaffByOriginalStaffIdAndDirection = async (originalStaffId, direction) => {
+    const staff = await mongo.collection('staffs').findOne({ originalStaffId, direction, status: constants.Statuses.Confirmed })
 
     return staff
 }
@@ -775,5 +788,6 @@ module.exports = {
     getStaffByIdAndGreenLight,
     declineStaff,
     confirmGreenLight,
-    getNewOrPendingStaffByOriginalStaffId
+    getNewOrPendingStaffByOriginalStaffIdAndDirection,
+    getConfirmedStaffByOriginalStaffIdAndDirection
 }
