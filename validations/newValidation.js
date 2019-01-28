@@ -11,7 +11,8 @@ const newValidation = Yup.object().shape({
         .nullable(true)
         .required('Direction is required'),
     plannedAssignmentStartDate: Yup.date()
-        .typeError('Planned assignment start date must be a datetime')
+        .format('DD/MM/YYYY')
+        .typeError('Incorrect planned assignment start date format (DD/MM/YYYY)')
         .nullable(true)
         .required('Planned assignment start date is required')
 })
