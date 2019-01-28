@@ -677,19 +677,21 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
 
     //Add BTT and createdBy to emails (PENDINGBTT => CONFIRMED) and send confirm date to gpx
     if (getStaff.status === constants.Statuses.PendingBTT && model.status === constants.Statuses.Confirmed) {
-        // //Send confirm date to GPX
-        // if (model.originalStaffId && model.positionAssignId) {
-        //     const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
+        //Send confirm date to GPX
+        if (config.sendConfirmToGPX === true) {
+            if (model.originalStaffId && model.positionAssignId) {
+                const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
 
-        //     const confirmRes = await gpxService.confirm(ctx, model.positionAssignId, confirmedDate, model.destination, model.originalStaffId)
+                const confirmRes = await gpxService.confirm(ctx, model.positionAssignId, confirmedDate, model.destination, model.originalStaffId)
 
-        //     if (confirmRes !== true) {
-        //         return {
-        //             ok: false,
-        //             error: 'Request updated but could not send confirm to GPX or send email notifications'
-        //         }
-        //     }
-        // }
+                if (confirmRes !== true) {
+                    return {
+                        ok: false,
+                        error: 'Request updated but could not send confirm to GPX or send email notifications'
+                    }
+                }
+            }
+        }
 
         //Add BS
         if (model.requestedBy && model.requestedBy.email) {
@@ -732,19 +734,21 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
     }
     //Add BTT and createdBy to emails (X => CONFIRMED) and send confirm date to gpx
     else if (model.status === constants.Statuses.Confirmed) {
-        // //Send confirm date to GPX
-        // if (model.originalStaffId && model.positionAssignId) {
-        //     const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
+        //Send confirm date to GPX
+        if (config.sendConfirmToGPX === true) {
+            if (model.originalStaffId && model.positionAssignId) {
+                const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
 
-        //     const confirmRes = await gpxService.confirm(ctx, model.positionAssignId, confirmedDate, model.destination, model.originalStaffId)
+                const confirmRes = await gpxService.confirm(ctx, model.positionAssignId, confirmedDate, model.destination, model.originalStaffId)
 
-        //     if (confirmRes !== true) {
-        //         return {
-        //             ok: false,
-        //             error: 'Request updated but could not send confirm to GPX or send email notifications'
-        //         }
-        //     }
-        // }
+                if (confirmRes !== true) {
+                    return {
+                        ok: false,
+                        error: 'Request updated but could not send confirm to GPX or send email notifications'
+                    }
+                }
+            }
+        }
 
         //Add BS
         if (model.requestedBy && model.requestedBy.email) {

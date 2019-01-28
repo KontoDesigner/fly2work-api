@@ -11,6 +11,7 @@ const config = {
     greenLightDestinations: process.env.GREENLIGHT_DESTINATIONS,
     maintenance: process.env.MAINTENANCE,
     timezone: process.env.TIMEZONE,
+    sendConfirmToGPX: process.env.SEND_CONFIRM_TO_GPX,
 
     emailBTTN: process.env.EMAIL_BTT_N,
     emailBTTNCC: process.env.EMAIL_BTT_N_CC,
