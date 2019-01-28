@@ -48,7 +48,7 @@ async function camelCase(ctx, next) {
 async function logIncomingRequest(ctx, next) {
     const start = Date.now()
 
-    return next().then(() => {
+    return await next().then(() => {
         if (ctx.url !== '/health') {
             const ms = Date.now() - start
 
