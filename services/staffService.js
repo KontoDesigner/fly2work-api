@@ -735,7 +735,7 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
     //Add BTT and createdBy to emails (X => CONFIRMED) and send confirm date to gpx
     else if (model.status === constants.Statuses.Confirmed) {
         //Send confirm date to GPX
-        if (config.sendConfirmToGPX === true) {
+        if (config.sendConfirmToGPX == true) {
             if (model.originalStaffId && model.positionAssignId) {
                 const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
 
