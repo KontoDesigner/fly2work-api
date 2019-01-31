@@ -22,6 +22,10 @@ const config = {
     emailBTTE: process.env.EMAIL_BTT_E,
     emailBTTECC: process.env.EMAIL_BTT_E_CC,
 
+    emailBTTUK: process.env.EMAIL_BTT_UK,
+    emailBTTUKCC: process.env.EMAIL_BTT_UK_CC,
+
+    emailUKSourceMarkets: process.env.EMAIL_UK_SOURCEMARKETS,
     emailNSourceMarkets: process.env.EMAIL_N_SOURCEMARKETS,
     emailWSourceMarkets: process.env.EMAIL_W_SOURCEMARKETS,
     emailESourceMarkets: process.env.EMAIL_E_SOURCEMARKETS,
