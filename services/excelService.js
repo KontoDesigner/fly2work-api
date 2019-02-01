@@ -122,7 +122,7 @@ function generateExcel(staffs, type = 'binary') {
 }
 
 function parseCost(val) {
-    var parsed = parseInt(val)
+    var parsed = parseFloat(val)
 
     if (isNaN(parsed)) {
         return 0
