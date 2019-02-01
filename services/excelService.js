@@ -70,7 +70,7 @@ function generateExcel(staffs, type = 'binary') {
                     body.push(flight.xbagCost)
                     body.push(flight.flightCost)
                     body.push(flight.hotelCost)
-                    body.push(parseCost(flight.flightCost) + parseCost(flight.xbagCost) + parseCost(flight.hotelCost))
+                    body.push((parseCost(flight.flightCost) + parseCost(flight.xbagCost) + parseCost(flight.hotelCost)).toFixed(2))
                     body.push(flight.costCentre)
                     body.push(flight.railFlyRequestedAndBooked === true ? 'YES' : 'NO')
                     body.push(flight.hotelNeededHotelName)

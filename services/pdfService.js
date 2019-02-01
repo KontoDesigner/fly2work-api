@@ -117,7 +117,9 @@ function getFlights(staff) {
                   { text: flight.hotelCost ? flight.hotelCost : ' ', style: 'cell' },
                   { text: 'Total Cost', bold: true, style: 'header' },
                   {
-                      text: helpers.parseCost(flight.flightCost) + helpers.parseCost(flight.xbagCost) + helpers.parseCost(flight.hotelCost),
+                      text: (helpers.parseCost(flight.flightCost) + helpers.parseCost(flight.xbagCost) + helpers.parseCost(flight.hotelCost)).toFixed(
+                          2
+                      ),
                       style: 'cell'
                   },
                   { text: 'Cost Centre', bold: true, style: 'header' },
