@@ -680,7 +680,7 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
         //Send confirm date to GPX
         if (config.sendConfirmToGPX === true) {
             if (model.originalStaffId && model.positionAssignId) {
-                const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
+                const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : model.flights[0].confirmedFlightDate
 
                 const confirmRes = await gpxService.confirm(
                     ctx,
@@ -744,7 +744,7 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
         //Send confirm date to GPX
         if (config.sendConfirmToGPX === true) {
             if (model.originalStaffId && model.positionAssignId) {
-                const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : moment()
+                const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : model.flights[0].confirmedFlightDate
 
                 const confirmRes = await gpxService.confirm(
                     ctx,
