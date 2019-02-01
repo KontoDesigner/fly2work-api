@@ -70,7 +70,13 @@ function generateExcel(staffs, type = 'binary') {
                     body.push(flight.xbagCost)
                     body.push(flight.flightCost)
                     body.push(flight.hotelCost)
-                    body.push((parseCost(flight.flightCost) + parseCost(flight.xbagCost) + parseCost(flight.hotelCost)).toFixed(2))
+                    body.push(
+                        (
+                            parseCost(flight.flightCost ? flight.flightCost.replace(',', '.') : 0) +
+                            parseCost(flight.xbagCost ? flight.xbagCost.replace(',', '.') : 0) +
+                            parseCost(flight.hotelCost ? flight.hotelCost.replace(',', '.') : 0)
+                        ).toFixed(2)
+                    )
                     body.push(flight.costCentre)
                     body.push(flight.railFlyRequestedAndBooked === true ? 'YES' : 'NO')
                     body.push(flight.hotelNeededHotelName)

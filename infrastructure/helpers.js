@@ -38,7 +38,11 @@ function getTotalCost(flights) {
     let totalCost = 0
 
     for (const flight of flights) {
-        totalCost = totalCost + (parseCost(flight.flightCost) + parseCost(flight.xbagCost) + parseCost(flight.hotelCost))
+        totalCost =
+            totalCost +
+            (parseCost(flight.flightCost ? flight.flightCost.replace(',', '.') : 0) +
+                parseCost(flight.xbagCost ? flight.xbagCost.replace(',', '.') : 0) +
+                parseCost(flight.hotelCost ? flight.hotelCost.replace(',', '.') : 0))
     }
 
     return totalCost.toFixed(2)
