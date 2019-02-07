@@ -225,6 +225,16 @@ const insertStaffFromGpx = async (body, ctx) => {
     } else {
         model.id = uuid.v1()
         model.created = moment()._d
+
+        model.audit.push({
+            updatedBy: 'GPX',
+            greenLightFrom: greenLight,
+            greenLightTo: greenLight,
+            statusFrom: constants.Statuses.New,
+            statusTo: constants.Statuses.New,
+            group: null,
+            date: new Date()
+        })
     }
 
     if (body.DateOfBirth) {
@@ -561,13 +571,13 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.greenLight = getStaff ? getStaff.greenLight : null
 
     if (add === true) {
-        return await insertStaff(ctx, model, getStaff, userName, userEmail, btt, user)
+        return await insertStaff(ctx, model, getStaff, userName, userEmail, btt, user, userRoles)
     } else {
         return await updateStaff(ctx, model, getStaff, userName, userRoles, btt, user)
     }
 }
 
-async function insertStaff(ctx, model, getStaff, userName, userEmail, btt, user) {
+async function insertStaff(ctx, model, getStaff, userName, userEmail, btt, user, userRoles) {
     if (btt === false) {
         model = Object.assign(model, new constants.StaffBTT())
     }
@@ -592,6 +602,16 @@ async function insertStaff(ctx, model, getStaff, userName, userEmail, btt, user)
         const greenLightDestinations = config.greenLightDestinations.split(',')
         model.greenLight = greenLightDestinations.includes(model.destination) ? false : null
     }
+
+    model.audit.push({
+        updatedBy: userName,
+        greenLightFrom: model.greenLight,
+        greenLightTo: model.greenLight,
+        statusFrom: constants.Statuses.New,
+        statusTo: model.greenLight === false ? 'PendingHR' : model.status,
+        group: userRoles.join(', '),
+        date: new Date()
+    })
 
     let insertOne = {}
 
