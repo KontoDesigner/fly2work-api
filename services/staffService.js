@@ -522,6 +522,8 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.requestedBy = getStaff ? getStaff.requestedBy : null
     model.direction = getStaff ? getStaff.direction : null
     model.originalStaffId = getStaff ? getStaff.originalStaffId : null
+    model.greenLightUpdated = getStaff ? getStaff.greenLightUpdated : null
+    model.greenLightUpdatedBy = getStaff ? getStaff.greenLightUpdatedBy : null
     if (add === true && model.comment && model.comment !== '') {
         const comment = {
             text: model.comment,
