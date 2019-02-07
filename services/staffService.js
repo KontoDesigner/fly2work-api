@@ -79,14 +79,13 @@ const confirmGreenLight = async (body, ctx) => {
     logger.info('Confirm green light result', { url: ctx.url, id, replaceOne, user })
 
     if (getStaff.status === constants.Statuses.PendingBTT) {
-        let emails = {
-            to: [],
-            cc: []
-        }
+        let emails = helpers.getBTTEmails(getStaff.sourceMarket)
 
         if (getStaff.requestedBy && getStaff.requestedBy.email) {
             emails.to.push(getStaff.requestedBy.email)
+        }
 
+        if (emails.to.length > 0) {
             const statusText = `PendingHR => ${getStaff.status}`
 
             getStaff.greenLight = true
