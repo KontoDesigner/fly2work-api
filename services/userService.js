@@ -9,17 +9,7 @@ const getUserRoles = async (ctx, user = null) => {
 
     const userRoles = []
 
-    if (uR.includes('DS_F2W_HR_Team')) {
-        userRoles.push(constants.UserRoles.HR)
-    }
-
-    if (uR.includes('DS_F2W_Edit')) {
-        userRoles.push(constants.UserRoles.BS)
-    }
-
-    if (uR.includes('DS_F2W_Business_Travel_Team')) {
-        userRoles.push(constants.UserRoles.BTT)
-    }
+    userRoles.push(constants.UserRoles.BS)
 
     return userRoles
 }
