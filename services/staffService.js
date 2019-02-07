@@ -657,8 +657,8 @@ async function updateStaff(ctx, model, getStaff, userName, userRoles, btt, user)
         updatedBy: userName,
         greenLightFrom: getStaff.greenLight,
         greenLightTo: getStaff.greenLight,
-        statusFrom: getStaff.status,
-        statusTo: model.status,
+        statusFrom: getStaff.greenLight === false ? 'PendingHR' : getStaff.status,
+        statusTo: getStaff.greenLight === false ? 'PendingHR' : model.status,
         group: userRoles.join(', '),
         date: new Date()
     })
