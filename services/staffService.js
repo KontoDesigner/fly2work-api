@@ -179,6 +179,10 @@ const insertStaffFromGpx = async (body, ctx) => {
 
     let model = new constants.Staff()
 
+    const destination = body.Destination ? body.Destination : ''
+    const greenLightDestinations = config.greenLightDestinations.split(',')
+    const greenLight = greenLightDestinations.includes(destination) ? false : null
+
     const getStaff = await getNewOrPendingStaffByOriginalStaffIdAndDirection(body.Id, body.Direction)
 
     if (getStaff) {
@@ -192,6 +196,18 @@ const insertStaffFromGpx = async (body, ctx) => {
         )
 
         model = getStaff
+
+        const audit = {
+            updatedBy: 'SYSTEM',
+            greenLightFrom: getStaff.greenLight,
+            greenLightTo: greenLight,
+            statusFrom: getStaff.greenLight === false ? 'PendingHR' : getStaff.status,
+            statusTo: constants.Statuses.New,
+            group: null,
+            date: new Date()
+        }
+
+        model.audit.push(audit)
 
         if (getStaff.status !== constants.Statuses.New) {
             const comment = {
@@ -229,8 +245,6 @@ const insertStaffFromGpx = async (body, ctx) => {
         }
     }
 
-    const greenLightDestinations = config.greenLightDestinations.split(',')
-
     model.originalStaffId = body.Id
     model.direction = body.Direction
     model.firstName = body.FirstName ? body.FirstName : ''
@@ -240,10 +254,10 @@ const insertStaffFromGpx = async (body, ctx) => {
     model.phone = body.Phone ? body.Phone : ''
     model.status = constants.Statuses.New
     model.gender = body.Gender ? body.Gender : ''
-    model.destination = body.Destination ? body.Destination : ''
+    model.destination = destination
     model.jobTitle = body.JobTitle ? body.JobTitle : ''
     model.iataCode = body.IataCode ? body.IataCode : ''
-    model.greenLight = greenLightDestinations.includes(model.destination) ? false : null
+    model.greenLight = greenLight
     model.positionAssignId = body.PositionAssignId ? body.PositionAssignId : null
 
     const validation = await newValidation.validate(model, { abortEarly: false }).catch(function(err) {
