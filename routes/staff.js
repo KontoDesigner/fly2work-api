@@ -26,6 +26,23 @@ router.post(
 
 //BTT
 router.post(
+    `${BASE}/delete`,
+    (ctx, next) => auth(ctx, next, [constants.UserRoles.BTT]),
+    async (ctx, next) => {
+        const body = ctx.request.body
+
+        const res = await staffService.deleteStaff(body, ctx)
+
+        ctx.body = res
+
+        logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, body })
+
+        return await next()
+    }
+)
+
+//BTT
+router.post(
     `${BASE}/decline`,
     (ctx, next) => auth(ctx, next, [constants.UserRoles.BTT]),
     async (ctx, next) => {

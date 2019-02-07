@@ -13,6 +13,31 @@ const config = require('../infrastructure/config')
 const uuid = require('node-uuid')
 const gpxService = require('./gpxService')
 
+const deleteStaff = async (body, ctx) => {
+    const id = body.id
+    const user = await userService.getUser(ctx)
+    const getStaff = await mongo.collection('staffs').findOne({ id: id })
+
+    let remove = {}
+
+    try {
+        remove = (await mongo.collection('staffs').remove({ id: id })).result
+    } catch (err) {
+        logger.error('Error deleting staff', err, { url: ctx.url, id, user, getStaff })
+
+        return {
+            ok: false,
+            error: 'Delete staff failed'
+        }
+    }
+
+    logger.info('Delete staff result', { url: ctx.url, id, remove, user, getStaff })
+
+    return {
+        ok: true
+    }
+}
+
 const confirmGreenLight = async (body, ctx) => {
     const id = body.id
 
@@ -43,7 +68,7 @@ const confirmGreenLight = async (body, ctx) => {
             }
         )).result
     } catch (err) {
-        logger.error('Error confirming green light', err, { url: ctx.url, id })
+        logger.error('Error confirming green light', err, { url: ctx.url, id, user })
 
         return {
             ok: false,
@@ -51,7 +76,7 @@ const confirmGreenLight = async (body, ctx) => {
         }
     }
 
-    logger.info('Confirm green light result', { url: ctx.url, id, replaceOne })
+    logger.info('Confirm green light result', { url: ctx.url, id, replaceOne, user })
 
     if (getStaff.status === constants.Statuses.PendingBTT) {
         let emails = {
@@ -83,6 +108,10 @@ const confirmGreenLight = async (body, ctx) => {
 }
 
 const declineStaff = async (body, ctx) => {
+    const user = await userService.getUser(ctx)
+    const userName = await userService.getUserName(ctx, user)
+    const userRoles = await userService.getUserRoles(ctx, user)
+
     const model = {
         id: body.id,
         text: body.text
@@ -93,17 +122,13 @@ const declineStaff = async (body, ctx) => {
     })
 
     if (validation.errors && validation.errors.length > 0) {
-        logger.warning('Decline staff validation failed, aborting', { url: ctx.url, model, validation })
+        logger.warning('Decline staff validation failed, aborting', { url: ctx.url, model, validation, user })
 
         return {
             ok: false,
             errors: validation.errors
         }
     }
-
-    const user = await userService.getUser(ctx)
-    const userName = await userService.getUserName(ctx, user)
-    const userRoles = await userService.getUserRoles(ctx, user)
 
     const comment = {
         text: model.text,
@@ -135,7 +160,7 @@ const declineStaff = async (body, ctx) => {
                 { $push: { comments: comment, audit: audit }, $set: { status: constants.Statuses.PendingDES } }
             )).result
     } catch (err) {
-        logger.error('Error declining staff', err, { url: ctx.url, model })
+        logger.error('Error declining staff', err, { url: ctx.url, model, user })
 
         return {
             ok: false,
@@ -143,7 +168,7 @@ const declineStaff = async (body, ctx) => {
         }
     }
 
-    logger.info('Decline staff result', { url: ctx.url, model: model, replaceOne })
+    logger.info('Decline staff result', { url: ctx.url, model: model, replaceOne, user })
 
     return {
         ok: true
@@ -807,5 +832,6 @@ module.exports = {
     declineStaff,
     confirmGreenLight,
     getNewOrPendingStaffByOriginalStaffIdAndDirection,
-    getConfirmedStaffByOriginalStaffIdAndDirection
+    getConfirmedStaffByOriginalStaffIdAndDirection,
+    deleteStaff
 }
