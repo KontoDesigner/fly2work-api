@@ -1,4 +1,4 @@
-const logger = require('tuin-logging')
+const logger = require('../infrastructure/logger')
 const xlsx = require('xlsx')
 const constants = require('../infrastructure/constants')
 const helpers = require('../infrastructure/helpers')

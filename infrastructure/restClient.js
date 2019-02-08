@@ -1,5 +1,5 @@
 const axios = require('axios')
-const logger = require('tuin-logging')
+const logger = require('./logger')
 
 async function get(url, ctx) {
     let config = {}

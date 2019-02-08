@@ -1,7 +1,7 @@
 const router = require('koa-better-router')().loadMethods()
 const userService = require('../services/userService')
 const auth = require('../infrastructure/auth')
-const logger = require('tuin-logging')
+const logger = require('../infrastructure/logger')
 
 const BASE = '/user'
 

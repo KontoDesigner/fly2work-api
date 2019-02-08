@@ -2,7 +2,7 @@ const router = require('koa-better-router')().loadMethods()
 const attachmentService = require('../services/attachmentService')
 const asyncBusboy = require('async-busboy')
 const auth = require('../infrastructure/auth')
-const logger = require('tuin-logging')
+const logger = require('../infrastructure/logger')
 
 const BASE = '/attachment'
 

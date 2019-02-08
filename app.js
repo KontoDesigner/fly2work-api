@@ -1,5 +1,5 @@
 const Koa = require('koa')
-const logger = require('tuin-logging')
+const logger = require('./infrastructure/logger')
 const camelcaseKeys = require('camelcase-keys')
 const routes = require('./routes')
 const bodyParser = require('koa-bodyparser')

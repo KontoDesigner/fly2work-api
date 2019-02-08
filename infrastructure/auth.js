@@ -1,6 +1,6 @@
 const passport = require('koa-passport')
 const userService = require('../services/userService')
-const logger = require('tuin-logging')
+const logger = require('./logger')
 const config = require('./config')
 
 async function auth(ctx, next, roles = []) {

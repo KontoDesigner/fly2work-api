@@ -1,5 +1,5 @@
 const mongo = require('../infrastructure/mongo')
-const logger = require('tuin-logging')
+const logger = require('../infrastructure/logger')
 const constants = require('../infrastructure/constants')
 const bsValidation = require('../validations/bsValidation')
 const bttValidation = require('../validations/bttValidation')

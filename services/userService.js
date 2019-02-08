@@ -1,6 +1,6 @@
 const constants = require('../infrastructure/constants')
 const passport = require('koa-passport')
-const logger = require('tuin-logging')
+const logger = require('../infrastructure/logger')
 
 const getUserRoles = async (ctx, user = null) => {
     const u = user ? user : await getUser(ctx)

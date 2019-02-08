@@ -1,5 +1,5 @@
 const app = require('./app')
-const logger = require('tuin-logging')
+const logger = require('./infrastructure/logger')
 
 const port = process.env.SERVICE_PORT || 5000
 

@@ -1,4 +1,4 @@
-const logger = require('tuin-logging')
+const logger = require('../infrastructure/logger')
 const mongo = require('../infrastructure/mongo')
 const moment = require('moment')
 const uuid = require('node-uuid')

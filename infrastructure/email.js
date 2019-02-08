@@ -1,4 +1,4 @@
-const logger = require('tuin-logging')
+const logger = require('./logger')
 const restClient = require('./restClient')
 const config = require('./config')
 const constants = require('./constants')

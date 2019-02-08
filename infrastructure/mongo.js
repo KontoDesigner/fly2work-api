@@ -1,4 +1,4 @@
-const logger = require('tuin-logging')
+const logger = require('./logger')
 const mongo = require('mongodb')
 const config = require('./config')
 const MongoClient = mongo.MongoClient

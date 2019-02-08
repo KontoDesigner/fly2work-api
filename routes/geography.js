@@ -1,7 +1,7 @@
 const router = require('koa-better-router')().loadMethods()
 const geographyService = require('../services/geographyService')
 const auth = require('../infrastructure/auth')
-const logger = require('tuin-logging')
+const logger = require('../infrastructure/logger')
 
 const BASE = '/geography'
 

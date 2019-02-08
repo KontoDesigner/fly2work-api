@@ -3,7 +3,7 @@ const staffService = require('../services/staffService')
 const auth = require('../infrastructure/auth')
 const constants = require('../infrastructure/constants')
 const uuid = require('node-uuid')
-const logger = require('tuin-logging')
+const logger = require('../infrastructure/logger')
 
 const BASE = '/staff'
 

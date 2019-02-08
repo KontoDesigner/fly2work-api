@@ -1,4 +1,4 @@
-const logger = require('tuin-logging')
+const logger = require('../infrastructure/logger')
 const pdfMakePrinter = require('pdfmake/src/printer')
 const constants = require('../infrastructure/constants')
 const helpers = require('../infrastructure/helpers')

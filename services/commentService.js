@@ -1,5 +1,5 @@
 const mongo = require('../infrastructure/mongo')
-const logger = require('tuin-logging')
+const logger = require('../infrastructure/logger')
 const commentValidation = require('../validations/commentValidation')
 const uuid = require('node-uuid')
 const moment = require('moment')
