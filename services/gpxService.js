@@ -19,7 +19,7 @@ async function confirm(ctx, positionAssignId, confirmedDate, destination, staffI
     try {
         res = await restClient.post(`${config.gpxApi}/ctx/confirm`, req, ctx)
 
-        logger.info('GPX confirm result', { req })
+        logger.info('GPX confirm result', { req, res })
 
         if (res.ok === true) {
             return true
