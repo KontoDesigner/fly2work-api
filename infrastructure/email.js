@@ -51,6 +51,7 @@ async function send(staff, statusText, emails) {
     email.bccTo = []
 
     email.body = `
+    ${config.environment !== 'PROD' ? `WARNING! ENVIRONMENT: ${config.environment}! NO FURTHER ACTIONS!<br><br>` : ''}
     ${statusText}
     ${comments.length > 0 ? `<br><br>${table}<br>` : '<br><br>'}
     Please kindly find the attached file(s)
