@@ -12,7 +12,7 @@ const config = {
     maintenance: process.env.MAINTENANCE == 'true',
     timezone: process.env.TIMEZONE,
     sendConfirmToGPX: process.env.SEND_CONFIRM_TO_GPX == 'true',
-    scope: process.env.SCOPE,
+    scope: process.env.SCOPE.toUpperCase(),
 
     emailBTTN: process.env.EMAIL_BTT_N,
     emailBTTNCC: process.env.EMAIL_BTT_N_CC,
