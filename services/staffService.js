@@ -228,7 +228,7 @@ const insertStaffFromGpx = async (body, ctx) => {
 
         model.audit.push({
             updatedBy: 'GPX',
-            greenLightFrom: greenLight,
+            greenLightFrom: null,
             greenLightTo: greenLight,
             statusFrom: constants.Statuses.New,
             statusTo: constants.Statuses.New,
