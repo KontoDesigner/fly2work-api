@@ -96,6 +96,8 @@ async function send(staff, statusText, emails) {
 
         if (res.ok === true) {
             return true
+        } else {
+            logger.warning('Could not send email', { res, staff, mailApi, statusText, emails })
         }
     } catch (err) {
         logger.error('Error sending email', err, { staff, email, mailApi, statusText, emails })

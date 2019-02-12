@@ -23,6 +23,8 @@ async function confirm(ctx, positionAssignId, confirmedDate, destination, staffI
 
         if (res.ok === true) {
             return true
+        } else {
+            logger.warning('Could not send confirm to GPX', { req, res })
         }
     } catch (err) {
         logger.error('Error GPX confirm', err, { req })
