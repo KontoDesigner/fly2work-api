@@ -21,7 +21,7 @@ const deleteStaff = async (body, ctx) => {
     let remove = {}
 
     try {
-        remove = (await mongo.collection('staffs').remove({ id: id })).result
+        remove = (await mongo.collection('staffs').deleteOne({ id: id })).result
     } catch (err) {
         logger.error('Error deleting staff', err, { url: ctx.url, id, user, getStaff })
 
