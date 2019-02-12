@@ -334,7 +334,7 @@ const insertStaffFromGpx = async (body, ctx) => {
 const getStaffs = async () => {
     const staffs = await mongo
         .collection('staffs')
-        .find({}, { fields: { attachments: 0 } })
+        .find({}, { projection: { attachments: 0 } })
         .toArray()
 
     return staffs
@@ -377,7 +377,7 @@ const getStaffsByGreenLight = async greenLight => {
 
     const staffs = await mongo
         .collection('staffs')
-        .find({ greenLight: parseGreenLight, status: { $ne: constants.Statuses.New } }, { fields: { attachments: 0 } })
+        .find({ greenLight: parseGreenLight, status: { $ne: constants.Statuses.New } }, { projection: { attachments: 0 } })
         .toArray()
 
     return staffs
@@ -397,12 +397,12 @@ const getStaffsByStatus = async status => {
     if (status === constants.Statuses.New) {
         staffs = await mongo
             .collection('staffs')
-            .find({ status: status }, { fields: { attachments: 0 } })
+            .find({ status: status }, { projection: { attachments: 0 } })
             .toArray()
     } else {
         staffs = await mongo
             .collection('staffs')
-            .find({ status: status, greenLight: { $ne: false } }, { fields: { attachments: 0 } })
+            .find({ status: status, greenLight: { $ne: false } }, { projection: { attachments: 0 } })
             .toArray()
     }
 
