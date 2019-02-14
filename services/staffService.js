@@ -201,7 +201,7 @@ const insertStaffFromGpx = async (body, ctx) => {
             updatedBy: 'SYSTEM',
             greenLightFrom: getStaff.greenLight,
             greenLightTo: greenLight,
-            statusFrom: getStaff.greenLight === false ? 'PendingHR' : getStaff.status,
+            statusFrom: getStaff.status !== constants.Statuses.New && getStaff.greenLight === false ? 'PendingHR' : getStaff.status,
             statusTo: constants.Statuses.New,
             group: null,
             date: new Date()
@@ -607,7 +607,7 @@ async function insertStaff(ctx, model, getStaff, userName, userEmail, btt, user,
         updatedBy: userName,
         greenLightFrom: model.greenLight,
         greenLightTo: model.greenLight,
-        statusFrom: constants.Statuses.New,
+        statusFrom: model.greenLight === false ? 'PendingHR' : model.status,
         statusTo: model.greenLight === false ? 'PendingHR' : model.status,
         group: userRoles.join(', '),
         date: new Date()
@@ -723,7 +723,7 @@ async function updateStaff(ctx, model, getStaff, userName, userRoles, btt, user)
 }
 
 async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
-    const statusText = `${getStaff.greenLight === false ? 'PendingHR' : getStaff.status} => ${
+    const statusText = `${getStaff.greenLight === false && getStaff.status !== constants.Statuses.New ? 'PendingHR' : getStaff.status} => ${
         getStaff.greenLight === false ? 'PendingHR' : model.status
     }`
 
@@ -735,8 +735,31 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
         emails.to.push(config.emailHR)
     }
 
+    //Add BTT and createdBy to emails (NEW => PENDINGBTT)
+    if (getStaff.status === constants.Statuses.New && model.status === constants.Statuses.PendingBTT) {
+        //Add BS
+        if (model.requestedBy && model.requestedBy.email) {
+            emails.to.push(model.requestedBy.email)
+        }
+
+        //Add additional emails
+        if (model.emails && model.emails.length > 0) {
+            emails.to.push(model.emails)
+        }
+
+        if (emails.to.length > 0) {
+            const emailRes = await email.send(model, statusText, emails)
+
+            if (emailRes === false) {
+                return {
+                    ok: false,
+                    error: 'Request updated but could not send email notification'
+                }
+            }
+        }
+    }
     //Add BTT and createdBy to emails (PENDINGBTT => CONFIRMED) and send confirm date to gpx
-    if (getStaff.status === constants.Statuses.PendingBTT && model.status === constants.Statuses.Confirmed) {
+    else if (getStaff.status === constants.Statuses.PendingBTT && model.status === constants.Statuses.Confirmed) {
         //Send confirm date to GPX
         if (config.sendConfirmToGPX === true) {
             if (model.originalStaffId && model.positionAssignId) {
