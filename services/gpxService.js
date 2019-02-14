@@ -3,8 +3,8 @@ const restClient = require('../infrastructure/restClient')
 const config = require('../infrastructure/config')
 const moment = require('moment')
 
-async function confirm(ctx, positionAssignId, confirmedDate, destination, staffId, direction) {
-    logger.info('Sending GPX confirm request', { positionAssignId, confirmedDate })
+async function confirm(ctx, positionAssignId, confirmedDate, destination, staffId, direction, user) {
+    logger.info('Sending GPX confirm request', { positionAssignId, confirmedDate, destination, staffId, direction, user })
 
     const req = {
         PositionAssignId: positionAssignId,
@@ -19,15 +19,15 @@ async function confirm(ctx, positionAssignId, confirmedDate, destination, staffI
     try {
         res = await restClient.post(`${config.gpxApi}/ctx/confirm`, req, ctx)
 
-        logger.info('GPX confirm result', { req, res })
+        logger.info('GPX confirm result', { req, res, user })
 
         if (res.ok === true) {
             return true
         } else {
-            logger.warning('Could not send confirm to GPX', { req, res })
+            logger.warning('Could not send confirm to GPX', { req, res, user })
         }
     } catch (err) {
-        logger.error('Error GPX confirm', err, { req })
+        logger.error('Error GPX confirm', err, { req, user })
     }
 
     return false

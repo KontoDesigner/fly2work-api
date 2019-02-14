@@ -7,14 +7,11 @@ const BASE = '/user'
 
 router.get(`${BASE}/getuser`, auth, async (ctx, next) => {
     const user = await userService.getUser(ctx)
-    const userName = await userService.getUserName(ctx, user)
-    const userRoles = await userService.getUserRoles(ctx, user)
-    const userEmail = await userService.getUserEmail(ctx, user)
 
     const res = {
-        userName,
-        userRoles,
-        userEmail
+        userName: user.name,
+        userRoles: user.roles,
+        userEmail: user.email
     }
 
     ctx.body = res

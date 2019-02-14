@@ -42,18 +42,16 @@ const confirmGreenLight = async (body, ctx) => {
     const id = body.id
 
     const user = await userService.getUser(ctx)
-    const userName = await userService.getUserName(ctx, user)
-    const userRoles = await userService.getUserRoles(ctx, user)
 
     const getStaff = await mongo.collection('staffs').findOne({ id: id })
 
     const audit = {
-        updatedBy: userName,
+        updatedBy: user.name,
         statusFrom: 'PendingHR',
         statusTo: getStaff ? getStaff.status : '',
         greenLightFrom: false,
         greenLightTo: true,
-        group: userRoles.join(', '),
+        group: user.roles.join(', '),
         date: new Date()
     }
 
@@ -64,7 +62,7 @@ const confirmGreenLight = async (body, ctx) => {
             { id: id, greenLight: false },
             {
                 $push: { audit: audit },
-                $set: { greenLight: true, greenLightUpdated: moment().format('DD/MM/YYYY HH:mm'), greenLightUpdatedBy: userName }
+                $set: { greenLight: true, greenLightUpdated: moment().format('DD/MM/YYYY HH:mm'), greenLightUpdatedBy: user.name }
             }
         )).result
     } catch (err) {
@@ -108,8 +106,6 @@ const confirmGreenLight = async (body, ctx) => {
 
 const declineStaff = async (body, ctx) => {
     const user = await userService.getUser(ctx)
-    const userName = await userService.getUserName(ctx, user)
-    const userRoles = await userService.getUserRoles(ctx, user)
 
     const model = {
         id: body.id,
@@ -133,19 +129,19 @@ const declineStaff = async (body, ctx) => {
         text: model.text,
         id: uuid.v1(),
         created: moment()._d,
-        createdBy: userName,
-        group: userRoles.join(', ')
+        createdBy: user.name,
+        group: user.roles.join(', ')
     }
 
     const getStaff = await mongo.collection('staffs').findOne({ id: model.id })
 
     const audit = {
-        updatedBy: userName,
+        updatedBy: user.name,
         greenLightFrom: getStaff ? getStaff.greenLight : null,
         greenLightTo: getStaff ? getStaff.greenLight : null,
         statusFrom: constants.Statuses.PendingBTT,
         statusTo: constants.Statuses.PendingDES,
-        group: userRoles.join(', '),
+        group: user.roles.join(', '),
         date: new Date()
     }
 
@@ -441,9 +437,6 @@ const getStaffByIdAndStatus = async (id, status) => {
 
 const updateOrInsertStaff = async (body, ctx) => {
     const user = await userService.getUser(ctx)
-    const userName = await userService.getUserName(ctx, user)
-    const userRoles = await userService.getUserRoles(ctx, user)
-    const userEmail = await userService.getUserEmail(ctx, user)
 
     let model = new constants.StaffBS()
 
@@ -477,7 +470,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.emails = body.emails
     model.comment = body.comment
 
-    const btt = userRoles.includes(constants.UserRoles.BTT)
+    const btt = user.roles.includes(constants.UserRoles.BTT)
 
     if (btt === true && model.status === constants.Statuses.Confirmed) {
         model.confirmedStatus = body.confirmedStatus
@@ -553,8 +546,8 @@ const updateOrInsertStaff = async (body, ctx) => {
             text: model.comment,
             id: uuid.v1(),
             created: moment()._d,
-            createdBy: userName,
-            group: userRoles.join(', ')
+            createdBy: user.name,
+            group: user.roles.join(', ')
         }
 
         model.comments = [comment]
@@ -571,13 +564,13 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.greenLight = getStaff ? getStaff.greenLight : null
 
     if (add === true) {
-        return await insertStaff(ctx, model, getStaff, userName, userEmail, btt, user, userRoles)
+        return await insertStaff(ctx, model, getStaff, btt, user)
     } else {
-        return await updateStaff(ctx, model, getStaff, userName, userRoles, btt, user)
+        return await updateStaff(ctx, model, getStaff, btt, user)
     }
 }
 
-async function insertStaff(ctx, model, getStaff, userName, userEmail, btt, user, userRoles) {
+async function insertStaff(ctx, model, getStaff, btt, user) {
     if (btt === false) {
         model = Object.assign(model, new constants.StaffBTT())
     }
@@ -593,8 +586,8 @@ async function insertStaff(ctx, model, getStaff, userName, userEmail, btt, user,
 
     model.created = moment()._d
     model.requestedBy = {
-        name: userName,
-        email: userEmail
+        name: user.name,
+        email: user.email
     }
     model.status = constants.Statuses.PendingBTT
 
@@ -604,12 +597,12 @@ async function insertStaff(ctx, model, getStaff, userName, userEmail, btt, user,
     }
 
     model.audit.push({
-        updatedBy: userName,
+        updatedBy: user.name,
         greenLightFrom: model.greenLight,
         greenLightTo: model.greenLight,
-        statusFrom: model.greenLight === false ? 'PendingHR' : model.status,
+        statusFrom: constants.Statuses.New,
         statusTo: model.greenLight === false ? 'PendingHR' : model.status,
-        group: userRoles.join(', '),
+        group: user.roles.join(', '),
         date: new Date()
     })
 
@@ -677,7 +670,7 @@ async function sendInsertEmails(ctx, model, user) {
     }
 }
 
-async function updateStaff(ctx, model, getStaff, userName, userRoles, btt, user) {
+async function updateStaff(ctx, model, getStaff, btt, user) {
     if (btt === false && getStaff.status !== constants.Statuses.Confirmed && model.status === constants.Statuses.Confirmed) {
         logger.error('BS is trying to set request status to confirm', { url: ctx.url, getStaff, model, user })
 
@@ -688,12 +681,12 @@ async function updateStaff(ctx, model, getStaff, userName, userRoles, btt, user)
     }
 
     model.audit.push({
-        updatedBy: userName,
+        updatedBy: user.name,
         greenLightFrom: getStaff.greenLight,
         greenLightTo: getStaff.greenLight,
         statusFrom: getStaff.status,
         statusTo: getStaff.greenLight === false ? 'PendingHR' : model.status,
-        group: userRoles.join(', '),
+        group: user.roles.join(', '),
         date: new Date()
     })
 
@@ -735,7 +728,7 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
         emails.to.push(config.emailHR)
     }
 
-    //Add BTT and createdBy to emails (NEW => PENDINGBTT)
+    //Send (NEW => PENDINGBTT)
     if (getStaff.status === constants.Statuses.New && model.status === constants.Statuses.PendingBTT) {
         //Add BS
         if (model.requestedBy && model.requestedBy.email) {
@@ -758,27 +751,26 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
             }
         }
     }
-    //Add BTT and createdBy to emails (PENDINGBTT => CONFIRMED) and send confirm date to gpx
+    //Send (PENDINGBTT => CONFIRMED) + Confirm
     else if (getStaff.status === constants.Statuses.PendingBTT && model.status === constants.Statuses.Confirmed) {
         //Send confirm date to GPX
-        if (config.sendConfirmToGPX === true) {
-            if (model.originalStaffId && model.positionAssignId) {
-                const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : model.flights[0].confirmedFlightDate
+        if (config.sendConfirmToGPX === true && model.originalStaffId && model.positionAssignId) {
+            const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : model.flights[0].confirmedFlightDate
 
-                const confirmRes = await gpxService.confirm(
-                    ctx,
-                    model.positionAssignId,
-                    confirmedDate,
-                    model.destination,
-                    model.originalStaffId,
-                    model.direction
-                )
+            const confirmRes = await gpxService.confirm(
+                ctx,
+                model.positionAssignId,
+                confirmedDate,
+                model.destination,
+                model.originalStaffId,
+                model.direction,
+                user
+            )
 
-                if (confirmRes !== true) {
-                    return {
-                        ok: false,
-                        error: 'Request updated but could not send confirm to GPX or send email notifications'
-                    }
+            if (confirmRes !== true) {
+                return {
+                    ok: false,
+                    error: 'Request updated but could not send confirm to GPX or send email notifications'
                 }
             }
         }
@@ -804,7 +796,7 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
             }
         }
     }
-    //Add BTT to emails (PENDINGDES => PendingBTT)
+    //Send (PENDINGDES => PendingBTT)
     else if (getStaff.status === constants.Statuses.PendingDES && model.status === constants.Statuses.PendingBTT) {
         //Add additional emails
         if (model.emails && model.emails.length > 0) {
@@ -822,27 +814,26 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
             }
         }
     }
-    //Add BTT and createdBy to emails (X => CONFIRMED) and send confirm date to gpx
+    //Send (X => CONFIRMED) + Confirm
     else if (model.status === constants.Statuses.Confirmed) {
         //Send confirm date to GPX
-        if (config.sendConfirmToGPX === true) {
-            if (model.originalStaffId && model.positionAssignId) {
-                const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : model.flights[0].confirmedFlightDate
+        if (config.sendConfirmToGPX === true && model.originalStaffId && model.positionAssignId) {
+            const confirmedDate = model.confirmedStatus === constants.ConfirmedStatuses.Cancelled ? null : model.flights[0].confirmedFlightDate
 
-                const confirmRes = await gpxService.confirm(
-                    ctx,
-                    model.positionAssignId,
-                    confirmedDate,
-                    model.destination,
-                    model.originalStaffId,
-                    model.direction
-                )
+            const confirmRes = await gpxService.confirm(
+                ctx,
+                model.positionAssignId,
+                confirmedDate,
+                model.destination,
+                model.originalStaffId,
+                model.direction,
+                user
+            )
 
-                if (confirmRes !== true) {
-                    return {
-                        ok: false,
-                        error: 'Request updated but could not send confirm to GPX or send email notifications'
-                    }
+            if (confirmRes !== true) {
+                return {
+                    ok: false,
+                    error: 'Request updated but could not send confirm to GPX or send email notifications'
                 }
             }
         }

@@ -6,12 +6,14 @@ const moment = require('moment')
 const userService = require('./userService')
 
 const insertComment = async (staffId, comment, ctx) => {
+    const user = await userService.getUser(ctx)
+
     const validation = await commentValidation.validate(comment, { abortEarly: false }).catch(function(err) {
         return err
     })
 
     if (validation.errors && validation.errors.length > 0) {
-        logger.warning('Comment model validation failed, aborting', { url: ctx.url, comment, validation, staffId })
+        logger.warning('Comment model validation failed, aborting', { url: ctx.url, comment, validation, staffId, user })
 
         return {
             ok: false,
@@ -19,14 +21,10 @@ const insertComment = async (staffId, comment, ctx) => {
         }
     }
 
-    const user = await userService.getUser(ctx)
-    const userName = await userService.getUserName(ctx, user)
-    const userRoles = await userService.getUserRoles(ctx, user)
-
     comment.id = uuid.v1()
     comment.created = moment()._d
-    comment.createdBy = userName
-    comment.group = userRoles.join(', ')
+    comment.createdBy = user.name
+    comment.group = user.roles.join(', ')
 
     try {
         const updateOne = await mongo.collection('staffs').updateOne({ id: staffId }, { $push: { comments: comment } })
@@ -34,7 +32,8 @@ const insertComment = async (staffId, comment, ctx) => {
         logger.info('Insert comment result', {
             staffId,
             comment,
-            result: updateOne.result
+            result: updateOne.result,
+            user
         })
 
         if (updateOne.result.ok === 1) {
@@ -44,7 +43,7 @@ const insertComment = async (staffId, comment, ctx) => {
             }
         }
     } catch (err) {
-        logger.error('Error inserting comment', err, { staffId, commentId, url: ctx.url })
+        logger.error('Error inserting comment', err, { staffId, commentId, url: ctx.url, user })
     }
 
     return {
@@ -53,10 +52,12 @@ const insertComment = async (staffId, comment, ctx) => {
 }
 
 const deleteComment = async (staffId, commentId, ctx) => {
+    const user = await userService.getUser(ctx)
+
     try {
         const updateOne = (await mongo.collection('staffs').updateOne({ id: staffId }, { $pull: { comments: { id: commentId } } })).result
 
-        logger.info('Delete comment result', { staffId, commentId, updateOne, url: ctx.url })
+        logger.info('Delete comment result', { staffId, commentId, updateOne, url: ctx.url, user })
 
         if (updateOne.ok === 1) {
             return {
@@ -64,7 +65,7 @@ const deleteComment = async (staffId, commentId, ctx) => {
             }
         }
     } catch (err) {
-        logger.error('Error deleting comment', err, { staffId, commentId, url: ctx.url })
+        logger.error('Error deleting comment', err, { staffId, commentId, url: ctx.url, user })
     }
 
     return {

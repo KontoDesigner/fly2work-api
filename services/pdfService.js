@@ -186,46 +186,6 @@ function getFlights(staff) {
     return res
 }
 
-// function getComments(staff) {
-//     let res = []
-
-//     const commentBodies = staff.comments
-//         ? staff.comments.map(comment => [
-//               [
-//                   { text: 'Created By', bold: true, style: 'header' },
-//                   { text: comment.createdBy ? comment.createdBy : ' ', style: 'cell' },
-//                   { text: 'Group', bold: true, style: 'header' },
-//                   { text: comment.group ? comment.group : ' ', style: 'cell' },
-//                   { text: 'Created', bold: true, style: 'header' },
-//                   { text: comment.created ? moment(comment.created).format('DD/MM/YYYY') : ' ', style: 'cell' }
-//               ],
-//               [{ text: 'Comment', bold: true, style: 'header' }, { text: comment.text ? comment.text : ' ', style: 'cell', colSpan: 5 }]
-//           ])
-//         : []
-
-//     for (var i = 0; i < commentBodies.length; i++) {
-//         res.push({
-//             margin: i === 0 ? [0, 0, 0, 0] : [0, 10, 0, 0],
-//             fontSize: 9,
-//             table: {
-//                 headerRows: 0,
-//                 widths: ['*', '*', '*', '*', '*', 'auto'],
-//                 body: commentBodies[i]
-//             },
-//             layout: {
-//                 paddingTop: function(i, node) {
-//                     return 2
-//                 },
-//                 paddingBottom: function(i, node) {
-//                     return 2
-//                 }
-//             }
-//         })
-//     }
-
-//     return res
-// }
-
 function getBody(staff) {
     const body = [
         [
@@ -421,7 +381,6 @@ function getDocDefinition(staff) {
                 fontSize: 12,
                 margin: [0, 4, 0, 5]
             },
-            // comments.map(m => m)
             {
                 fontSize: 9,
                 table: {

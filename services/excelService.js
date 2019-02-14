@@ -102,8 +102,6 @@ function generateExcel(staffs, type = 'binary') {
             }
 
             ws_data.push(body)
-
-            // logger.info(`Pushed ${staffs.length} staff(s) to sheet`, { staffs })
         }
 
         var ws = xlsx.utils.aoa_to_sheet(ws_data)

@@ -7,8 +7,6 @@ const userService = require('./userService')
 
 const upload = async (staffId, file, ctx) => {
     const user = await userService.getUser(ctx)
-    const userName = await userService.getUserName(ctx, user)
-    const userRoles = await userService.getUserRoles(ctx, user)
 
     try {
         const size = fs.statSync(file.path).size
@@ -20,8 +18,8 @@ const upload = async (staffId, file, ctx) => {
             size: size,
             type: file.mimeType,
             created: moment()._d,
-            createdBy: userName,
-            group: userRoles.join(', ')
+            createdBy: user.name,
+            group: user.roles.join(', ')
         }
 
         const updateOne = await mongo.collection('staffs').updateOne({ id: staffId }, { $push: { attachments: attachment } })
@@ -33,7 +31,9 @@ const upload = async (staffId, file, ctx) => {
             type: file.mimeType,
             created: moment()._d,
             result: updateOne.result,
-            url: ctx.url
+            url: ctx.url,
+            createdBy: user.name,
+            group: user.roles.join(', ')
         })
 
         if (updateOne.result.ok === 1) {
@@ -49,7 +49,9 @@ const upload = async (staffId, file, ctx) => {
             size: file.size,
             type: file.type,
             path: file.path,
-            url: ctx.url
+            url: ctx.url,
+            createdBy: user.name,
+            group: user.roles.join(', ')
         })
     }
 
@@ -59,6 +61,8 @@ const upload = async (staffId, file, ctx) => {
 }
 
 const download = async (staffId, attachmentId, ctx) => {
+    const user = await userService.getUser(ctx)
+
     const staff = await mongo.collection('staffs').findOne(
         {
             id: staffId,
@@ -68,19 +72,21 @@ const download = async (staffId, attachmentId, ctx) => {
     )
 
     if (staff) {
-        logger.info('Downloading attachment', { staffId, attachmentId, url: ctx.url })
+        logger.info('Downloading attachment', { staffId, attachmentId, url: ctx.url, user })
 
         return staff.attachments[0].data.buffer
     } else {
-        logger.info('Could not find attachment for download', { staffId, attachmentId, url: ctx.url })
+        logger.info('Could not find attachment for download', { staffId, attachmentId, url: ctx.url, user })
     }
 }
 
 const deleteAttachment = async (staffId, attachmentId, ctx) => {
+    const user = await userService.getUser(ctx)
+
     try {
         const result = (await mongo.collection('staffs').updateOne({ id: staffId }, { $pull: { attachments: { id: attachmentId } } })).result
 
-        logger.info('Delete attachment result', { staffId, attachmentId, result, url: ctx.url })
+        logger.info('Delete attachment result', { staffId, attachmentId, result, url: ctx.url, user })
 
         if (result.ok === 1) {
             return {
@@ -88,7 +94,7 @@ const deleteAttachment = async (staffId, attachmentId, ctx) => {
             }
         }
     } catch (err) {
-        logger.error('Error deleting attachment', err, { staffId, attachmentId, url: ctx.url })
+        logger.error('Error deleting attachment', err, { staffId, attachmentId, url: ctx.url, user })
     }
 
     return {
