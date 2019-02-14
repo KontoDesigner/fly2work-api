@@ -70,16 +70,21 @@ const download = async (staffId, attachmentId, ctx) => {
             id: staffId,
             'attachments.id': attachmentId
         },
-        { collection: { 'attachments.$': 1, _id: 0 } }
+
+        { projection: { attachments: 1, _id: 0 } }
     )
 
     if (staff) {
-        logger.info('Downloading attachment', { staffId, attachmentId, url: ctx.url, user })
+        const attachment = staff.attachments.filter(a => a.id === attachmentId)[0]
 
-        return staff.attachments[0].data.buffer
-    } else {
-        logger.info('Could not find attachment for download', { staffId, attachmentId, url: ctx.url, user })
+        if (attachment) {
+            logger.info('Downloading attachment', { staffId, attachmentId, url: ctx.url, user })
+
+            return attachment.data.buffer
+        }
     }
+
+    logger.info('Could not find attachment for download', { staffId, attachmentId, url: ctx.url, user })
 }
 
 const deleteAttachment = async (staffId, attachmentId, ctx) => {
