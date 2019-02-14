@@ -11,7 +11,7 @@ const insertComment = async (staffId, comment, ctx) => {
     })
 
     if (validation.errors && validation.errors.length > 0) {
-        logger.warning('Comment model validation failed, aborting', { url: ctx.url, comment, validation })
+        logger.warning('Comment model validation failed, aborting', { url: ctx.url, comment, validation, staffId })
 
         return {
             ok: false,
@@ -32,6 +32,7 @@ const insertComment = async (staffId, comment, ctx) => {
         const updateOne = await mongo.collection('staffs').updateOne({ id: staffId }, { $push: { comments: comment } })
 
         logger.info('Insert comment result', {
+            staffId,
             comment,
             result: updateOne.result
         })
