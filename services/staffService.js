@@ -382,7 +382,7 @@ const getStaffsByGreenLight = async greenLight => {
 const getStaffByIdAndGreenLight = async (id, greenLight) => {
     const parseGreenLight = greenLight === 'true'
 
-    const staff = await mongo.collection('staffs').findOne({ id: id, greenLight: parseGreenLight })
+    const staff = await mongo.collection('staffs').findOne({ id: id, greenLight: parseGreenLight }, { projection: { 'attachments.data': 0 } })
 
     return staff
 }
@@ -406,7 +406,7 @@ const getStaffsByStatus = async status => {
 }
 
 const getStaffById = async id => {
-    const staff = await mongo.collection('staffs').findOne({ id: id })
+    const staff = await mongo.collection('staffs').findOne({ id: id }, { projection: { 'attachments.data': 0 } })
 
     return staff
 }
@@ -427,9 +427,11 @@ const getStaffByIdAndStatus = async (id, status) => {
     let staff = null
 
     if (status === constants.Statuses.New) {
-        staff = await mongo.collection('staffs').findOne({ id: id, status: status })
+        staff = await mongo.collection('staffs').findOne({ id: id, status: status }, { projection: { 'attachments.data': 0 } })
     } else {
-        staff = await mongo.collection('staffs').findOne({ id: id, status: status, greenLight: { $ne: false } })
+        staff = await mongo
+            .collection('staffs')
+            .findOne({ id: id, status: status, greenLight: { $ne: false } }, { projection: { 'attachments.data': 0 } })
     }
 
     return staff

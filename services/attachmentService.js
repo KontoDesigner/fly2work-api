@@ -37,6 +37,8 @@ const upload = async (staffId, file, ctx) => {
         })
 
         if (updateOne.result.ok === 1) {
+            attachment.data = null
+
             return {
                 ok: true,
                 attachment
