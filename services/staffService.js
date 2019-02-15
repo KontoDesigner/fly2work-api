@@ -729,8 +729,6 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
 
     //Send (NEW => PENDINGBTT)
     if (getStaff.status === constants.Statuses.New && model.status === constants.Statuses.PendingBTT) {
-        emails = new constants.EmailRecipients()
-
         if (model.greenLight === false) {
             //Add HR
             emails = helpers.getHREmails(model.destination)
