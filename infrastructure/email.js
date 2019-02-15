@@ -42,7 +42,7 @@ async function send(staff, statusText, emails) {
                 <th align="left">Created</th>
             </tr>
             
-            ${trs.toString()}
+            ${trs}
         </table>`
 
     const status = staff.status !== constants.Statuses.New && staff.greenLight === false ? 'pendinghr' : staff.status

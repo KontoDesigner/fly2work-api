@@ -22,6 +22,21 @@ function getBTTEmails(sourceMarket) {
     return res
 }
 
+function getHREmails(destination) {
+    const emailHRTSAGDestinations = config.emailHRTSAGDestinations.split(',')
+    const emailHRTDSDestinations = config.emailHRTDSDestinations.split(',')
+
+    let res = new constants.EmailRecipients()
+
+    if (emailHRTSAGDestinations.includes(destination)) {
+        res.to.push(config.emailHRTSAG)
+    } else if (emailHRTDSDestinations.includes(destination)) {
+        res.to.push(config.emailHRTDS)
+    }
+
+    return res
+}
+
 function parseCost(val) {
     var parsed = parseFloat(val)
 
@@ -51,5 +66,6 @@ function getTotalCost(flights) {
 module.exports = {
     parseCost,
     getBTTEmails,
-    getTotalCost
+    getTotalCost,
+    getHREmails
 }

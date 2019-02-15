@@ -641,7 +641,7 @@ async function sendInsertEmails(ctx, model, user) {
 
     if (model.greenLight === false) {
         //Add HR
-        emails.to.push(config.emailHR)
+        emails = helpers.getHREmails(model.destination)
     } else {
         //Get BTT to/cc based on sourceMarket
         emails = helpers.getBTTEmails(model.sourceMarket)
@@ -727,18 +727,13 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
     //Get BTT to/cc based on sourceMarket
     let emails = helpers.getBTTEmails(model.sourceMarket)
 
-    //Add HR
-    if (getStaff.status === constants.Statuses.New && model.status !== constants.Statuses.New && model.greenLight === false) {
-        emails.to.push(config.emailHR)
-    }
-
     //Send (NEW => PENDINGBTT)
     if (getStaff.status === constants.Statuses.New && model.status === constants.Statuses.PendingBTT) {
         emails = new constants.EmailRecipients()
 
         if (model.greenLight === false) {
             //Add HR
-            emails.to.push(config.emailHR)
+            emails = helpers.getHREmails(model.destination)
         } else {
             //Get BTT to/cc based on sourceMarket
             emails = helpers.getBTTEmails(model.sourceMarket)
