@@ -62,7 +62,12 @@ const confirmGreenLight = async (body, ctx) => {
             { id: id, greenLight: false },
             {
                 $push: { audit: audit },
-                $set: { greenLight: true, greenLightUpdated: moment().format('DD/MM/YYYY HH:mm'), greenLightUpdatedBy: user.name }
+                $set: {
+                    greenLight: true,
+                    greenLightUpdated: moment().format('DD/MM/YYYY HH:mm'),
+                    greenLightUpdatedBy: user.name,
+                    greenLightUpdatedByEmail: user.email
+                }
             }
         )).result
     } catch (err) {
@@ -543,6 +548,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.originalStaffId = getStaff ? getStaff.originalStaffId : null
     model.greenLightUpdated = getStaff ? getStaff.greenLightUpdated : null
     model.greenLightUpdatedBy = getStaff ? getStaff.greenLightUpdatedBy : null
+    model.greenLightUpdatedByEmail = getStaff ? getStaff.greenLightUpdatedByEmail : null
     if (add === true && model.comment && model.comment !== '') {
         const comment = {
             text: model.comment,
@@ -782,6 +788,15 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
             }
         }
 
+        //Add HR
+        if (model.greenLight === true && model.greenLightUpdatedBy) {
+            const confirmedHREmail = helpers.getConfirmedHREmail(model.destination, model.greenLightUpdatedBy)
+
+            if (confirmedHREmail !== null) {
+                emails.to.push(confirmedHREmail)
+            }
+        }
+
         //Add BS
         if (model.requestedBy && model.requestedBy.email) {
             emails.to.push(model.requestedBy.email)
@@ -842,6 +857,15 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
                     ok: false,
                     error: 'Request updated but could not send confirm to GPX or send email notifications'
                 }
+            }
+        }
+
+        //Add HR
+        if (model.greenLight === true && model.greenLightUpdatedBy) {
+            const confirmedHREmail = helpers.getConfirmedHREmail(model.destination, model.greenLightUpdatedBy)
+
+            if (confirmedHREmail !== null) {
+                emails.to.push(confirmedHREmail)
             }
         }
 

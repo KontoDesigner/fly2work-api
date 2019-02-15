@@ -47,6 +47,7 @@ function StaffBTT() {
     this.greenLight = null
     this.greenLightUpdated = null
     this.greenLightUpdatedBy = null
+    this.greenLightUpdatedByEmail = null
     this.currency = null
 }
 

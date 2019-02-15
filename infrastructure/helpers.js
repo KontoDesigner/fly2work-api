@@ -37,6 +37,21 @@ function getHREmails(destination) {
     return res
 }
 
+function getConfirmedHREmail(destination, greenLightUpdatedBy) {
+    const emailHRTSAGDestinations = config.emailHRTSAGDestinations.split(',')
+    const emailHRTDSDestinations = config.emailHRTDSDestinations.split(',')
+
+    if (emailHRTDSDestinations.includes(destination)) {
+        if (greenLightUpdatedBy === 'Samantha Brito' || greenLightUpdatedBy === 'Cynthia Scheuer') {
+            return 'criticalcases.hr.tsag@tui.com'
+        }
+    } else if (emailHRTSAGDestinations.includes(destination)) {
+        return 'notifications.hr.tsag@tui.com'
+    }
+
+    return null
+}
+
 function parseCost(val) {
     var parsed = parseFloat(val)
 
@@ -67,5 +82,6 @@ module.exports = {
     parseCost,
     getBTTEmails,
     getTotalCost,
-    getHREmails
+    getHREmails,
+    getConfirmedHREmail
 }

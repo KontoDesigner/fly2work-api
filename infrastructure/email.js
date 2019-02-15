@@ -7,7 +7,7 @@ const pdfService = require('../services/pdfService')
 const moment = require('moment')
 
 async function send(staff, statusText, emails) {
-    logger.info('Started send email', { staff })
+    logger.info('Started send email', { staff, emails })
 
     if (!emails || !emails.to || !emails.cc || emails.to.length === 0) {
         logger.info('No emails specified in request, aborting send', { staff, emails })
