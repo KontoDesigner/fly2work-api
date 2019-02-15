@@ -1,4 +1,5 @@
 const config = require('./config')
+const constants = require('./constants')
 
 function getBTTEmails(sourceMarket) {
     const emailNSourceMarkets = config.emailNSourceMarkets.split(',')
@@ -6,10 +7,7 @@ function getBTTEmails(sourceMarket) {
     const emailWSourceMarkets = config.emailWSourceMarkets.split(',')
     const emailUKSourceMarkets = config.emailUKSourceMarkets.split(',')
 
-    let res = {
-        to: [],
-        cc: []
-    }
+    let res = new constants.EmailRecipients()
 
     if (emailNSourceMarkets.includes(sourceMarket)) {
         res.to.push(config.emailBTTN), res.cc.push(config.emailBTTNCC)

@@ -104,6 +104,11 @@ const ConfirmedStatuses = keyMirror({
     Modified: null
 })
 
+function EmailRecipients() {
+    this.to = []
+    this.cc = []
+}
+
 module.exports = {
     Statuses,
     ConfirmedStatuses,
@@ -112,5 +117,6 @@ module.exports = {
     StaffBTT,
     Email,
     Flight,
-    UserRoles
+    UserRoles,
+    EmailRecipients
 }
