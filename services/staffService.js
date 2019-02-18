@@ -188,6 +188,8 @@ const declineStaff = async (body, ctx) => {
         emails.to.push(model.emails)
     }
 
+    const statusText = `${constants.Statuses.PendingBTT} => ${constants.Statuses.PendingDES}`
+
     const emailRes = await email.send(model, statusText, emails)
 
     if (emailRes === false) {
