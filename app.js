@@ -38,7 +38,7 @@ async function errorHandler(ctx, next) {
             body = ctx.request.body
             url = ctx.url
             params = ctx.params
-        } catch {
+        } catch (e) {
             logger.error(err.message, err)
         } finally {
             logger.error(err.message, err, { user, body, url, params })
