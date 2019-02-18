@@ -824,8 +824,38 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
             }
         }
     }
-    //Send (PENDINGDES => PendingBTT)
+    //Send (PENDINGDES => PENDINGBTT)
     else if (getStaff.status === constants.Statuses.PendingDES && model.status === constants.Statuses.PendingBTT) {
+        //Add additional emails
+        if (model.emails && model.emails.length > 0) {
+            emails.to.push(model.emails)
+        }
+
+        if (emails.to.length > 0) {
+            const emailRes = await email.send(model, statusText, emails)
+
+            if (emailRes === false) {
+                return {
+                    ok: false,
+                    error: 'Request updated but could not send email notification'
+                }
+            }
+        }
+    }
+    //Send (CONFIRMED => PENDINGBTT)
+    else if (getStaff.status === constants.Statuses.Confirmed && model.status === constants.Statuses.PendingBTT) {
+        if (model.greenLight !== null) {
+            //Add HR
+            const hrEmails = helpers.getHREmails(model.destination).to
+
+            emails.to.concat(hrEmails)
+        }
+
+        //Add BS
+        if (model.requestedBy && model.requestedBy.email) {
+            emails.to.push(model.requestedBy.email)
+        }
+
         //Add additional emails
         if (model.emails && model.emails.length > 0) {
             emails.to.push(model.emails)
