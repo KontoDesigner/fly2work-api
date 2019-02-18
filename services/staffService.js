@@ -826,6 +826,11 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
     }
     //Send (PENDINGDES => PENDINGBTT)
     else if (getStaff.status === constants.Statuses.PendingDES && model.status === constants.Statuses.PendingBTT) {
+        //Add BS
+        if (model.requestedBy && model.requestedBy.email) {
+            emails.to.push(model.requestedBy.email)
+        }
+
         //Add additional emails
         if (model.emails && model.emails.length > 0) {
             emails.to.push(model.emails)
