@@ -84,8 +84,14 @@ const confirmGreenLight = async (body, ctx) => {
     if (getStaff.status === constants.Statuses.PendingBTT) {
         let emails = helpers.getBTTEmails(getStaff.sourceMarket)
 
+        //Add BS
         if (getStaff.requestedBy && getStaff.requestedBy.email) {
             emails.to.push(getStaff.requestedBy.email)
+        }
+
+        //Add additional emails
+        if (getStaff.emails && getStaff.emails.length > 0) {
+            emails.to.push(getStaff.emails)
         }
 
         if (emails.to.length > 0) {
