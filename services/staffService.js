@@ -903,6 +903,28 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
     }
     //Send (CONFIRMED => PENDINGBTT)
     else if (getStaff.status === constants.Statuses.Confirmed && model.status === constants.Statuses.PendingBTT) {
+        //Send empty confirm date to GPX
+        if (config.sendConfirmToGPX === true && model.originalStaffId && model.positionAssignId) {
+            const confirmedDate = null
+
+            const confirmRes = await gpxService.confirm(
+                ctx,
+                model.positionAssignId,
+                confirmedDate,
+                model.destination,
+                model.originalStaffId,
+                model.direction,
+                user
+            )
+
+            if (confirmRes !== true) {
+                return {
+                    ok: false,
+                    error: 'Request updated but could not send confirm to GPX or send email notifications'
+                }
+            }
+        }
+
         if (model.greenLight !== null) {
             //Add HR
             const hrEmails = helpers.getHREmails(model.destination).to
