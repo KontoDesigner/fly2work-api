@@ -9,6 +9,7 @@ const cors = require('@koa/cors')
 const config = require('./infrastructure/config')
 const passport = require('koa-passport')
 const BearerStrategy = require('passport-azure-ad').BearerStrategy
+const userService = require('./services/userService')
 
 const authOptions = {
     identityMetadata: config.authAuthority + config.authTenantId + '/.well-known/openid-configuration',
@@ -27,12 +28,24 @@ async function errorHandler(ctx, next) {
     try {
         await next()
     } catch (err) {
-        logger.error(err.message, err)
+        let user = null
+        let body = null
+        let url = null
+        let params = null
 
-        ctx.status = err.status || 500
+        try {
+            user = await userService.getUser(ctx)
+            body = ctx.request.body
+            url = ctx.url
+            params = ctx.params
+        } finally {
+            logger.error(err.message, err, { user, body, url, params })
 
-        ctx.body = {
-            error: err.message
+            ctx.status = err.status || 500
+
+            ctx.body = {
+                error: err.message
+            }
         }
     }
 }
