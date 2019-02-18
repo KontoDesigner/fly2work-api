@@ -10,14 +10,22 @@ function getBTTEmails(sourceMarket) {
     let res = new constants.EmailRecipients()
 
     if (emailNSourceMarkets.includes(sourceMarket)) {
-        res.to.push(config.emailBTTN), res.cc.push(config.emailBTTNCC)
+        res.to.push(config.emailBTTN), res.cc.push(config.emailBTTCC)
     } else if (emailESourceMarkets.includes(sourceMarket)) {
-        res.to.push(config.emailBTTE), res.cc.push(config.emailBTTECC)
+        res.to.push(config.emailBTTE), res.cc.push(config.emailBTTCC)
     } else if (emailWSourceMarkets.includes(sourceMarket)) {
-        res.to.push(config.emailBTTW), res.cc.push(config.emailBTTWCC)
+        res.to.push(config.emailBTTW), res.cc.push(config.emailBTTCC)
     } else if (emailUKSourceMarkets.includes(sourceMarket)) {
-        res.to.push(config.emailBTTUK), res.cc.push(config.emailBTTUKCC)
+        res.to.push(config.emailBTTUK), res.cc.push(config.emailBTTCC)
     }
+
+    return res
+}
+
+function getBTTCC() {
+    let res = new constants.EmailRecipients()
+
+    res.to.push(config.emailBTTCC)
 
     return res
 }
@@ -83,5 +91,6 @@ module.exports = {
     getBTTEmails,
     getTotalCost,
     getHREmails,
-    getConfirmedHREmail
+    getConfirmedHREmail,
+    getBTTCC
 }

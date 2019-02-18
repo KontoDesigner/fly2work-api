@@ -176,6 +176,27 @@ const declineStaff = async (body, ctx) => {
 
     logger.info('Decline staff result', { url: ctx.url, model: model, replaceOne, user })
 
+    let emails = helpers.getBTTCC()
+
+    //Add BS
+    if (model.requestedBy && model.requestedBy.email) {
+        emails.to.push(model.requestedBy.email)
+    }
+
+    //Add additional emails
+    if (model.emails && model.emails.length > 0) {
+        emails.to.push(model.emails)
+    }
+
+    const emailRes = await email.send(model, statusText, emails)
+
+    if (emailRes === false) {
+        return {
+            ok: false,
+            error: 'Request declined but could not send email notification'
+        }
+    }
+
     return {
         ok: true
     }
@@ -654,6 +675,8 @@ async function sendInsertEmails(ctx, model, user) {
     if (model.greenLight === false) {
         //Add HR
         emails = helpers.getHREmails(model.destination)
+
+        emails.to.push(config.emailBTTCC)
     } else {
         //Get BTT to/cc based on sourceMarket
         emails = helpers.getBTTEmails(model.sourceMarket)
@@ -744,6 +767,8 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
         if (model.greenLight === false) {
             //Add HR
             emails = helpers.getHREmails(model.destination)
+
+            emails.to.push(config.emailBTTCC)
         } else {
             //Get BTT to/cc based on sourceMarket
             emails = helpers.getBTTEmails(model.sourceMarket)
@@ -802,6 +827,31 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
                 emails.to.push(confirmedHREmail)
             }
         }
+
+        //Add BS
+        if (model.requestedBy && model.requestedBy.email) {
+            emails.to.push(model.requestedBy.email)
+        }
+
+        //Add additional emails
+        if (model.emails && model.emails.length > 0) {
+            emails.to.push(model.emails)
+        }
+
+        if (emails.to.length > 0) {
+            const emailRes = await email.send(model, statusText, emails)
+
+            if (emailRes === false) {
+                return {
+                    ok: false,
+                    error: 'Request updated but could not send email notification'
+                }
+            }
+        }
+    }
+    //Send (PENDINGBTT => PENDINGDES)
+    else if (getStaff.status === constants.Statuses.PendingBTT && model.status === constants.Statuses.PendingDES) {
+        emails = helpers.getBTTCC()
 
         //Add BS
         if (model.requestedBy && model.requestedBy.email) {

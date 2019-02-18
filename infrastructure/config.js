@@ -15,16 +15,10 @@ const config = {
     scope: process.env.SCOPE.toUpperCase(),
 
     emailBTTN: process.env.EMAIL_BTT_N,
-    emailBTTNCC: process.env.EMAIL_BTT_N_CC,
-
     emailBTTW: process.env.EMAIL_BTT_W,
-    emailBTTWCC: process.env.EMAIL_BTT_W_CC,
-
     emailBTTE: process.env.EMAIL_BTT_E,
-    emailBTTECC: process.env.EMAIL_BTT_E_CC,
-
     emailBTTUK: process.env.EMAIL_BTT_UK,
-    emailBTTUKCC: process.env.EMAIL_BTT_UK_CC,
+    emailBTTCC: process.env.EMAIL_BTT_CC,
 
     emailUKSourceMarkets: process.env.EMAIL_UK_SOURCEMARKETS,
     emailNSourceMarkets: process.env.EMAIL_N_SOURCEMARKETS,
