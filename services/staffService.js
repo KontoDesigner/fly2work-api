@@ -188,9 +188,11 @@ const declineStaff = async (body, ctx) => {
         emails.to.push(model.emails)
     }
 
+    const getStaffAfterUpdate = await mongo.collection('staffs').findOne({ id: model.id })
+
     const statusText = `${constants.Statuses.PendingBTT} => ${constants.Statuses.PendingDES}`
 
-    const emailRes = await email.send(model, statusText, emails)
+    const emailRes = await email.send(getStaffAfterUpdate, statusText, emails)
 
     if (emailRes === false) {
         return {
