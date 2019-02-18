@@ -234,7 +234,7 @@ const insertStaffFromGpx = async (body, ctx) => {
         model.created = moment()._d
 
         model.audit.push({
-            updatedBy: 'GPX',
+            updatedBy: 'TPP',
             greenLightFrom: greenLight,
             greenLightTo: greenLight,
             statusFrom: constants.Statuses.New,
