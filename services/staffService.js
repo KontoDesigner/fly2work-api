@@ -587,7 +587,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.greenLightUpdated = getStaff ? getStaff.greenLightUpdated : null
     model.greenLightUpdatedBy = getStaff ? getStaff.greenLightUpdatedBy : null
     model.greenLightUpdatedByEmail = getStaff ? getStaff.greenLightUpdatedByEmail : null
-    model.sentToPendingBTT = getStaff ? getStaff.sentToPendingBTT : null
+    model.dateRequested = getStaff ? getStaff.dateRequested : null
     if (add === true && model.comment && model.comment !== '') {
         const comment = {
             text: model.comment,
@@ -630,7 +630,7 @@ async function insertStaff(ctx, model, getStaff, btt, user) {
             error: `Request with id: '${model.id}' already exists`
         }
     }
-    model.sentToPendingBTT = moment()._d
+    model.dateRequested = moment()._d
     model.created = moment()._d
     model.requestedBy = {
         name: user.name,
@@ -744,7 +744,7 @@ async function updateStaff(ctx, model, getStaff, btt, user) {
     let replaceOne = {}
 
     if (getStaff.status === constants.Statuses.New && model.status === constants.Statuses.pendingBTT) {
-        model.sentToPendingBTT = moment()._d
+        model.dateRequested = moment()._d
     }
 
     try {

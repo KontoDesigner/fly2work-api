@@ -32,7 +32,7 @@ function StaffBS() {
     this.requestedBy = {}
     this.confirmedStatus = null
     this.dateOfConfirmation = null
-    this.sentToPendingBTT = null
+    this.dateRequested = null
     //Insert
     this.comment = ''
     //Update
