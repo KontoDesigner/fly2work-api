@@ -13,7 +13,7 @@ const insertComment = async (staffId, comment, ctx) => {
     })
 
     if (validation.errors && validation.errors.length > 0) {
-        logger.warning('Comment model validation failed, aborting', { url: ctx.url, comment, validation, staffId, user })
+        logger.info('Comment model validation failed, aborting', { url: ctx.url, comment, validation, staffId, user })
 
         return {
             ok: false,
