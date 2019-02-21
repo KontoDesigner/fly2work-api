@@ -27,12 +27,12 @@ function StaffBS() {
     this.bookReturnFlightArrivalAirport = ''
     this.iataCode = ''
     this.typeOfFlight = ''
-
     this.positionAssignId = null
     this.created = ''
     this.requestedBy = {}
     this.confirmedStatus = null
     this.dateOfConfirmation = null
+    this.sentToPendingBTT = null
     //Insert
     this.comment = ''
     //Update
