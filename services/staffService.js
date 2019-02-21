@@ -743,7 +743,7 @@ async function updateStaff(ctx, model, getStaff, btt, user) {
 
     let replaceOne = {}
 
-    if (getStaff.status === constants.Statuses.New && model.status === constants.Statuses.pendingBTT) {
+    if (getStaff.status === constants.Statuses.New && model.status === constants.Statuses.PendingBTT) {
         model.dateRequested = moment()._d
     }
 
