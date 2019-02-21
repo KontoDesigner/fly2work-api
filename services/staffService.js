@@ -287,6 +287,13 @@ const insertStaffFromGpx = async (body, ctx) => {
         }
     }
 
+    if (body.RequestedByName && body.RequestedByEmail) {
+        model.requestedBy = {
+            name: body.RequestedByName,
+            email: body.RequestedByEmail
+        }
+    }
+
     model.originalStaffId = body.Id
     model.direction = body.Direction
     model.firstName = body.FirstName ? body.FirstName : ''
