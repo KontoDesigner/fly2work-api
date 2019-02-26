@@ -572,6 +572,10 @@ const updateOrInsertStaff = async (body, ctx) => {
     }
 
     //Should not be overwritten from request
+    if (btt === false && getStaff) {
+        model.flights = getStaff.flights
+    }
+
     model.attachments = getStaff && getStaff.attachments ? getStaff.attachments : []
     model.created = getStaff ? getStaff.created : null
     model.requestedBy = getStaff ? getStaff.requestedBy : null
