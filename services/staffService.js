@@ -243,9 +243,9 @@ const insertStaffFromGpx = async (body, ctx) => {
 
         if (getStaff.status !== constants.Statuses.New) {
             const comment = {
-                text: `Request from GPX with status new or pending and direction: ${
-                    body.Direction
-                } already exists, updating values and reverting status to: ${constants.Statuses.New}`,
+                text: `Request change from TTP due to change in planned assignment start date and/or destination: ticket has been moved back to status ${
+                    constants.Statuses.New
+                }, please provide details and/or preferred flight date again`,
                 id: uuid.v1(),
                 created: moment()._d,
                 createdBy: 'SYSTEM',
