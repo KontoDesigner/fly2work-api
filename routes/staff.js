@@ -27,7 +27,7 @@ router.post(
 //BTT
 router.post(
     `${BASE}/delete`,
-    (ctx, next) => auth(ctx, next, [constants.UserRoles.BTT]),
+    (ctx, next) => auth(ctx, next, [constants.UserRoles.BTT, constants.UserRoles.BS]),
     async (ctx, next) => {
         const body = ctx.request.body
 
