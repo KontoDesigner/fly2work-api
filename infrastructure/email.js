@@ -60,8 +60,9 @@ async function send(staff, statusText, emails) {
     email.ccTo = emails.cc
     email.emailTo = emails.to
     email.isBodyHtml = true
-    email.subject = `${staff.status !== constants.Statuses.New && staff.greenLight === false ? 'PendingHR' : staff.status} Request - 
-    ${staff.iataCode} ${staff.firstName} ${staff.lastName} ${staff.preferredFlightDate}`
+    email.subject = `${staff.status !== constants.Statuses.New && staff.greenLight === false ? 'PendingHR' : staff.status} Request - ${
+        staff.iataCode
+    } ${staff.firstName} ${staff.lastName} ${staff.preferredFlightDate}`
     email.userAddress = config.emailUserAddress
 
     const mailApi = `${config.mailApi}/${config.name}`
