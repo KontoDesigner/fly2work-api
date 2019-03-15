@@ -91,7 +91,7 @@ const confirmGreenLight = async (body, ctx) => {
 
         //Add additional emails
         if (getStaff.emails && getStaff.emails.length > 0) {
-            emails.to.push(getStaff.emails)
+            emails.to.push(...getStaff.emails)
         }
 
         if (emails.to.length > 0) {
@@ -185,7 +185,7 @@ const declineStaff = async (body, ctx) => {
 
     //Add additional emails
     if (model.emails && model.emails.length > 0) {
-        emails.to.push(model.emails)
+        emails.to.push(...model.emails)
     }
 
     const getStaffAfterUpdate = await mongo.collection('staffs').findOne({ id: model.id })
@@ -699,7 +699,7 @@ async function sendInsertEmails(ctx, model, user) {
 
     //Add additional emails
     if (model.emails && model.emails.length > 0) {
-        emails.to.push(model.emails)
+        emails.to.push(...model.emails)
     }
 
     const emailRes = await email.send(model, statusText, emails)
@@ -799,7 +799,7 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
 
         //Add additional emails
         if (model.emails && model.emails.length > 0) {
-            emails.to.push(model.emails)
+            emails.to.push(...model.emails)
         }
 
         if (emails.to.length > 0) {
@@ -853,7 +853,7 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
 
         //Add additional emails
         if (model.emails && model.emails.length > 0) {
-            emails.to.push(model.emails)
+            emails.to.push(...model.emails)
         }
 
         if (emails.to.length > 0) {
@@ -878,7 +878,7 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
 
         //Add additional emails
         if (model.emails && model.emails.length > 0) {
-            emails.to.push(model.emails)
+            emails.to.push(...model.emails)
         }
 
         if (emails.to.length > 0) {
@@ -901,7 +901,7 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
 
         //Add additional emails
         if (model.emails && model.emails.length > 0) {
-            emails.to.push(model.emails)
+            emails.to.push(...model.emails)
         }
 
         if (emails.to.length > 0) {
@@ -953,7 +953,7 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
 
         //Add additional emails
         if (model.emails && model.emails.length > 0) {
-            emails.to.push(model.emails)
+            emails.to.push(...model.emails)
         }
 
         if (emails.to.length > 0) {
@@ -1007,7 +1007,7 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
 
         //Add additional emails
         if (model.emails && model.emails.length > 0) {
-            emails.to.push(model.emails)
+            emails.to.push(...model.emails)
         }
 
         if (emails.to.length > 0) {
