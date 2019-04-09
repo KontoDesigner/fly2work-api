@@ -1,43 +1,52 @@
 {
-  "name": "fly2work-api",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "dependencies": {
-    "@koa/cors": "^2.2.2",
-    "async-busboy": "^0.7.0",
-    "axios": "^0.18.0",
-    "camelcase-keys": "^4.2.0",
-    "dotenv": "^4.0.0",
-    "keymirror": "^0.1.1",
-    "koa": "^2.4.1",
-    "koa-better-router": "^2.1.1",
-    "koa-body": "^2.5.0",
-    "koa-bodyparser": "^4.2.1",
-    "koa-passport": "^4.1.1",
-    "koa-requestid": "^2.0.1",
-    "moment": "^2.22.2",
-    "moment-timezone": "^0.5.23",
-    "mongodb": "^3.1.8",
-    "node-uuid": "^1.4.8",
-    "passport-azure-ad": "^4.0.0",
-    "pdfmake": "^0.1.40",
-    "tuin-logging": "^1.0.1",
-    "xlsx": "^0.14.0",
-    "yup": "^0.26.6",
-    "zone": "^0.3.4"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/TUI-Nordic/fly2work-api.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/TUI-Nordic/fly2work-api/issues"
-  },
-  "homepage": "https://github.com/TUI-Nordic/fly2work-api#readme"
+    "name": "fly2work-api",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "jest": {
+        "setupTestFrameworkScriptFile": "./setup.js"
+    },
+    "dependencies": {
+        "@koa/cors": "^2.2.2",
+        "async-busboy": "^0.7.0",
+        "axios": "^0.18.0",
+        "camelcase-keys": "^4.2.0",
+        "dotenv": "^4.0.0",
+        "keymirror": "^0.1.1",
+        "koa": "^2.4.1",
+        "koa-better-router": "^2.1.1",
+        "koa-body": "^2.5.0",
+        "koa-bodyparser": "^4.2.1",
+        "koa-passport": "^4.1.1",
+        "koa-requestid": "^2.0.1",
+        "moment": "^2.22.2",
+        "moment-timezone": "^0.5.23",
+        "mongodb": "^3.1.8",
+        "node-uuid": "^1.4.8",
+        "passport-azure-ad": "^4.0.0",
+        "pdfmake": "^0.1.40",
+        "tuin-logging": "^1.0.1",
+        "xlsx": "^0.14.0",
+        "yup": "^0.26.6",
+        "zone": "^0.3.4"
+    },
+    "scripts": {
+        "test": "jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/TUI-Nordic/fly2work-api.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/TUI-Nordic/fly2work-api/issues"
+    },
+    "homepage": "https://github.com/TUI-Nordic/fly2work-api#readme",
+    "devDependencies": {
+        "jest": "^24.7.1",
+        "jest-environment-node": "^24.7.1",
+        "mongodb-memory-server": "^4.2.2",
+        "supertest": "^4.0.2"
+    }
 }
