@@ -301,7 +301,7 @@ const insertStaffFromGpx = async (body, ctx) => {
     model.iataCode = body.IataCode ? body.IataCode : ''
     model.greenLight = greenLight
     model.positionAssignId = body.PositionAssignId ? body.PositionAssignId : null
-    model.typeOfFlight = body.TypeOfFlight ? body.typeOfFlight : ''
+    model.typeOfFlight = body.TypeOfFlight ? body.TypeOfFlight : ''
 
     const validation = await newValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
