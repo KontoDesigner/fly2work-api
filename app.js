@@ -101,4 +101,4 @@ async function main() {
     module.exports = app
 }
 
-main().catch(err => console.log(err.stack))
+return main().catch(err => console.log(err.stack))
