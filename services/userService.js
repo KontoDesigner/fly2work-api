@@ -22,7 +22,7 @@ const getUser = async ctx => {
             if (!user || err) {
                 logger.warning('NOT AUTHENTICATED', { url: ctx.url })
 
-                ctx.throw(401)
+                resolve(null)
             }
 
             const roles = mapRoles(user)

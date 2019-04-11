@@ -4,6 +4,7 @@ const auth = require('../infrastructure/auth')
 const constants = require('../infrastructure/constants')
 const uuid = require('node-uuid')
 const logger = require('../infrastructure/logger')
+const basicAuth = require('koa-basic-auth')
 
 const BASE = '/staff'
 
@@ -76,6 +77,18 @@ router.post(
 )
 
 router.post(`${BASE}/new`, auth, async (ctx, next) => {
+    const body = ctx.request.body
+
+    const res = await staffService.insertStaffFromGpx(body, ctx)
+
+    ctx.body = res
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, body })
+
+    return await next()
+})
+
+router.post(`${BASE}/new/basic`, basicAuth({ name: 'test', pass: 'test' }), async (ctx, next) => {
     const body = ctx.request.body
 
     const res = await staffService.insertStaffFromGpx(body, ctx)
