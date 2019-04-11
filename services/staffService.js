@@ -128,7 +128,7 @@ const declineStaff = async (body, ctx) => {
     })
 
     if (validation.errors && validation.errors.length > 0) {
-        logger.warning('Decline staff validation failed, aborting', { url: ctx.url, model, validation, user })
+        logger.info('Decline staff validation failed, aborting', { url: ctx.url, model, validation, user })
 
         return {
             ok: false,
