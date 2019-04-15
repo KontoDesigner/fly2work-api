@@ -101,6 +101,18 @@ router.post(`${BASE}/new/basic`, basicAuth({ name: config.basicAuthUser, pass: c
     return await next()
 })
 
+router.post(`${BASE}/deletebyoriginalstaffid`, basicAuth({ name: config.basicAuthUser, pass: config.basicAuthPassword }), async (ctx, next) => {
+    const body = ctx.request.body
+
+    const res = await staffService.deleteStaffsByOriginalStaffId(body, ctx)
+
+    ctx.body = res
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, body })
+
+    return await next()
+})
+
 router.get(BASE, auth, async (ctx, next) => {
     const res = await staffService.getStaffs()
 

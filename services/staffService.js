@@ -5,6 +5,8 @@ const bsValidation = require('../validations/bsValidation')
 const bttValidation = require('../validations/bttValidation')
 const newValidation = require('../validations/newValidation')
 const declineValidation = require('../validations/declineValidation')
+const deleteStaffsByOriginalStaffIdValidation = require('../validations/deleteStaffsByOriginalStaffIdValidation')
+const deleteStaffValidation = require('../validations/deleteStaffValidation')
 const email = require('../infrastructure/email')
 const userService = require('./userService')
 const helpers = require('../infrastructure/helpers')
@@ -13,17 +15,80 @@ const config = require('../infrastructure/config')
 const uuid = require('node-uuid')
 const gpxService = require('./gpxService')
 
-const deleteStaff = async (body, ctx) => {
-    const id = body.id
-    const user = await userService.getUser(ctx)
-    const getStaff = await mongo.collection('staffs').findOne({ id: id })
+const deleteStaffsByOriginalStaffId = async (body, ctx) => {
+    const model = {
+        originalStaffId: body.originalStaffId
+    }
+
+    const validation = await deleteStaffsByOriginalStaffIdValidation.validate(model, { abortEarly: false }).catch(function(err) {
+        return err
+    })
+
+    if (validation.errors && validation.errors.length > 0) {
+        logger.info('delete staffs by original staff id validation failed, aborting', { url: ctx.url, model })
+
+        return {
+            ok: false,
+            error: validation.errors,
+            count: 0
+        }
+    }
+
+    const getStaffs = await mongo
+        .collection('staffs')
+        .find({ originalStaffId: model.originalStaffId }, { projection: { attachments: 0 } })
+        .toArray()
 
     let remove = {}
 
     try {
-        remove = (await mongo.collection('staffs').deleteOne({ id: id })).result
+        remove = (await mongo.collection('staffs').deleteMany({ originalStaffId: model.originalStaffId })).result
     } catch (err) {
-        logger.error('Error deleting staff', err, { url: ctx.url, id, user, getStaff })
+        logger.error('Error deleting staffs by original staff id', err, { url: ctx.url, model, getStaffs })
+
+        return {
+            ok: false,
+            count: 0,
+            error: err.message
+        }
+    }
+
+    logger.info('Delete staffs by original staff id result', { url: ctx.url, model, remove, getStaffs })
+
+    return {
+        ok: getStaffs.length > 0,
+        count: getStaffs.length
+    }
+}
+
+const deleteStaff = async (body, ctx) => {
+    const model = {
+        id: body.id
+    }
+
+    const user = await userService.getUser(ctx)
+
+    const validation = await deleteStaffValidation.validate(model, { abortEarly: false }).catch(function(err) {
+        return err
+    })
+
+    if (validation.errors && validation.errors.length > 0) {
+        logger.info('delete staff validation failed, aborting', { url: ctx.url, model, validation, user })
+
+        return {
+            ok: false,
+            errors: validation.errors
+        }
+    }
+
+    const getStaff = await mongo.collection('staffs').findOne({ id: model.id })
+
+    let remove = {}
+
+    try {
+        remove = (await mongo.collection('staffs').deleteOne({ id: model.id })).result
+    } catch (err) {
+        logger.error('Error deleting staff', err, { url: ctx.url, model, user, getStaff })
 
         return {
             ok: false,
@@ -31,7 +96,7 @@ const deleteStaff = async (body, ctx) => {
         }
     }
 
-    logger.info('Delete staff result', { url: ctx.url, id, remove, user, getStaff })
+    logger.info('Delete staff result', { url: ctx.url, model, remove, user, getStaff })
 
     return {
         ok: true
@@ -1045,5 +1110,6 @@ module.exports = {
     confirmGreenLight,
     getNewOrPendingStaffByOriginalStaffIdAndDirection,
     getConfirmedStaffByOriginalStaffIdAndDirection,
-    deleteStaff
+    deleteStaff,
+    deleteStaffsByOriginalStaffId
 }
