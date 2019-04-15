@@ -77,7 +77,7 @@ const deleteStaff = async (body, ctx) => {
 
         return {
             ok: false,
-            errors: validation.errors
+            error: validation.errors
         }
     }
 
