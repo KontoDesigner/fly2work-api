@@ -5,7 +5,7 @@ const bsValidation = require('../validations/bsValidation')
 const bttValidation = require('../validations/bttValidation')
 const newValidation = require('../validations/newValidation')
 const declineValidation = require('../validations/declineValidation')
-const deleteStaffsByOriginalStaffIdValidation = require('../validations/deleteStaffsByOriginalStaffIdValidation')
+const resignValidation = require('../validations/resignValidation')
 const deleteStaffValidation = require('../validations/deleteStaffValidation')
 const email = require('../infrastructure/email')
 const userService = require('./userService')
@@ -15,50 +15,192 @@ const config = require('../infrastructure/config')
 const uuid = require('node-uuid')
 const gpxService = require('./gpxService')
 
-const deleteStaffsByOriginalStaffId = async (body, ctx) => {
+const resign = async body => {
     const model = {
-        originalStaffId: body.originalStaffId
+        originalStaffId: body.originalStaffId,
+        lastWorkingDay: body.lastWorkingDay
     }
 
-    const validation = await deleteStaffsByOriginalStaffIdValidation.validate(model, { abortEarly: false }).catch(function(err) {
+    const validation = await resignValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
     })
 
     if (validation.errors && validation.errors.length > 0) {
-        logger.info('delete staffs by original staff id validation failed, aborting', { url: ctx.url, model })
+        logger.info('delete staffs by original staff id validation failed, aborting', { model })
 
-        return {
-            ok: false,
-            error: validation.errors,
-            count: 0
-        }
+        return [
+            {
+                ok: false,
+                error: validation.errors
+            }
+        ]
     }
 
-    const getStaffs = await mongo
+    const staffs = await mongo
         .collection('staffs')
-        .find({ originalStaffId: model.originalStaffId }, { projection: { attachments: 0 } })
+        .find({ originalStaffId: model.originalStaffId }, { projection: { _id: 0 } })
         .toArray()
 
-    let remove = {}
+    if (staffs.length === 0) {
+        return [
+            {
+                ok: true,
+                error: 'No flight requests found'
+            }
+        ]
+    }
 
-    try {
-        remove = (await mongo.collection('staffs').deleteMany({ originalStaffId: model.originalStaffId })).result
-    } catch (err) {
-        logger.error('Error deleting staffs by original staff id', err, { url: ctx.url, model, getStaffs })
+    logger.info('found staffs for resign', { model, staffs })
 
-        return {
-            ok: false,
-            count: 0,
-            error: err.message
+    const res = []
+
+    for (var staff of staffs) {
+        const plannedAssignmentStartDate = moment(staff.plannedAssignmentStartDate, 'DD/MM/YYYY', true)
+        const now = moment()._d
+        let confirmedFlightDate = null
+
+        if (staff.status === constants.Statuses.Confirmed) {
+            confirmedFlightDate = moment(staff.flights[0].confirmedFlightDate, 'DD/MM/YYYY', true)
+        }
+
+        if (
+            now.isBefore(plannedAssignmentStartDate, 'day') ||
+            (now.isAfter(plannedAssignmentStartDate) && confirmedFlightDate !== null && now.isBefore(confirmedFlightDate, 'day'))
+        ) {
+            const confirmed = staff.status === constants.Statuses.Confirmed && (staff.greenLight === null || staff.greenLight === true)
+
+            if (confirmed) {
+                //Move to pending BTT and add a comment
+                logger.info('resign - move confirmed to pendingbtt and add a comment', { staff, model, confirmedFlightDate })
+
+                let replaceOne = {}
+
+                staff.status = constants.Statuses.PendingBTT
+                staff.comments.push({
+                    text: 'Cancel flight ticket due to resignation',
+                    id: uuid.v1(),
+                    created: moment()._d,
+                    createdBy: 'SYSTEM',
+                    group: ''
+                })
+
+                try {
+                    replaceOne = (await mongo.collection('staffs').replaceOne({ id: staff.id }, { $set: staff })).result
+                } catch (err) {
+                    logger.error('resign - move confirmed to pendingbtt and add a comment error', err, { model, staff, confirmedFlightDate })
+
+                    res.add({
+                        ok: false,
+                        originalStaffId: staff.originalStaffId,
+                        id: staff.id,
+                        error: err.message,
+                        type: 'resign - move confirmed to pendingbtt and add a comment'
+                    })
+
+                    continue
+                }
+
+                logger.info('resign - move confirmed to pendingbtt and add a comment result', { model, staff, confirmedFlightDate, replaceOne })
+
+                if (replaceOne.ok === false) {
+                    res.add({
+                        ok: false,
+                        originalStaffId: staff.originalStaffId,
+                        id: staff.id,
+                        error: 'replaceOne.ok === false',
+                        type: 'resign - move confirmed to pendingbtt and add a comment'
+                    })
+                } else {
+                    res.add({
+                        ok: true,
+                        originalStaffId: staff.originalStaffId,
+                        id: staff.id,
+                        type: 'resign - move confirmed to pendingbtt and add a comment'
+                    })
+                }
+            } else {
+                //Remove request
+                logger.info('resign - remove pending', { model, staff, confirmedFlightDate })
+
+                let remove = {}
+
+                try {
+                    remove = (await mongo.collection('staffs').deleteOne({ id: staff.id })).result
+                } catch (err) {
+                    logger.error('resign - remove pending error', err, { model, staff, confirmedFlightDate })
+
+                    res.add({
+                        ok: false,
+                        originalStaffId: staff.originalStaffId,
+                        id: staff.id,
+                        error: err.message,
+                        type: 'resign - remove pending'
+                    })
+
+                    continue
+                }
+
+                logger.info('resign - remove pending result', { model, staff, confirmedFlightDate, remove })
+
+                res.add({
+                    ok: true,
+                    originalStaffId: staff.originalStaffId,
+                    id: staff.id,
+                    type: 'resign - remove pending'
+                })
+            }
+        } else if (now.isAfter(plannedAssignmentStartDate, 'day') && confirmedFlightDate !== null && now.isAfter(confirmedFlightDate, 'day')) {
+            //New request with same data but with end of season + Preffered Flight Date = Last Working Day
+            logger.info('resign - new request', { model, staff, confirmedFlightDate })
+
+            staff.id = uuid.v1()
+            staff.created = moment()._d
+            staff.typeOfFlight = 'End of season'
+
+            if (model.lastWorkingDay) {
+                staff.preferredFlightDate = moment(model.lastWorkingDay).format('DD/MM/YYYY')
+            }
+
+            let insertOne = {}
+
+            try {
+                insertOne = (await mongo.collection('staffs').insertOne(model)).result
+            } catch (err) {
+                logger.error('resign - new request error', err, { model, staff, confirmedFlightDate })
+
+                res.add({
+                    ok: false,
+                    originalStaffId: staff.originalStaffId,
+                    id: staff.id,
+                    error: err.message,
+                    type: 'resign - new request'
+                })
+
+                continue
+            }
+
+            logger.info('resign - new request result', { model, staff, confirmedFlightDate, insertOne })
+
+            if (insertOne.ok === false) {
+                res.add({
+                    ok: false,
+                    originalStaffId: staff.originalStaffId,
+                    id: staff.id,
+                    error: 'Add request failed',
+                    type: 'resign - new request'
+                })
+            } else {
+                res.add({
+                    ok: true,
+                    originalStaffId: staff.originalStaffId,
+                    id: staff.id,
+                    type: 'resign - new request'
+                })
+            }
         }
     }
 
-    logger.info('Delete staffs by original staff id result', { url: ctx.url, model, remove, getStaffs })
-
-    return {
-        ok: getStaffs.length > 0,
-        count: getStaffs.length
-    }
+    return res
 }
 
 const deleteStaff = async (body, ctx) => {
@@ -1111,5 +1253,5 @@ module.exports = {
     getNewOrPendingStaffByOriginalStaffIdAndDirection,
     getConfirmedStaffByOriginalStaffIdAndDirection,
     deleteStaff,
-    deleteStaffsByOriginalStaffId
+    resign
 }
