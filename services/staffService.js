@@ -26,7 +26,7 @@ const resign = async body => {
     })
 
     if (validation.errors && validation.errors.length > 0) {
-        logger.info('delete staffs by original staff id validation failed, aborting', { model })
+        logger.warning('resign validation failed, aborting', { model })
 
         return [
             {
@@ -44,8 +44,7 @@ const resign = async body => {
     if (staffs.length === 0) {
         return [
             {
-                ok: true,
-                error: 'No flight requests found'
+                ok: true
             }
         ]
     }
@@ -56,10 +55,10 @@ const resign = async body => {
 
     for (var staff of staffs) {
         const plannedAssignmentStartDate = moment(staff.plannedAssignmentStartDate, 'DD/MM/YYYY', true)
-        const now = moment()._d
+        const now = moment()
         let confirmedFlightDate = null
 
-        if (staff.status === constants.Statuses.Confirmed) {
+        if (staff.flights[0] && staff.flights[0].confirmedFlightDate && staff.flights[0].confirmedFlightDate !== '') {
             confirmedFlightDate = moment(staff.flights[0].confirmedFlightDate, 'DD/MM/YYYY', true)
         }
 
@@ -83,13 +82,22 @@ const resign = async body => {
                     createdBy: 'SYSTEM',
                     group: ''
                 })
+                staff.audit.push({
+                    updatedBy: 'SYSTEM',
+                    greenLightFrom: staff.greenLight,
+                    greenLightTo: staff.greenLight,
+                    statusFrom: staff.status,
+                    statusTo: constants.Statuses.PendingBTT,
+                    group: '',
+                    date: new Date()
+                })
 
                 try {
                     replaceOne = (await mongo.collection('staffs').replaceOne({ id: staff.id }, { $set: staff })).result
                 } catch (err) {
                     logger.error('resign - move confirmed to pendingbtt and add a comment error', err, { model, staff, confirmedFlightDate })
 
-                    res.add({
+                    res.push({
                         ok: false,
                         originalStaffId: staff.originalStaffId,
                         id: staff.id,
@@ -103,7 +111,7 @@ const resign = async body => {
                 logger.info('resign - move confirmed to pendingbtt and add a comment result', { model, staff, confirmedFlightDate, replaceOne })
 
                 if (replaceOne.ok === false) {
-                    res.add({
+                    res.push({
                         ok: false,
                         originalStaffId: staff.originalStaffId,
                         id: staff.id,
@@ -111,7 +119,7 @@ const resign = async body => {
                         type: 'resign - move confirmed to pendingbtt and add a comment'
                     })
                 } else {
-                    res.add({
+                    res.push({
                         ok: true,
                         originalStaffId: staff.originalStaffId,
                         id: staff.id,
@@ -129,7 +137,7 @@ const resign = async body => {
                 } catch (err) {
                     logger.error('resign - remove pending error', err, { model, staff, confirmedFlightDate })
 
-                    res.add({
+                    res.push({
                         ok: false,
                         originalStaffId: staff.originalStaffId,
                         id: staff.id,
@@ -142,7 +150,7 @@ const resign = async body => {
 
                 logger.info('resign - remove pending result', { model, staff, confirmedFlightDate, remove })
 
-                res.add({
+                res.push({
                     ok: true,
                     originalStaffId: staff.originalStaffId,
                     id: staff.id,
@@ -159,16 +167,18 @@ const resign = async body => {
 
             if (model.lastWorkingDay) {
                 staff.preferredFlightDate = moment(model.lastWorkingDay).format('DD/MM/YYYY')
+            } else {
+                staff.preferredFlightDate = ''
             }
 
             let insertOne = {}
 
             try {
-                insertOne = (await mongo.collection('staffs').insertOne(model)).result
+                insertOne = (await mongo.collection('staffs').insertOne(staff)).result
             } catch (err) {
                 logger.error('resign - new request error', err, { model, staff, confirmedFlightDate })
 
-                res.add({
+                res.push({
                     ok: false,
                     originalStaffId: staff.originalStaffId,
                     id: staff.id,
@@ -182,7 +192,7 @@ const resign = async body => {
             logger.info('resign - new request result', { model, staff, confirmedFlightDate, insertOne })
 
             if (insertOne.ok === false) {
-                res.add({
+                res.push({
                     ok: false,
                     originalStaffId: staff.originalStaffId,
                     id: staff.id,
@@ -190,7 +200,7 @@ const resign = async body => {
                     type: 'resign - new request'
                 })
             } else {
-                res.add({
+                res.push({
                     ok: true,
                     originalStaffId: staff.originalStaffId,
                     id: staff.id,
