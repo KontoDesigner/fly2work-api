@@ -7,6 +7,7 @@ const newValidation = require('../validations/newValidation')
 const declineValidation = require('../validations/declineValidation')
 const resignValidation = require('../validations/resignValidation')
 const deleteStaffValidation = require('../validations/deleteStaffValidation')
+const deleteStaffByOriginalStaffIdValidation = require('../validations/deleteStaffByOriginalStaffIdValidation')
 const email = require('../infrastructure/email')
 const userService = require('./userService')
 const helpers = require('../infrastructure/helpers')
@@ -41,17 +42,13 @@ const resign = async body => {
         .find({ originalStaffId: model.originalStaffId }, { projection: { _id: 0 } })
         .toArray()
 
+    const res = []
+
     if (staffs.length === 0) {
-        return [
-            {
-                ok: true
-            }
-        ]
+        return res
     }
 
     logger.info('found staffs for resign', { model, staffs })
-
-    const res = []
 
     for (var staff of staffs) {
         const plannedAssignmentStartDate = moment(staff.plannedAssignmentStartDate, 'DD/MM/YYYY', true)
@@ -253,6 +250,67 @@ const deleteStaff = async (body, ctx) => {
     return {
         ok: true
     }
+}
+
+const deleteStaffByOriginalStaffId = async (body, ctx) => {
+    const model = {
+        originalStaffId: body.originalStaffId
+    }
+
+    const validation = await deleteStaffByOriginalStaffIdValidation.validate(model, { abortEarly: false }).catch(function(err) {
+        return err
+    })
+
+    const res = []
+
+    if (validation.errors && validation.errors.length > 0) {
+        logger.info('delete staff by original staff id validation failed, aborting', { url: ctx.url, model, validation })
+
+        res.push({
+            ok: false,
+            error: validation.errors
+        })
+
+        return res
+    }
+
+    const staffs = await mongo
+        .collection('staffs')
+        .find({ originalStaffId: model.originalStaffId }, { projection: { attachments: 0 } })
+        .toArray()
+
+    if (staffs.length === 0) {
+        return res
+    }
+
+    logger.info('found staffs for delete staff by original staff id', { model, staffs })
+
+    for (var staff of staffs) {
+        let remove = {}
+
+        try {
+            remove = (await mongo.collection('staffs').deleteOne({ id: staff.id })).result
+        } catch (err) {
+            logger.error('delete staff by original staff id error', err, { url: ctx.url, model, staff })
+
+            res.push({
+                ok: false,
+                error: 'delete staff by original staff id failed',
+                originalStaffId: staff.originalStaffId,
+                id: staff.id
+            })
+        }
+
+        logger.info('delete staff by original staff id result', { url: ctx.url, model, remove, staff })
+
+        res.push({
+            ok: true,
+            originalStaffId: staff.originalStaffId,
+            id: staff.id
+        })
+    }
+
+    return res
 }
 
 const confirmGreenLight = async (body, ctx) => {
@@ -1263,5 +1321,6 @@ module.exports = {
     getNewOrPendingStaffByOriginalStaffIdAndDirection,
     getConfirmedStaffByOriginalStaffIdAndDirection,
     deleteStaff,
-    resign
+    resign,
+    deleteStaffByOriginalStaffId
 }

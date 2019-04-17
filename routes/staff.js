@@ -43,6 +43,18 @@ router.post(
     }
 )
 
+router.post(`${BASE}/deletebyoriginalstaffid/basic`, basicAuth({ name: config.basicAuthUser, pass: config.basicAuthPassword }), async (ctx, next) => {
+    const body = ctx.request.body
+
+    const res = await staffService.deleteStaffByOriginalStaffId(body, ctx)
+
+    ctx.body = res
+
+    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, body })
+
+    return await next()
+})
+
 //BTT
 router.post(
     `${BASE}/decline`,
