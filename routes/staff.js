@@ -113,7 +113,7 @@ router.post(`${BASE}/new/basic`, basicAuth({ name: config.basicAuthUser, pass: c
     return await next()
 })
 
-router.post(`${BASE}/resign`, basicAuth({ name: config.basicAuthUser, pass: config.basicAuthPassword }), async (ctx, next) => {
+router.post(`${BASE}/resign/basic`, basicAuth({ name: config.basicAuthUser, pass: config.basicAuthPassword }), async (ctx, next) => {
     const body = ctx.request.body
 
     const res = await staffService.resign(body)
