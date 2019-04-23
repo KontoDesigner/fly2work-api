@@ -102,12 +102,12 @@ async function send(staff, statusText, emails) {
         } else {
             logger.warning('Could not send email', { res, staff, mailApi, statusText, emails })
 
-            await insertSentEmails(staff, email, statusText, `Received error from mail service: ${res.errors}`)
+            await insertSentEmails(staff, email, statusText, `Response error: ${res.errors}`)
         }
     } catch (err) {
         logger.error('Error sending email', err, { staff, email, mailApi, statusText, emails })
 
-        await insertSentEmails(staff, email, statusText, `Received error from mongo: ${err.message}`)
+        await insertSentEmails(staff, email, statusText, `Connection error: ${err.message}`)
     }
 
     return false
