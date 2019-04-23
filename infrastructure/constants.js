@@ -39,6 +39,7 @@ function StaffBS() {
     this.comments = []
     this.attachments = []
     this.emails = []
+    this.sentEmails = []
     this.audit = []
 }
 

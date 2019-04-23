@@ -862,6 +862,7 @@ const updateOrInsertStaff = async (body, ctx) => {
     model.greenLightUpdatedBy = getStaff ? getStaff.greenLightUpdatedBy : null
     model.greenLightUpdatedByEmail = getStaff ? getStaff.greenLightUpdatedByEmail : null
     model.dateRequested = getStaff ? getStaff.dateRequested : null
+    model.sentEmails = getStaff ? getStaff.sentEmails : []
     if (add === true && model.comment && model.comment !== '') {
         const comment = {
             text: model.comment,

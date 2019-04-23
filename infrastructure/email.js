@@ -5,6 +5,7 @@ const constants = require('./constants')
 const pdfService = require('../services/pdfService')
 // const excel = require('./excel')
 const moment = require('moment')
+const mongo = require('./mongo')
 
 async function send(staff, statusText, emails) {
     logger.info('Started send email', { staff, emails })
@@ -95,15 +96,54 @@ async function send(staff, statusText, emails) {
         logger.info('Mail api result', { res, staff, mailApi, statusText, emails })
 
         if (res.ok === true) {
+            await insertSentEmails(staff, email, statusText, null)
+
             return true
         } else {
             logger.warning('Could not send email', { res, staff, mailApi, statusText, emails })
+
+            await insertSentEmails(staff, email, statusText, `Received error from mail service: ${res.errors}`)
         }
     } catch (err) {
         logger.error('Error sending email', err, { staff, email, mailApi, statusText, emails })
+
+        await insertSentEmails(staff, email, statusText, `Received error from mongo: ${err.message}`)
     }
 
     return false
+}
+
+async function insertSentEmails(staff, email, statusText, error) {
+    if (!staff.id || staff.id === '') {
+        return
+    }
+
+    const sentEmail = {
+        to: email.emailTo,
+        ccTo: email.ccTo,
+        attachments: email.attachments.length,
+        statusText,
+        date: new Date(),
+        error
+    }
+
+    try {
+        let updateOne = {}
+
+        if (!staff.sentEmails || staff.sentEmails.length === 0) {
+            updateOne = await mongo.collection('staffs').updateOne({ id: staff.id }, { $set: { sentEmails: [sentEmail] } })
+        } else {
+            updateOne = await mongo.collection('staffs').updateOne({ id: staff.id }, { $push: { sentEmails: sentEmail } })
+        }
+
+        logger.info('Insert sent emails result', {
+            id: staff.id,
+            sentEmail,
+            result: updateOne.result
+        })
+    } catch (err) {
+        logger.error('Error inserting sent email', err, { staff, email, statusText, err })
+    }
 }
 
 module.exports = {
