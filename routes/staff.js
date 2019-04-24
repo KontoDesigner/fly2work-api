@@ -43,17 +43,21 @@ router.post(
     }
 )
 
-router.post(`${BASE}/deletebyoriginalstaffid/basic`, basicAuth({ name: config.basicAuthUser, pass: config.basicAuthPassword }), async (ctx, next) => {
-    const body = ctx.request.body
+router.post(
+    `${BASE}/deletebypositionassignid/basic`,
+    basicAuth({ name: config.basicAuthUser, pass: config.basicAuthPassword }),
+    async (ctx, next) => {
+        const body = ctx.request.body
 
-    const res = await staffService.deleteStaffByOriginalStaffId(body, ctx)
+        const res = await staffService.deleteStaffByPositionAssignId(body, ctx)
 
-    ctx.body = res
+        ctx.body = res
 
-    logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, body })
+        logger.info(`OUTGOING ${ctx.method}`, { url: ctx.url, res, body })
 
-    return await next()
-})
+        return await next()
+    }
+)
 
 //BTT
 router.post(

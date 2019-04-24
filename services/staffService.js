@@ -7,7 +7,7 @@ const newValidation = require('../validations/newValidation')
 const declineValidation = require('../validations/declineValidation')
 const resignValidation = require('../validations/resignValidation')
 const deleteStaffValidation = require('../validations/deleteStaffValidation')
-const deleteStaffByOriginalStaffIdValidation = require('../validations/deleteStaffByOriginalStaffIdValidation')
+const deleteStaffByPositionAssignIdValidation = require('../validations/deleteStaffByPositionAssignIdValidation')
 const email = require('../infrastructure/email')
 const userService = require('./userService')
 const helpers = require('../infrastructure/helpers')
@@ -252,12 +252,12 @@ const deleteStaff = async (body, ctx) => {
     }
 }
 
-const deleteStaffByOriginalStaffId = async (body, ctx) => {
+const deleteStaffByPositionAssignId = async (body, ctx) => {
     const model = {
-        originalStaffId: body.originalStaffId
+        positionAssignId: body.positionAssignId
     }
 
-    const validation = await deleteStaffByOriginalStaffIdValidation.validate(model, { abortEarly: false }).catch(function(err) {
+    const validation = await deleteStaffByPositionAssignIdValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
     })
 
@@ -276,7 +276,7 @@ const deleteStaffByOriginalStaffId = async (body, ctx) => {
 
     const staffs = await mongo
         .collection('staffs')
-        .find({ originalStaffId: model.originalStaffId }, { projection: { attachments: 0 } })
+        .find({ positionAssignId: model.positionAssignId }, { projection: { attachments: 0 } })
         .toArray()
 
     if (staffs.length === 0) {
@@ -296,7 +296,7 @@ const deleteStaffByOriginalStaffId = async (body, ctx) => {
             res.push({
                 ok: false,
                 error: 'delete staff by original staff id failed',
-                originalStaffId: staff.originalStaffId,
+                positionAssignId: staff.positionAssignId,
                 id: staff.id
             })
         }
@@ -305,7 +305,7 @@ const deleteStaffByOriginalStaffId = async (body, ctx) => {
 
         res.push({
             ok: true,
-            originalStaffId: staff.originalStaffId,
+            positionAssignId: staff.positionAssignId,
             id: staff.id
         })
     }
@@ -1323,5 +1323,5 @@ module.exports = {
     getConfirmedStaffByOriginalStaffIdAndDirection,
     deleteStaff,
     resign,
-    deleteStaffByOriginalStaffId
+    deleteStaffByPositionAssignId
 }
