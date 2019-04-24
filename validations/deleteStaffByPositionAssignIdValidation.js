@@ -1,7 +1,7 @@
 const Yup = require('yup')
 
 const deleteStaffByPositionAssignIdValidation = Yup.object().shape({
-    positionAssignId: Yup.string()
+    positionAssignId: Yup.number()
         .nullable(true)
         .required('Position assign id is required')
 })
