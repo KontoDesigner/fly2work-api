@@ -17,4 +17,4 @@ steps:
         environment:
             - TEAM=delivery
             - CMD=node,index.js
-            - SCOPES=uat,prod
+            - SCOPES=dev,uat,prod
