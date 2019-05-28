@@ -1299,6 +1299,21 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
             }
         }
     }
+    //Send (PENDING => NEW)
+    else if (
+        model.status === constants.Statuses.New &&
+        (getStaff.status === constants.Statuses.PendingBTT || getStaff.status === constants.Statuses.PendingDES)
+    ) {
+        emails = new constants.EmailRecipients()
+
+        //Add BS
+        if (model.requestedBy && model.requestedBy.email) {
+            emails.to.push(model.requestedBy.email)
+        }
+
+        //Add BTT CC
+        emails.to.push(config.emailBTTCC)
+    }
 
     logger.info('Update staff successfull', { url: ctx.url, model, user })
 
