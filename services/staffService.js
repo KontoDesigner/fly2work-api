@@ -488,7 +488,8 @@ const insertStaffFromGpx = async (body, ctx) => {
 
     const destination = body.Destination ? body.Destination : ''
     const greenLightDestinations = config.greenLightDestinations.split(',')
-    const greenLight = greenLightDestinations.includes(destination) && body.TypeOfFlight !== 'End of season' ? false : null
+    const greenLight =
+        greenLightDestinations.includes(destination) && body.TypeOfFlight !== 'End of season' && body.TypeOfFlight !== 'Resignation' ? false : null
 
     const getStaff = await getNewOrPendingStaffByOriginalStaffIdAndDirection(body.Id, body.Direction)
 
