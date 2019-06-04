@@ -529,6 +529,28 @@ const insertStaffFromGpx = async (body, ctx) => {
             }
 
             model.comments.push(comment)
+
+            emails = new constants.EmailRecipients()
+
+            //Add BS
+            if (getStaff.requestedBy && getStaff.requestedBy.email) {
+                emails.to.push(getStaff.requestedBy.email)
+            }
+
+            //Add BTT CC
+            emails.to.push(config.emailBTTCC)
+
+            if (emails.to.length > 0) {
+                const statusText = `Pending => ${constants.Statuses.New}`
+
+                const emailRes = await email.send(getStaff, statusText, emails)
+
+                if (emailRes === true) {
+                    logger.info('Sent pending => new notification', { emails, emailRes, getStaff })
+                } else {
+                    logger.warning('Could not send pending => new notification', { emailRes, getStaff })
+                }
+            }
         }
     } else {
         model.id = uuid.v1()
@@ -1298,21 +1320,6 @@ async function sendUpdateEmailsAndConfirm(ctx, model, getStaff, user) {
                 }
             }
         }
-    }
-    //Send (PENDING => NEW)
-    else if (
-        model.status === constants.Statuses.New &&
-        (getStaff.status === constants.Statuses.PendingBTT || getStaff.status === constants.Statuses.PendingDES)
-    ) {
-        emails = new constants.EmailRecipients()
-
-        //Add BS
-        if (model.requestedBy && model.requestedBy.email) {
-            emails.to.push(model.requestedBy.email)
-        }
-
-        //Add BTT CC
-        emails.to.push(config.emailBTTCC)
     }
 
     logger.info('Update staff successfull', { url: ctx.url, model, user })
