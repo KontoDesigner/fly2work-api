@@ -8,10 +8,17 @@ async function confirm(ctx, positionAssignId, confirmedDate, destination, staffI
 
     const req = {
         PositionAssignId: positionAssignId,
-        ConfirmedDate: confirmedDate !== null ? moment(confirmedDate, 'DD/MM/YYYY', true).format('YYYY-MM-DD') : null,
         Destination: destination,
         StaffId: staffId,
         Direction: direction
+    }
+
+    if (direction === 'Arriving') {
+        req.ConfirmedDate = confirmedDate !== null ? moment(confirmedDate, 'DD/MM/YYYY', true).format('YYYY-MM-DD') : null
+    }
+
+    if (direction === 'Departing') {
+        req.ConfirmedDepDate = confirmedDate !== null ? moment(confirmedDate, 'DD/MM/YYYY', true).format('YYYY-MM-DD') : null
     }
 
     let res = {}
