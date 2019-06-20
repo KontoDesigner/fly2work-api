@@ -11,13 +11,6 @@ router.extend(require('./user'))
 router.extend(require('./comment'))
 
 router.get('/', async (ctx, next) => {
-    const res = router.routes
-        .filter(r => r.route !== '/')
-        .map(r => ({
-            route: r.path,
-            method: r.method
-        }))
-
     res.unshift(`▀▀▀ ░░▀░░ ▀░▀`)
 
     res.unshift(`█░░ ░░█░░ ▄▀▄`)
