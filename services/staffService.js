@@ -19,7 +19,8 @@ const gpxService = require('./gpxService')
 const resign = async body => {
     const model = {
         originalStaffId: body.originalStaffId,
-        lastWorkingDay: body.lastWorkingDay
+        lastWorkingDay: body.lastWorkingDay,
+        resign: body.resign
     }
 
     const validation = await resignValidation.validate(model, { abortEarly: false }).catch(function(err) {
@@ -44,7 +45,121 @@ const resign = async body => {
 
     const res = []
 
+    const now = moment()
+
     if (staffs.length === 0) {
+        const plannedAssignmentStartDate = moment(model.resign.PositionStart)
+        const confirmedFlightDate = moment(model.resign.ConfirmedFlightDate)
+
+        //New request
+        if (
+            model.resign &&
+            model.resign.ConfirmedFlightDate &&
+            model.resign.PositionStart &&
+            now.isAfter(plannedAssignmentStartDate, 'day') &&
+            now.isAfter(confirmedFlightDate, 'day')
+        ) {
+            logger.info('found no requests for resign, creating a new staff resign request', { model })
+
+            let resign = new constants.Staff()
+            resign.id = uuid.v1()
+            resign.created = moment()._d
+            resign.originalStaffId = model.resign.Id
+            resign.direction = model.resign.Direction
+            resign.firstName = model.resign.FirstName ? model.resign.FirstName : ''
+            resign.lastName2 = model.resign.LastName2 ? model.resign.LastName2 : ''
+            resign.lastName = model.resign.LastName ? model.resign.LastName : ''
+            resign.sourceMarket = model.resign.SourceMarket ? model.resign.SourceMarket : ''
+            resign.phone = model.resign.Phone ? model.resign.Phone : ''
+            resign.status = constants.Statuses.New
+            resign.gender = model.resign.Gender ? model.resign.Gender : ''
+            resign.destination = model.resign.Destination ? model.resign.Destination : ''
+            resign.jobTitle = model.resign.JobTitle ? model.resign.JobTitle : ''
+            resign.iataCode = model.resign.IataCode ? model.resign.IataCode : ''
+            resign.greenLight = null
+            resign.positionAssignId = model.resign.PositionAssignId ? model.resign.PositionAssignId : null
+            resign.typeOfFlight = model.resign.TypeOfFlight ? model.resign.TypeOfFlight : ''
+
+            if (model.lastWorkingDay) {
+                resign.preferredFlightDate = moment(model.lastWorkingDay).format('DD/MM/YYYY')
+            } else {
+                resign.preferredFlightDate = ''
+            }
+
+            if (model.resign.DateOfBirth) {
+                const dateOfBirth = moment(model.resign.DateOfBirth)
+                const dateOfBirthValid = dateOfBirth.isValid()
+
+                if (dateOfBirthValid === true) {
+                    resign.dateOfBirth = moment(model.resign.DateOfBirth).format('DD/MM/YYYY')
+                }
+            }
+
+            if (model.resign.PositionStart) {
+                const positionStart = moment(model.resign.PositionStart)
+                const positionStartValid = positionStart.isValid()
+
+                if (positionStartValid === true) {
+                    resign.plannedAssignmentStartDate = moment(model.resign.PositionStart).format('DD/MM/YYYY')
+                }
+            }
+
+            const validation = await newValidation.validate(resign, { abortEarly: false }).catch(function(err) {
+                return err
+            })
+
+            if (validation.errors && validation.errors.length > 0) {
+                logger.warning('Staff model validation failed, aborting new resign request', { model, validation })
+
+                res.push({
+                    ok: false,
+                    originalStaffId: model.resign.Id,
+                    id: '',
+                    type: 'resign - new request (no copy)',
+                    errors: validation.errors
+                })
+
+                return res
+            }
+
+            try {
+                const insertOne = (await mongo.collection('staffs').insertOne(resign)).result
+
+                logger.info('Insert new resign request result', { resign, insertOne })
+
+                if (insertOne.ok) {
+                    res.push({
+                        ok: true,
+                        originalStaffId: model.resign.Id,
+                        id: '',
+                        type: 'resign - new request  (no copy)'
+                    })
+                } else {
+                    logger.warning('Could not insert new resign request', { insertOne, resign })
+
+                    res.push({
+                        ok: false,
+                        originalStaffId: model.resign.Id,
+                        id: '',
+                        type: 'resign - new request  (no copy)',
+                        errors: ['Could not insert new resign request']
+                    })
+                }
+            } catch (err) {
+                logger.error('Error inserting new resign request', err, { resign })
+
+                res.push({
+                    ok: false,
+                    originalStaffId: model.resign.Id,
+                    id: '',
+                    type: 'resign - new request  (no copy)',
+                    errors: err
+                })
+            }
+        } else {
+            logger.info('found no request for resign, staff not eligible for new resign request', { model, staffs })
+        }
+
         return res
     }
 
@@ -52,7 +167,6 @@ const resign = async body => {
 
     for (var staff of staffs) {
         const plannedAssignmentStartDate = moment(staff.plannedAssignmentStartDate, 'DD/MM/YYYY', true)
-        const now = moment()
         let confirmedFlightDate = null
 
         if (staff.flights[0] && staff.flights[0].confirmedFlightDate && staff.flights[0].confirmedFlightDate !== '') {
