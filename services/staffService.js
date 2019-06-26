@@ -230,36 +230,6 @@ const resign = async body => {
                     type: 'resign - move confirmed to pendingbtt and add a comment'
                 })
             }
-        } else if (confirmed === false && now.isBefore(plannedAssignmentStartDate, 'day')) {
-            //Remove request
-            logger.info('resign - remove pending', { model, staff, confirmedFlightDate })
-
-            let remove = {}
-
-            try {
-                remove = (await mongo.collection('staffs').deleteOne({ id: staff.id })).result
-            } catch (err) {
-                logger.error('resign - remove pending error', err, { model, staff, confirmedFlightDate })
-
-                res.push({
-                    ok: false,
-                    originalStaffId: staff.originalStaffId,
-                    id: staff.id,
-                    error: err.message,
-                    type: 'resign - remove pending'
-                })
-
-                continue
-            }
-
-            logger.info('resign - remove pending result', { model, staff, confirmedFlightDate, remove })
-
-            res.push({
-                ok: true,
-                originalStaffId: staff.originalStaffId,
-                id: staff.id,
-                type: 'resign - remove pending'
-            })
         } else if (now.isAfter(plannedAssignmentStartDate, 'day') && confirmedFlightDate !== null && now.isAfter(confirmedFlightDate, 'day')) {
             //New request with same data but with end of season + Preffered Flight Date = Last Working Day
             logger.info('resign - new request', { model, staff, confirmedFlightDate })
@@ -310,6 +280,36 @@ const resign = async body => {
                     type: 'resign - new request'
                 })
             }
+        } else if (confirmed === false) {
+            //Remove request
+            logger.info('resign - remove pending', { model, staff, confirmedFlightDate })
+
+            let remove = {}
+
+            try {
+                remove = (await mongo.collection('staffs').deleteOne({ id: staff.id })).result
+            } catch (err) {
+                logger.error('resign - remove pending error', err, { model, staff, confirmedFlightDate })
+
+                res.push({
+                    ok: false,
+                    originalStaffId: staff.originalStaffId,
+                    id: staff.id,
+                    error: err.message,
+                    type: 'resign - remove pending'
+                })
+
+                continue
+            }
+
+            logger.info('resign - remove pending result', { model, staff, confirmedFlightDate, remove })
+
+            res.push({
+                ok: true,
+                originalStaffId: staff.originalStaffId,
+                id: staff.id,
+                type: 'resign - remove pending'
+            })
         }
     }
 
