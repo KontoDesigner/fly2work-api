@@ -236,7 +236,8 @@ const resign = async body => {
 
             staff.id = uuid.v1()
             staff.created = moment()._d
-            staff.typeOfFlight = 'End of season'
+            staff.typeOfFlight = 'Resignation'
+            staff.status = constants.Statuses.New
 
             if (model.lastWorkingDay) {
                 staff.preferredFlightDate = moment(model.lastWorkingDay).format('DD/MM/YYYY')
