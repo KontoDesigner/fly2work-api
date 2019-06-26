@@ -170,101 +170,101 @@ const resign = async body => {
             confirmedFlightDate = moment(staff.flights[0].confirmedFlightDate, 'DD/MM/YYYY', true)
         }
 
+        const confirmed = staff.status === constants.Statuses.Confirmed && (staff.greenLight === null || staff.greenLight === true)
+
         if (
-            now.isBefore(plannedAssignmentStartDate, 'day') ||
-            (now.isAfter(plannedAssignmentStartDate) && confirmedFlightDate !== null && now.isBefore(confirmedFlightDate, 'day'))
+            confirmed === true &&
+            now.isAfter(plannedAssignmentStartDate) &&
+            confirmedFlightDate !== null &&
+            now.isBefore(confirmedFlightDate, 'day')
         ) {
-            const confirmed = staff.status === constants.Statuses.Confirmed && (staff.greenLight === null || staff.greenLight === true)
+            //Move to pending BTT and add a comment
+            logger.info('resign - move confirmed to pendingbtt and add a comment', { staff, model, confirmedFlightDate })
 
-            if (confirmed) {
-                //Move to pending BTT and add a comment
-                logger.info('resign - move confirmed to pendingbtt and add a comment', { staff, model, confirmedFlightDate })
+            let replaceOne = {}
 
-                let replaceOne = {}
+            staff.status = constants.Statuses.PendingBTT
+            staff.comments.push({
+                text: 'Cancel flight ticket due to resignation',
+                id: uuid.v1(),
+                created: moment()._d,
+                createdBy: 'SYSTEM',
+                group: ''
+            })
+            staff.audit.push({
+                updatedBy: 'SYSTEM',
+                greenLightFrom: staff.greenLight,
+                greenLightTo: staff.greenLight,
+                statusFrom: staff.status,
+                statusTo: constants.Statuses.PendingBTT,
+                group: '',
+                date: new Date()
+            })
 
-                staff.status = constants.Statuses.PendingBTT
-                staff.comments.push({
-                    text: 'Cancel flight ticket due to resignation',
-                    id: uuid.v1(),
-                    created: moment()._d,
-                    createdBy: 'SYSTEM',
-                    group: ''
+            try {
+                replaceOne = (await mongo.collection('staffs').replaceOne({ id: staff.id }, { $set: staff })).result
+            } catch (err) {
+                logger.error('resign - move confirmed to pendingbtt and add a comment error', err, { model, staff, confirmedFlightDate })
+
+                res.push({
+                    ok: false,
+                    originalStaffId: staff.originalStaffId,
+                    id: staff.id,
+                    error: err.message,
+                    type: 'resign - move confirmed to pendingbtt and add a comment'
                 })
-                staff.audit.push({
-                    updatedBy: 'SYSTEM',
-                    greenLightFrom: staff.greenLight,
-                    greenLightTo: staff.greenLight,
-                    statusFrom: staff.status,
-                    statusTo: constants.Statuses.PendingBTT,
-                    group: '',
-                    date: new Date()
+
+                continue
+            }
+
+            logger.info('resign - move confirmed to pendingbtt and add a comment result', { model, staff, confirmedFlightDate, replaceOne })
+
+            if (replaceOne.ok === false) {
+                res.push({
+                    ok: false,
+                    originalStaffId: staff.originalStaffId,
+                    id: staff.id,
+                    error: 'replaceOne.ok === false',
+                    type: 'resign - move confirmed to pendingbtt and add a comment'
                 })
-
-                try {
-                    replaceOne = (await mongo.collection('staffs').replaceOne({ id: staff.id }, { $set: staff })).result
-                } catch (err) {
-                    logger.error('resign - move confirmed to pendingbtt and add a comment error', err, { model, staff, confirmedFlightDate })
-
-                    res.push({
-                        ok: false,
-                        originalStaffId: staff.originalStaffId,
-                        id: staff.id,
-                        error: err.message,
-                        type: 'resign - move confirmed to pendingbtt and add a comment'
-                    })
-
-                    continue
-                }
-
-                logger.info('resign - move confirmed to pendingbtt and add a comment result', { model, staff, confirmedFlightDate, replaceOne })
-
-                if (replaceOne.ok === false) {
-                    res.push({
-                        ok: false,
-                        originalStaffId: staff.originalStaffId,
-                        id: staff.id,
-                        error: 'replaceOne.ok === false',
-                        type: 'resign - move confirmed to pendingbtt and add a comment'
-                    })
-                } else {
-                    res.push({
-                        ok: true,
-                        originalStaffId: staff.originalStaffId,
-                        id: staff.id,
-                        type: 'resign - move confirmed to pendingbtt and add a comment'
-                    })
-                }
             } else {
-                //Remove request
-                logger.info('resign - remove pending', { model, staff, confirmedFlightDate })
-
-                let remove = {}
-
-                try {
-                    remove = (await mongo.collection('staffs').deleteOne({ id: staff.id })).result
-                } catch (err) {
-                    logger.error('resign - remove pending error', err, { model, staff, confirmedFlightDate })
-
-                    res.push({
-                        ok: false,
-                        originalStaffId: staff.originalStaffId,
-                        id: staff.id,
-                        error: err.message,
-                        type: 'resign - remove pending'
-                    })
-
-                    continue
-                }
-
-                logger.info('resign - remove pending result', { model, staff, confirmedFlightDate, remove })
-
                 res.push({
                     ok: true,
                     originalStaffId: staff.originalStaffId,
                     id: staff.id,
-                    type: 'resign - remove pending'
+                    type: 'resign - move confirmed to pendingbtt and add a comment'
                 })
             }
+        } else if (confirmed === false && now.isBefore(plannedAssignmentStartDate, 'day')) {
+            //Remove request
+            logger.info('resign - remove pending', { model, staff, confirmedFlightDate })
+
+            let remove = {}
+
+            try {
+                remove = (await mongo.collection('staffs').deleteOne({ id: staff.id })).result
+            } catch (err) {
+                logger.error('resign - remove pending error', err, { model, staff, confirmedFlightDate })
+
+                res.push({
+                    ok: false,
+                    originalStaffId: staff.originalStaffId,
+                    id: staff.id,
+                    error: err.message,
+                    type: 'resign - remove pending'
+                })
+
+                continue
+            }
+
+            logger.info('resign - remove pending result', { model, staff, confirmedFlightDate, remove })
+
+            res.push({
+                ok: true,
+                originalStaffId: staff.originalStaffId,
+                id: staff.id,
+                type: 'resign - remove pending'
+            })
         } else if (now.isAfter(plannedAssignmentStartDate, 'day') && confirmedFlightDate !== null && now.isAfter(confirmedFlightDate, 'day')) {
             //New request with same data but with end of season + Preffered Flight Date = Last Working Day
             logger.info('resign - new request', { model, staff, confirmedFlightDate })
