@@ -6,6 +6,7 @@ const bttValidation = require('../validations/bttValidation')
 const newValidation = require('../validations/newValidation')
 const declineValidation = require('../validations/declineValidation')
 const resignValidation = require('../validations/resignValidation')
+const resignNewRequestValidation = require('../validations/resignNewRequestValidation')
 const deleteStaffValidation = require('../validations/deleteStaffValidation')
 const deleteStaffByPositionAssignIdValidation = require('../validations/deleteStaffByPositionAssignIdValidation')
 const email = require('../infrastructure/email')
@@ -95,16 +96,7 @@ const resign = async body => {
                 }
             }
 
-            if (model.resign.PositionStart) {
-                const positionStart = moment(model.resign.PositionStart)
-                const positionStartValid = positionStart.isValid()
-
-                if (positionStartValid === true) {
-                    resign.plannedAssignmentStartDate = moment(model.resign.PositionStart).format('DD/MM/YYYY')
-                }
-            }
-
-            const validation = await newValidation.validate(resign, { abortEarly: false }).catch(function(err) {
+            const validation = await resignNewRequestValidation.validate(resign, { abortEarly: false }).catch(function(err) {
                 return err
             })
 
@@ -157,7 +149,12 @@ const resign = async body => {
                 })
             }
         } else {
-            logger.info('found no request for resign, staff not eligible for new resign request', { model, staffs })
+            logger.info('found no request for resign, staff not eligible for new resign request', {
+                model,
+                staffs,
+                plannedAssignmentStartDate,
+                confirmedFlightDate
+            })
         }
 
         return res
