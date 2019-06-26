@@ -172,12 +172,7 @@ const resign = async body => {
 
         const confirmed = staff.status === constants.Statuses.Confirmed && (staff.greenLight === null || staff.greenLight === true)
 
-        if (
-            confirmed === true &&
-            now.isAfter(plannedAssignmentStartDate) &&
-            confirmedFlightDate !== null &&
-            now.isBefore(confirmedFlightDate, 'day')
-        ) {
+        if (confirmed === true && confirmedFlightDate !== null && now.isBefore(confirmedFlightDate, 'day')) {
             //Move to pending BTT and add a comment
             logger.info('resign - move confirmed to pendingbtt and add a comment', { staff, model, confirmedFlightDate })
 
