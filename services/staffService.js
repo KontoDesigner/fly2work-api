@@ -854,7 +854,9 @@ const getStaffById = async id => {
 }
 
 const getNewOrPendingStaffByOriginalStaffIdAndDirection = async (originalStaffId, direction) => {
-    const staff = await mongo.collection('staffs').findOne({ originalStaffId, direction, status: { $ne: constants.Statuses.Confirmed } })
+    const staff = await mongo
+        .collection('staffs')
+        .findOne({ originalStaffId, direction, typeOfFlight: { $ne: 'Resignation' }, status: { $ne: constants.Statuses.Confirmed } })
 
     return staff
 }
