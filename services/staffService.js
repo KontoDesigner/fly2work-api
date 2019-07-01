@@ -41,7 +41,7 @@ const resign = async body => {
 
     const staffs = await mongo
         .collection('staffs')
-        .find({ originalStaffId: model.originalStaffId }, { projection: { _id: 0 } })
+        .find({ originalStaffId: model.originalStaffId, typeOfFlight: { $ne: 'Resignation' } }, { projection: { _id: 0 } })
         .toArray()
 
     const res = []
@@ -856,13 +856,17 @@ const getStaffById = async id => {
 }
 
 const getNewOrPendingStaffByOriginalStaffIdAndDirection = async (originalStaffId, direction) => {
-    const staff = await mongo.collection('staffs').findOne({ originalStaffId, direction, status: { $ne: constants.Statuses.Confirmed } })
+    const staff = await mongo
+        .collection('staffs')
+        .findOne({ originalStaffId, direction, typeOfFlight: { $ne: 'Resignation' }, status: { $ne: constants.Statuses.Confirmed } })
 
     return staff
 }
 
 const getConfirmedStaffByOriginalStaffIdAndDirection = async (originalStaffId, direction) => {
-    const staff = await mongo.collection('staffs').findOne({ originalStaffId, direction, status: constants.Statuses.Confirmed })
+    const staff = await mongo
+        .collection('staffs')
+        .findOne({ originalStaffId, direction, status: constants.Statuses.Confirmed, typeOfFlight: { $ne: 'Resignation' } })
 
     return staff
 }
