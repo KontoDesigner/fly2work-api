@@ -179,7 +179,7 @@ const resign = async body => {
             let replaceOne = {}
 
             staff.status = constants.Statuses.PendingBTT
-            staff.direction = 'Departing'
+            // staff.direction = 'Departing'
             staff.comments.push({
                 text: 'Cancel flight ticket due to resignation',
                 id: uuid.v1(),
