@@ -79,6 +79,7 @@ const resign = async body => {
             resign.greenLight = null
             resign.positionAssignId = model.resign.PositionAssignId ? model.resign.PositionAssignId : null
             resign.typeOfFlight = model.resign.TypeOfFlight ? model.resign.TypeOfFlight : ''
+            resign.plannedAssignmentStartDate = model.resign.PositionStart
 
             if (model.lastWorkingDay) {
                 resign.preferredFlightDate = moment(model.lastWorkingDay).format('DD/MM/YYYY')
