@@ -610,7 +610,7 @@ const insertStaffFromGpx = async (body, ctx) => {
     logger.info('New request from gpx received', { body })
 
     if (body.TypeOfFlight === 'End of season') {
-        const resignationStaffs = getResignationStaffByOriginalStaffId(body.Id)
+        const resignationStaffs = await getResignationStaffByOriginalStaffId(body.Id)
 
         if (resignationStaffs && resignationStaffs.length > 0) {
             logger.info('Aborting new end of season request from gpx, resignation exists', { body, resignationStaffs })
