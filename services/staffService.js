@@ -41,7 +41,7 @@ const resign = async body => {
 
     const staffs = await mongo
         .collection('staffs')
-        .find({ originalStaffId: model.originalStaffId, typeOfFlight: { $ne: 'Resignation' } }, { projection: { _id: 0 } })
+        .find({ originalStaffId: model.originalStaffId, typeOfFlight: 'Start of season' }, { projection: { _id: 0 } })
         .toArray()
 
     const res = []
@@ -256,11 +256,8 @@ const resign = async body => {
             newStaff.iataCode = staff.iataCode
             newStaff.greenLight = null
             newStaff.positionAssignId = staff.positionAssignId
-
-            // newStaff.passportNumber = staff.passportNumber
-            // newStaff.plannedAssignmentStartDate = staff.plannedAssignmentStartDate
-            // newStaff.departureAirports = staff.departureAirports
-            // newStaff.arrivalAirports = staff.arrivalAirports
+            newStaff.passportNumber = staff.passportNumber
+            newStaff.plannedAssignmentStartDate = staff.plannedAssignmentStartDate
 
             if (model.lastWorkingDay) {
                 newStaff.preferredFlightDate = moment(model.lastWorkingDay).format('DD/MM/YYYY')
