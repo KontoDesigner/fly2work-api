@@ -55,10 +55,9 @@ const resign = async body => {
         //New request
         if (
             model.resign &&
-            model.resign.ConfirmedFlightDate &&
             model.resign.PositionStart &&
             now.isAfter(plannedAssignmentStartDate, 'day') &&
-            now.isAfter(confirmedFlightDate, 'day')
+            ((model.resign.ConfirmedFlightDate && now.isAfter(confirmedFlightDate, 'day')) || model.resign.YearRound === true)
         ) {
             logger.info('found no requests for resign, creating a new staff resign request', { model })
 
