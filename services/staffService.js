@@ -254,8 +254,13 @@ const resign = async body => {
             newStaff.destination = staff.destination
             newStaff.jobTitle = staff.jobTitle
             newStaff.iataCode = staff.iataCode
-            newStaff.greenLight = staff.greenLight
+            newStaff.greenLight = null
             newStaff.positionAssignId = staff.positionAssignId
+
+            // newStaff.passportNumber = staff.passportNumber
+            // newStaff.plannedAssignmentStartDate = staff.plannedAssignmentStartDate
+            // newStaff.departureAirports = staff.departureAirports
+            // newStaff.arrivalAirports = staff.arrivalAirports
 
             if (model.lastWorkingDay) {
                 newStaff.preferredFlightDate = moment(model.lastWorkingDay).format('DD/MM/YYYY')
