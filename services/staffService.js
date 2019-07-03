@@ -179,7 +179,7 @@ const resign = async body => {
             let replaceOne = {}
 
             staff.status = constants.Statuses.PendingBTT
-            // staff.direction = 'Departing'
+
             staff.comments.push({
                 text: 'Cancel flight ticket due to resignation',
                 id: uuid.v1(),
@@ -235,29 +235,45 @@ const resign = async body => {
             //New request with same data but with end of season + Preffered Flight Date = Last Working Day
             logger.info('resign - new request', { model, staff, confirmedFlightDate })
 
-            staff.id = uuid.v1()
-            staff.created = moment()._d
-            staff.typeOfFlight = 'Resignation'
-            staff.status = constants.Statuses.New
-            staff.direction = 'Departing'
+            const newStaff = new constants.Staff()
+
+            newStaff.id = uuid.v1()
+            newStaff.created = moment()._d
+            newStaff.typeOfFlight = 'Resignation'
+            newStaff.status = constants.Statuses.New
+            newStaff.direction = 'Departing'
+            newStaff.dateOfBirth = staff.dateOfBirth
+            newStaff.positionStart = staff.positionStart
+            newStaff.originalStaffId = staff.originalStaffId
+            newStaff.firstName = staff.firstName
+            newStaff.lastName2 = staff.lastName2
+            newStaff.lastName = staff.lastName
+            newStaff.sourceMarket = staff.sourceMarket
+            newStaff.phone = staff.phone
+            newStaff.gender = staff.gender
+            newStaff.destination = staff.destination
+            newStaff.jobTitle = staff.jobTitle
+            newStaff.iataCode = staff.iataCode
+            newStaff.greenLight = staff.greenLight
+            newStaff.positionAssignId = staff.positionAssignId
 
             if (model.lastWorkingDay) {
-                staff.preferredFlightDate = moment(model.lastWorkingDay).format('DD/MM/YYYY')
+                newStaff.preferredFlightDate = moment(model.lastWorkingDay).format('DD/MM/YYYY')
             } else {
-                staff.preferredFlightDate = ''
+                newStaff.preferredFlightDate = ''
             }
 
             let insertOne = {}
 
             try {
-                insertOne = (await mongo.collection('staffs').insertOne(staff)).result
+                insertOne = (await mongo.collection('staffs').insertOne(newStaff)).result
             } catch (err) {
-                logger.error('resign - new request error', err, { model, staff, confirmedFlightDate })
+                logger.error('resign - new request error', err, { model, staff, newStaff, confirmedFlightDate })
 
                 res.push({
                     ok: false,
                     originalStaffId: staff.originalStaffId,
-                    id: staff.id,
+                    id: newStaff.id,
                     error: err.message,
                     type: 'resign - new request'
                 })
@@ -265,13 +281,13 @@ const resign = async body => {
                 continue
             }
 
-            logger.info('resign - new request result', { model, staff, confirmedFlightDate, insertOne })
+            logger.info('resign - new request result', { model, staff, newStaff, confirmedFlightDate, insertOne })
 
             if (insertOne.ok === false) {
                 res.push({
                     ok: false,
                     originalStaffId: staff.originalStaffId,
-                    id: staff.id,
+                    id: newStaff.id,
                     error: 'Add request failed',
                     type: 'resign - new request'
                 })
@@ -279,7 +295,7 @@ const resign = async body => {
                 res.push({
                     ok: true,
                     originalStaffId: staff.originalStaffId,
-                    id: staff.id,
+                    id: newStaff.id,
                     type: 'resign - new request'
                 })
             }
