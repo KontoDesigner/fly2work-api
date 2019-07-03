@@ -593,6 +593,14 @@ const declineStaff = async (body, ctx) => {
 const insertStaffFromGpx = async (body, ctx) => {
     logger.info('New request from gpx received', { body })
 
+    if (body.TypeOfFlight === 'End of season') {
+        const resignationStaffs = getResignationStaffByOriginalStaffId(body.Id)
+
+        if (resignationStaffs && resignationStaffs.length > 0) {
+            logger.info('Aborting new end of season request from gpx, resignation exists', { body, resignationStaffs })
+        }
+    }
+
     let model = new constants.Staff()
 
     const destination = body.Destination ? body.Destination : ''
@@ -853,6 +861,15 @@ const getStaffById = async id => {
     const staff = await mongo.collection('staffs').findOne({ id: id }, { projection: { 'attachments.data': 0 } })
 
     return staff
+}
+
+const getResignationStaffByOriginalStaffId = async originalStaffId => {
+    const staffs = await mongo
+        .collection('staffs')
+        .find({ originalStaffId, typeOfFlight: 'Resignation' }, { projection: { attachments: 0 } })
+        .toArray()
+
+    return staffs
 }
 
 const getNewOrPendingStaffByOriginalStaffIdAndDirection = async (originalStaffId, direction) => {
