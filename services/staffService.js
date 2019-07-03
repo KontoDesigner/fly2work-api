@@ -614,6 +614,10 @@ const insertStaffFromGpx = async (body, ctx) => {
 
         if (resignationStaffs && resignationStaffs.length > 0) {
             logger.info('Aborting new end of season request from gpx, resignation exists', { body, resignationStaffs })
+
+            return {
+                ok: true
+            }
         }
     }
 
