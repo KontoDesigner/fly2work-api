@@ -174,6 +174,7 @@ const resign = async body => {
 
         if (confirmed === true && confirmedFlightDate !== null && now.isBefore(confirmedFlightDate, 'day')) {
             //Move to pending BTT and add a comment
+            logger.info('resign - starting move to pendingbtt', { originalStaffId: model.originalStaffId, id: staff.id })
             logger.info('resign - move confirmed to pendingbtt and add a comment', { staff, model, confirmedFlightDate })
 
             let replaceOne = {}
@@ -233,11 +234,12 @@ const resign = async body => {
             }
         } else if (now.isAfter(plannedAssignmentStartDate, 'day') && confirmedFlightDate !== null && now.isAfter(confirmedFlightDate, 'day')) {
             //New request with same data but with end of season + Preffered Flight Date = Last Working Day
+            const newStaff = new constants.Staff()
+            newStaff.id = uuid.v1()
+
+            logger.info('resign - starting new request', { originalStaffId: model.originalStaffId, id: newStaff.id })
             logger.info('resign - new request', { model, staff, confirmedFlightDate })
 
-            const newStaff = new constants.Staff()
-
-            newStaff.id = uuid.v1()
             newStaff.created = moment()._d
             newStaff.typeOfFlight = 'Resignation'
             newStaff.status = constants.Statuses.New
@@ -303,6 +305,7 @@ const resign = async body => {
             }
         } else if (confirmed === false) {
             //Remove request
+            logger.info('resign - starting new request', { originalStaffId: model.originalStaffId, id: staff.id })
             logger.info('resign - remove pending', { model, staff, confirmedFlightDate })
 
             let remove = {}
@@ -331,6 +334,8 @@ const resign = async body => {
                 id: staff.id,
                 type: 'resign - remove pending'
             })
+        } else {
+            logger.info('resign - no case hit', { model, staff })
         }
     }
 
