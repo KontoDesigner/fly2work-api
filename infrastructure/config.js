@@ -35,7 +35,10 @@ const config = {
     authTenantId: process.env.AUTH_TENANTID,
 
     basicAuthUser: process.env.BASIC_AUTH_USER,
-    basicAuthPassword: process.env.BASIC_AUTH_PASSWORD
+    basicAuthPassword: process.env.BASIC_AUTH_PASSWORD,
+
+    basicAuthAdminUser: process.env.BASIC_AUTH_ADMIN_USER,
+    basicAuthAdminPassword: process.env.BASIC_AUTH_ADMIN_PASSWORD
 }
 
 module.exports = config

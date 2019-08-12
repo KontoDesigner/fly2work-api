@@ -72,6 +72,24 @@ async function logIncomingRequest(ctx, next) {
     })
 }
 
+async function basicLogIn(ctx, next) {
+    if (ctx.method !== 'OPTIONS' && ctx.path === '/') {
+        try {
+            await next()
+        } catch (err) {
+            if (401 == err.status) {
+                ctx.status = 401
+                ctx.set('WWW-Authenticate', 'Basic')
+                ctx.body = '25 Schmeckles'
+            }
+        }
+
+        return
+    }
+
+    return await next()
+}
+
 async function main() {
     mongo.connect()
 
@@ -96,6 +114,7 @@ async function main() {
     app.use(errorHandler)
     app.use(logIncomingRequest)
     app.use(camelCase)
+    app.use(basicLogIn)
     app.use(routes)
 
     module.exports = app
