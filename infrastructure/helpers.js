@@ -52,6 +52,10 @@ function getHREmails(destination) {
 }
 
 function getConfirmedHREmail(destination, greenLightUpdatedBy) {
+    if (destination === 'Cyprus') {
+        return config.emailHRCyprus
+    }
+
     const emailHRTSAGDestinations = config.emailHRTSAGDestinations.split(',')
     const emailHRTDSDestinations = config.emailHRTDSDestinations.split(',')
 
