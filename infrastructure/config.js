@@ -29,6 +29,7 @@ const config = {
     emailHRTSAGDestinations: process.env.EMAIL_HR_TSAG_DESTINATIONS,
     emailHRTDS: process.env.EMAIL_HR_TDS,
     emailHRTDSDestinations: process.env.EMAIL_HR_TDS_DESTINATIONS,
+    emailHRCyprus: process.env.EMAIL_HR_CYPRUS,
 
     authAuthority: process.env.AUTH_AUTHORITY,
     authClientId: process.env.AUTH_CLIENTID,

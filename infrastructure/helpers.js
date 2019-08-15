@@ -31,10 +31,14 @@ function getBTTCC() {
 }
 
 function getHREmails(destination) {
+    let res = new constants.EmailRecipients()
+
+    if (destination === 'Cyprus') {
+        res.to.push(config.emailHRCyprus)
+    }
+
     const emailHRTSAGDestinations = config.emailHRTSAGDestinations.split(',')
     const emailHRTDSDestinations = config.emailHRTDSDestinations.split(',')
-
-    let res = new constants.EmailRecipients()
 
     if (emailHRTSAGDestinations.includes(destination)) {
         res.to.push(config.emailHRTSAG)
