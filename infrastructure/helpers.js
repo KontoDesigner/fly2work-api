@@ -35,6 +35,8 @@ function getHREmails(destination) {
 
     if (destination === 'Cyprus') {
         res.to.push(config.emailHRCyprus)
+
+        return res
     }
 
     const emailHRTSAGDestinations = config.emailHRTSAGDestinations.split(',')
