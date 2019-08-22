@@ -55,17 +55,17 @@ const deleteComment = async (staffId, commentId, ctx) => {
     const user = await userService.getUser(ctx)
 
     try {
-        const updateOne = (await mongo.collection('staffs').updateOne({ id: staffId }, { $pull: { comments: { id: commentId } } })).result
+        const updateOne = await mongo.collection('staffs').updateOne({ id: staffId }, { $pull: { comments: { id: commentId } } })
 
-        logger.info('Delete comment result', { staffId, commentId, updateOne, url: ctx.url, user })
+        logger.info('Delete comment result', { commentId, updateOne, url: ctx.url, user, staffId })
 
-        if (updateOne.ok === 1) {
+        if (updateOne.result.ok === 1) {
             return {
                 ok: true
             }
         }
     } catch (err) {
-        logger.error('Error deleting comment', err, { staffId, commentId, url: ctx.url, user })
+        logger.error('Error deleting comment', err, { commentId, url: ctx.url, user, staffId })
     }
 
     return {
