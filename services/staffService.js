@@ -744,6 +744,7 @@ const insertStaffFromGpx = async (body, ctx) => {
     model.greenLight = greenLight
     model.positionAssignId = body.PositionAssignId ? body.PositionAssignId : null
     model.typeOfFlight = body.TypeOfFlight ? body.TypeOfFlight : ''
+    model.season = body.Season ? body.Season : ''
 
     const validation = await newValidation.validate(model, { abortEarly: false }).catch(function(err) {
         return err
@@ -900,15 +901,13 @@ const getResignationStaffByOriginalStaffId = async originalStaffId => {
 }
 
 const getNewOrPendingStaffByOriginalStaffIdAndDirection = async (originalStaffId, direction, positionAssignId) => {
-    const staff = await mongo
-        .collection('staffs')
-        .findOne({
-            originalStaffId,
-            direction,
-            typeOfFlight: { $ne: 'Resignation' },
-            status: { $ne: constants.Statuses.Confirmed },
-            positionAssignId
-        })
+    const staff = await mongo.collection('staffs').findOne({
+        originalStaffId,
+        direction,
+        typeOfFlight: { $ne: 'Resignation' },
+        status: { $ne: constants.Statuses.Confirmed },
+        positionAssignId
+    })
 
     return staff
 }

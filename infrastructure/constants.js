@@ -33,6 +33,7 @@ function StaffBS() {
     this.confirmedStatus = null
     this.dateOfConfirmation = null
     this.dateRequested = null
+    this.season = null
     //Insert
     this.comment = ''
     //Update
