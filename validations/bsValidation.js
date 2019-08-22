@@ -25,7 +25,7 @@ const bsValidation = Yup.object().shape({
     comment: Yup.string()
         .nullable(true)
         .notRequired()
-        .max(200, 'Field must contain a total 200 characters'),
+        .max(1500, 'Field must contain a total 1500 characters'),
     plannedAssignmentStartDate: Yup.string()
         .default('')
         .nullable(true)
