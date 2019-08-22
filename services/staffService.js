@@ -408,7 +408,7 @@ const deleteStaffByPositionAssignId = async (body, ctx) => {
 
     const staffs = await mongo
         .collection('staffs')
-        .find({ positionAssignId: model.positionAssignId }, { projection: { attachments: 0 } })
+        .find({ positionAssignId: model.positionAssignId, status: { $ne: constants.Statuses.Confirmed } }, { projection: { attachments: 0 } })
         .toArray()
 
     if (staffs.length === 0) {
@@ -418,28 +418,94 @@ const deleteStaffByPositionAssignId = async (body, ctx) => {
     logger.info('found staffs for delete staff by original staff id', { model, staffs })
 
     for (var staff of staffs) {
-        let remove = {}
+        let confirmedFlightDate = null
 
-        try {
-            remove = (await mongo.collection('staffs').deleteOne({ id: staff.id })).result
-        } catch (err) {
-            logger.error('delete staff by original staff id error', err, { url: ctx.url, model, staff })
-
-            res.push({
-                ok: false,
-                error: 'delete staff by original staff id failed',
-                positionAssignId: staff.positionAssignId,
-                id: staff.id
-            })
+        if (staff.flights[0] && staff.flights[0].confirmedFlightDate && staff.flights[0].confirmedFlightDate !== '') {
+            confirmedFlightDate = moment(staff.flights[0].confirmedFlightDate, 'DD/MM/YYYY', true)
         }
 
-        logger.info('delete staff by original staff id result', { url: ctx.url, model, remove, staff })
+        if (confirmedFlightDate !== null && now.isBefore(confirmedFlightDate, 'day')) {
+            if (staff.status === constants.Statuses.PendingDES) {
+                logger.info('delete staff by original staff id - staff is already pending des', { model, staff, confirmedFlightDate })
 
-        res.push({
-            ok: true,
-            positionAssignId: staff.positionAssignId,
-            id: staff.id
-        })
+                continue
+            }
+
+            logger.info('delete staff by original staff id - moving staff to pending des', { model, staff, confirmedFlightDate })
+
+            let replaceOne = {}
+
+            staff.status = constants.Statuses.PendingDES
+
+            staff.audit.push({
+                updatedBy: 'SYSTEM',
+                greenLightFrom: staff.greenLight,
+                greenLightTo: staff.greenLight,
+                statusFrom: staff.status,
+                statusTo: constants.Statuses.PendingDES,
+                group: '',
+                date: new Date()
+            })
+
+            try {
+                replaceOne = (await mongo.collection('staffs').replaceOne({ id: staff.id }, { $set: staff })).result
+
+                if (replaceOne.ok === false) {
+                    res.push({
+                        ok: false,
+                        positionAssignId: staff.positionAssignId,
+                        id: staff.id,
+                        moved: false,
+                        deleted: false
+                    })
+                } else {
+                    res.push({
+                        ok: true,
+                        positionAssignId: staff.positionAssignId,
+                        id: staff.id,
+                        moved: true,
+                        deleted: false
+                    })
+                }
+            } catch (err) {
+                logger.error('delete staff by original staff id - moving staff to pending des - error', err, { model, staff, confirmedFlightDate })
+
+                res.push({
+                    ok: false,
+                    positionAssignId: staff.positionAssignId,
+                    id: staff.id,
+                    moved: false,
+                    deleted: false
+                })
+            }
+        } else {
+            let remove = {}
+
+            try {
+                remove = (await mongo.collection('staffs').deleteOne({ id: staff.id })).result
+            } catch (err) {
+                logger.error('delete staff by original staff id error', err, { url: ctx.url, model, staff })
+
+                res.push({
+                    ok: false,
+                    error: 'delete staff by original staff id failed',
+                    positionAssignId: staff.positionAssignId,
+                    id: staff.id,
+                    moved: false,
+                    deleted: false
+                })
+            }
+
+            logger.info('delete staff by original staff id result', { url: ctx.url, model, remove, staff })
+
+            res.push({
+                ok: true,
+                positionAssignId: staff.positionAssignId,
+                id: staff.id,
+                moved: false,
+                deleted: true
+            })
+        }
     }
 
     return res
