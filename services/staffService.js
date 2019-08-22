@@ -408,7 +408,7 @@ const deleteStaffByPositionAssignId = async (body, ctx) => {
 
     const staffs = await mongo
         .collection('staffs')
-        .find({ positionAssignId: model.positionAssignId, status: { $ne: constants.Statuses.Confirmed } }, { projection: { attachments: 0 } })
+        .find({ positionAssignId: model.positionAssignId }, { projection: { attachments: 0 } })
         .toArray()
 
     if (staffs.length === 0) {
@@ -424,18 +424,20 @@ const deleteStaffByPositionAssignId = async (body, ctx) => {
             confirmedFlightDate = moment(staff.flights[0].confirmedFlightDate, 'DD/MM/YYYY', true)
         }
 
-        if (confirmedFlightDate !== null && now.isBefore(confirmedFlightDate, 'day')) {
-            if (staff.status === constants.Statuses.PendingDES) {
-                logger.info('delete staff by original staff id - staff is already pending des', { model, staff, confirmedFlightDate })
-
-                continue
-            }
-
+        if (staff.status === constants.Statuses.Confirmed && confirmedFlightDate !== null && now.isBefore(confirmedFlightDate, 'day')) {
             logger.info('delete staff by original staff id - moving staff to pending des', { model, staff, confirmedFlightDate })
 
             let replaceOne = {}
 
             staff.status = constants.Statuses.PendingDES
+
+            staff.comments.push({
+                text: 'Assignment removed, please make sure the flight is cancelled',
+                id: uuid.v1(),
+                created: moment()._d,
+                createdBy: 'SYSTEM',
+                group: ''
+            })
 
             staff.audit.push({
                 updatedBy: 'SYSTEM',
@@ -479,6 +481,12 @@ const deleteStaffByPositionAssignId = async (body, ctx) => {
                 })
             }
         } else {
+            if (staff.status === constants.Statuses.Confirmed) {
+                logger.info('delete staff by original staff id - staff is confirmed, aborting', { model, staff, confirmedFlightDate })
+
+                continue
+            }
+
             let remove = {}
 
             try {
