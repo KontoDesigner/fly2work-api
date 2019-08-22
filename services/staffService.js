@@ -635,7 +635,7 @@ const insertStaffFromGpx = async (body, ctx) => {
     const greenLight =
         greenLightDestinations.includes(destination) && body.TypeOfFlight !== 'End of season' && body.TypeOfFlight !== 'Resignation' ? false : null
 
-    const getStaff = await getNewOrPendingStaffByOriginalStaffIdAndDirection(body.Id, body.Direction)
+    const getStaff = await getNewOrPendingStaffByOriginalStaffIdAndDirection(body.Id, body.Direction, body.PositionAssignId)
 
     if (getStaff) {
         logger.info(
@@ -899,10 +899,16 @@ const getResignationStaffByOriginalStaffId = async originalStaffId => {
     return staffs
 }
 
-const getNewOrPendingStaffByOriginalStaffIdAndDirection = async (originalStaffId, direction) => {
+const getNewOrPendingStaffByOriginalStaffIdAndDirection = async (originalStaffId, direction, positionAssignId) => {
     const staff = await mongo
         .collection('staffs')
-        .findOne({ originalStaffId, direction, typeOfFlight: { $ne: 'Resignation' }, status: { $ne: constants.Statuses.Confirmed } })
+        .findOne({
+            originalStaffId,
+            direction,
+            typeOfFlight: { $ne: 'Resignation' },
+            status: { $ne: constants.Statuses.Confirmed },
+            positionAssignId
+        })
 
     return staff
 }
