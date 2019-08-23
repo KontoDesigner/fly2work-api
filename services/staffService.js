@@ -417,6 +417,8 @@ const deleteStaffByPositionAssignId = async (body, ctx) => {
 
     logger.info('found staffs for delete staff by original staff id', { model, staffs })
 
+    const now = moment()
+
     for (var staff of staffs) {
         let confirmedFlightDate = null
 
