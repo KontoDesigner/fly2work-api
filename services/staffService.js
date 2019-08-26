@@ -1145,6 +1145,7 @@ const updateOrInsertStaff = async (body, ctx) => {
         model.dateOfConfirmation = getStaff ? getStaff.dateOfConfirmation : null
     }
     model.greenLight = getStaff ? getStaff.greenLight : null
+    model.season = getStaff ? getStaff.season : null
 
     if (add === true) {
         return await insertStaff(ctx, model, getStaff, btt, user)
