@@ -739,9 +739,7 @@ const insertStaffFromGpx = async (body, ctx) => {
 
         if (getStaff.status !== constants.Statuses.New) {
             const comment = {
-                text: `Request change from TTP due to change in planned assignment start date and/or destination: ticket has been moved back to status ${
-                    constants.Statuses.New
-                }, please provide details and/or preferred flight date again`,
+                text: `Request change from TTP due to change in planned assignment start date and/or destination: ticket has been moved back to status ${constants.Statuses.New}, please provide details and/or preferred flight date again`,
                 id: uuid.v1(),
                 created: moment()._d,
                 createdBy: 'SYSTEM',
@@ -846,9 +844,7 @@ const insertStaffFromGpx = async (body, ctx) => {
             })
 
             const comment = {
-                text: `Request sent from GPX with id: ${model.originalStaffId} and direction: ${body.Direction} already exists with status: ${
-                    constants.Statuses.Confirmed
-                }, allocating new request.`,
+                text: `Request sent from GPX with id: ${model.originalStaffId} and direction: ${body.Direction} already exists with status: ${constants.Statuses.Confirmed}, allocating new request.`,
                 id: uuid.v1(),
                 created: moment()._d,
                 createdBy: 'SYSTEM',
@@ -970,7 +966,7 @@ const getStaffById = async id => {
 const getResignationStaffByOriginalStaffId = async originalStaffId => {
     const staffs = await mongo
         .collection('staffs')
-        .find({ originalStaffId, typeOfFlight: 'Resignation' }, { projection: { attachments: 0 } })
+        .find({ originalStaffId, typeOfFlight: 'Resignation', status: { $ne: constants.Statuses.Confirmed } }, { projection: { attachments: 0 } })
         .toArray()
 
     return staffs
