@@ -9,7 +9,7 @@
     "dependencies": {
         "@koa/cors": "^2.2.2",
         "async-busboy": "^0.7.0",
-        "axios": "^0.18.0",
+        "axios": "^0.21.1",
         "camelcase-keys": "^4.2.0",
         "dotenv": "^4.0.0",
         "keymirror": "^0.1.1",
